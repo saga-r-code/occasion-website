@@ -48,7 +48,7 @@
 			</div>
 			<div class="News flex flex-col gap-8">
 				<h1 class="font-bold text-lg">NewsLetter</h1>
-				<p class="text-lg">Subscribe To Get Latest Media Updates</p>
+				<p class="text-lg">Subscribe To Get Latest Venues Updates</p>
 				<a href="/contact" class=" w-40 h-12 rounded-lg bg-[#50808E] border-2 hover:bg-[#284e59] hover:shadow-black flex justify-center items-center shadow-inner">Contact Us</a>
 			</div>
 		</section>
