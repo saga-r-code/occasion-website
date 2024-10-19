@@ -87,7 +87,7 @@
 			{/each}
 		</select>
 		<div
-			class="search bg-[#50808e] font-bold text-xl text-center text-white rounded-lg py-3 px-28 2xl:px-40 cursor-pointer active:bg-gray-500 hover:bg-gray-700"
+			class="search bg-[#50808e] font-bold text-xl text-center text-white rounded-lg py-3 px-28 2xl:px-40 cursor-pointer active:bg-[#50808e] hover:bg-[#315763]"
 		>
 			Search
 		</div>

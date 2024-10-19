@@ -189,11 +189,15 @@
 
 			<!-- pagination -->
 			<div class="pagination">
-				<button class="flex absolute z-10 top-[40%] -left-5 justify-center items-center">
+				<button
+					class="flex bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full text-center absolute z-10 top-[45%] md:top-[40%] -left-5 justify-center items-center"
+				>
 					<i class="fa-solid fa-angles-left"></i>
 				</button>
 
-				<button class="flex absolute z-10 top-[40%] -right-5 justify-center items-center">
+				<button
+					class="flex bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full text-center absolute z-10 top-[45%] md:top-[40%] -right-5 justify-center items-center"
+				>
 					<i class="fa-solid fa-angles-right"></i>
 				</button>
 			</div>
@@ -228,11 +232,15 @@
 
 			<!-- pagination -->
 			<div class="pagination">
-				<button class={`flex absolute z-10 top-[45%] -left-5 justify-center items-center`}>
+				<button
+					class={`flex bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full absolute z-10 top-[45%] -left-5 justify-center items-center`}
+				>
 					<i class="fa-solid fa-angles-left"></i>
 				</button>
 
-				<button class={`flex absolute z-10 top-[45%] -right-5  justify-center items-center`}>
+				<button
+					class={`flex bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full absolute z-10 top-[45%] -right-5  justify-center items-center`}
+				>
 					<i class="fa-solid fa-angles-right"></i>
 				</button>
 			</div>
@@ -271,11 +279,25 @@
 		<InfoContainer />
 		<!-- info-container end -->
 
-		<div class="decoration py-10">
+		<div class="decoration py-10 relative">
 			<Headline headline="Best Decoration And Event Plans" no="20" />
 			<div
 				class="decoration-list flex py-10 gap-x-3 sm:gap-x-6 overflow-x-auto lg:overflow-hidden lg:flex-wrap lg:gap-9"
 			>
+				<!-- pagination -->
+				<div class="pagination lg:hidden">
+					<button
+						class={`flex bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full absolute z-10 top-[50%] md:top-[45%] left-0 justify-center items-center`}
+					>
+						<i class="fa-solid fa-angles-left"></i>
+					</button>
+
+					<button
+						class={`flex bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full absolute z-10 top-[50%] md:top-[45%] -right-5  justify-center items-center`}
+					>
+						<i class="fa-solid fa-angles-right"></i>
+					</button>
+				</div>
 				{#each decorationCard as deco}
 					<div
 						class="decoration-cards flex flex-col gap-5 justify-start items-start w-[15rem] h-auto md:w-[20rem] rounded-2xl"

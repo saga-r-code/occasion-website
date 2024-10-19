@@ -135,7 +135,7 @@
 				{#each supplier as list}
 					<div class="flex gap-5 items-center w-[15rem] flex-col">
 						<div
-							class="w-32 h-32 relative overflow-hidden rounded-full border-2 border-white flex justify-center items-center"
+							class="w-28 h-28 md:w-32 md:h-32 relative overflow-hidden rounded-full border-2 border-white flex justify-center items-center"
 						>
 							<img
 								src={list.img}
@@ -155,11 +155,11 @@
 
 			<!-- pagination -->
 			<div class="pagination">
-				<button class={`flex absolute z-10 top-[40%] -left-5 justify-center items-center`}>
+				<button class={`flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -left-5 justify-center items-center`}>
 					<i class="fa-solid fa-angles-left"></i>
 				</button>
 
-				<button class={`flex absolute z-10 top-[40%] -right-5  justify-center items-center`}>
+				<button class={`flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -right-5  justify-center items-center`}>
 					<i class="fa-solid fa-angles-right"></i>
 				</button>
 			</div>
@@ -176,11 +176,11 @@
 
 			<!-- pagination -->
 			<div class="pagination">
-				<button class={`flex absolute z-10 top-[40%] -left-5 justify-center items-center`}>
+				<button class={`flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -left-5 justify-center items-center`}>
 					<i class="fa-solid fa-angles-left"></i>
 				</button>
 
-				<button class={`flex absolute z-10 top-[40%] -right-5  justify-center items-center`}>
+				<button class={`flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -right-5  justify-center items-center`}>
 					<i class="fa-solid fa-angles-right"></i>
 				</button>
 			</div>

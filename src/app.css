@@ -30,16 +30,4 @@ body {
 }
 
 
-	.pagination button {
-		height: 50px;
-		width: 50px;
-		border-radius: 100%;
-		/* border: 2px solid #98dfea; */
-		background-color: #50808e;
-		text-align: center;
-	}
-
-	.pagination button:hover {
-		background-color: #355964;
-	}
 

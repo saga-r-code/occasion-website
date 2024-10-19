@@ -289,11 +289,11 @@
 
 			<!-- pagination -->
 			<div class="pagination">
-				<button class={`flex absolute z-10 top-[35%] -left-5 justify-center items-center`}>
+				<button class={`flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -left-3 justify-center items-center`}>
 					<i class="fa-solid fa-angles-left"></i>
 				</button>
 
-				<button class={`flex absolute z-10 top-[35%] -right-5  justify-center items-center`}>
+				<button class={`flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -right-5  justify-center items-center`}>
 					<i class="fa-solid fa-angles-right"></i>
 				</button>
 			</div>
