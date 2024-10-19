@@ -4,7 +4,7 @@
 </script>
 
 <div
-	class="category flex justify-center items-center flex-col gap-16 h-[25rem] relative bg-[#f4f4f4]"
+	class="category flex justify-center items-center flex-col gap-16 h-[25rem] relative "
 >
 	<video class="absolute top-0 left-0 w-full h-full object-cover" autoplay muted loop>
 		<source src={video} type="video/mp4" />

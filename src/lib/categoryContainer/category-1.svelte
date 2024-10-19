@@ -56,7 +56,7 @@
 </script>
 
 <div
-	class="category text-white flex justify-start md:justify-end items-center flex-col gap-5 h-[25rem] p-8 bg-[#f4f4f4] relative overflow-hidden"
+	class="category text-white flex justify-start md:justify-end items-center flex-col gap-5 h-[25rem] p-8  relative overflow-hidden"
 >
 	<video class="absolute top-0 left-0 w-full h-full object-cover" autoplay muted loop>
 		<source src={video} type="video/mp4" />
