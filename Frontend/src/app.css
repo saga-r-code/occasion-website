@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+	background-image: linear-gradient(to bottom, #142b4e, #0a3656, #00405d, #004a62, #075466);
+	
+}
+
+.navbar ul li:hover {
+	cursor: pointer;
+	font-weight: bold;
+	text-decoration: underline;
+	text-underline-offset: 8px;
+}
+
+.navbar ul li {
+	letter-spacing: 2px;
+}
+
+.btn button {
+	height: 25px;
+	width: 25px;
+	border-radius: 100%;
+	background-color: rgb(218, 213, 213);
+}
+
+.btn button:hover {
+	background-color: rgb(187, 184, 184);
+}
+
+
+
