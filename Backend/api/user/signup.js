@@ -29,7 +29,9 @@ router.post('/api/user/signup', async (req, res) => {
 
         ]);
 
-        res.status(201).send("U are sign up with this email id:");
+        
+
+        res.status(201).send("Account Create Successfully:");
         
 
 

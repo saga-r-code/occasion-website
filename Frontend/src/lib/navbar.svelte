@@ -29,7 +29,7 @@
 			></button>
 
 			<ul
-				class={`bg-[#1c2541] z-20 md:bg-transparent right-0 w-full   py-10 top-16 flex flex-col justify-center items-center list-none gap-10 md:w-fit md:py-0 md:gap-8 md:flex md:flex-row md:static md:text-lg`}
+				class={`bg-[#1c2541] z-40 md:bg-transparent right-0 w-full   py-10 top-16 flex flex-col justify-center items-center list-none gap-10 md:w-fit md:py-0 md:gap-8 md:flex md:flex-row md:static md:text-lg`}
 				class:absolute={open}
 				class:hidden={!open}
 			>

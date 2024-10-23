@@ -8,11 +8,11 @@
 		e.preventDefault();
 
 		const data = {
-			username, 
+			username,
 			email,
-			password, 
-			confirmPassword,
-		}
+			password,
+			confirmPassword
+		};
 
 		try {
 			// Send the data to the backend and store in database
@@ -45,10 +45,21 @@
 
 	export let open = false;
 	export let togglemodal;
+
+	const toggleye = (id) => {
+		let eye = document.getElementById(id);
+		if (eye.type === 'password') {
+			eye.type = 'text';
+		} else {
+			eye.type = 'password';
+		}
+	};
 </script>
 
 {#if open}
-	<div class="w-dvw h-dvh absolute bg-[rgba(0,0,0,0.7)] justify-center items-center z-50 flex">
+	<div
+		class="w-dvw h-dvh absolute bg-[rgba(0,0,0,0.7)] justify-center items-start md:items-center p-2 py-14 sm:py-0 z-30 flex"
+	>
 		<div class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
 			<button
 				class="fa-solid fa-xmark text-2xl -mt-3 float-right cursor-pointer"
@@ -76,8 +87,9 @@
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					/>
 				</div>
-				<div class="mb-4">
+				<div class="mb-4 relative">
 					<label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
+
 					<input
 						type="password"
 						id="password"
@@ -85,8 +97,12 @@
 						required
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					/>
+					<button
+						class="fa-solid fa-eye absolute top-10 right-4 cursor-pointer"
+						on:click={() => toggleye('password')}
+					></button>
 				</div>
-				<div class="mb-4">
+				<div class="mb-4 relative">
 					<label class="block text-gray-700 text-sm font-bold mb-2" for="confirmPassword"
 						>Confirm Password</label
 					>
@@ -97,6 +113,10 @@
 						required
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					/>
+					<button
+						class="fa-solid fa-eye-slash absolute top-10 right-4 cursor-pointer"
+						on:click={() => toggleye('confirmPassword')}
+					></button>
 				</div>
 				<div class="flex items-center justify-between">
 					<button
