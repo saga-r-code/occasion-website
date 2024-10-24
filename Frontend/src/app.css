@@ -10,8 +10,7 @@ body {
 .navbar ul li:hover {
 	cursor: pointer;
 	font-weight: bold;
-	text-decoration: underline;
-	text-underline-offset: 8px;
+	
 }
 
 .navbar ul li {

@@ -1,44 +1,54 @@
-// // http://localhost:3000/api/user/login
+// http://localhost:3000/api/user/login
 
-// import express from "express";
-// import pool from '../../Database/db'
+import express from 'express';
+import pool from '../../Database/db.js';
 
-// const router = express.Router();
+const router = express.Router();
 
-// // Login route
-// router.post('/login', async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
+// POST route to login user
+router.post('/api/user/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
 
-//         // Check if email and password are provided
-//         if (!email || !password) {
-//             return res.status(400).json({ message: 'Email and password are required' });
-//         }
+        // Check if email and password are provided
+        if (!email || !password) {
+            return res.status(400).send({ message: "Email and password are required" });
+        }
 
-//         // Check if user exists
-//         const userQuery = {
-//             text: 'SELECT * FROM users WHERE email = $1',
-//             values: [email]
-//         };
+        // Check if the user exists and password matches
+        const userResult = await pool.query(`SELECT * FROM user_signup WHERE email = ?`, [email]);
 
-//         const result = await pool.query(userQuery);
+        if (userResult.length === 0) {
+            console.log("please check details")
+            return res.status(401).send({ message: "Invalid email please fill properly " });
+        }
 
-//         if (result.rows.length === 0) {
-//             return res.status(401).json({ message: 'Invalid email or password' });
-//         }
+        const user = userResult[0];
 
-//         // Verify password (assuming passwords are stored in plain text)
-//         const user = result.rows[0];
-//         if (user.password !== password) {
-//             return res.status(401).json({ message: 'Invalid email or password' });
-//         }
 
-//         // If login is successful, return a success message or user data
-//         res.json({ message: 'Login successful', user: { id: user.id, email: user.email } });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: 'Internal server error' });
-//     }
-// });
+        if (user.password !== password) {
+            console.log("please check details")
+            return res.status(401).send({ message: "Invalid Credtional" });
+        }
 
-// export default router;
+        // Check if user already exists in user_login table
+        const existingUser = await pool.query(`SELECT * FROM user_login WHERE email = ?`, [email]);
+
+        if (existingUser) {
+            console.log("User already Login")
+            return res.status(200).send({ message: "User Login " });
+        }
+
+        // Insert into user_login table
+        const loginQuery = `INSERT INTO user_login (email, password) VALUES (?, ?)`;
+        await pool.query(loginQuery, [email, password]);
+        console.log("User Successfully Login")
+        res.status(200).send({ message: "Login successful" });
+
+    } catch (error) {
+        console.error('Error during login:', error.message);
+        res.status(500).send({ message: 'Internal Server Error', error: error.message });
+    }
+});
+
+export default router;

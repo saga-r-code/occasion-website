@@ -45,10 +45,7 @@ router.post('/api/user/signup', async (req, res) => {
 
         ]);
 
-
-
         res.status(201).send("Account Create Successfully:");
-
 
 
     } catch (error) {

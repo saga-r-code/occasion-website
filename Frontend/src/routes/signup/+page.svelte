@@ -1,4 +1,6 @@
 <script>
+	import Navbar from "$lib/navbar.svelte";
+
 	let username = '';
 	let email = '';
 	let password = '';
@@ -13,8 +15,8 @@
 		confirmPassword = '';
 	}
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
+	const handleSubmit = async () => {
+		// e.preventDefault();
 		const data = {
 			username,
 			email,
@@ -22,7 +24,7 @@
 			confirmPassword
 		};
 
-		//For Password check
+		
 
 		try {
 			// Send the data to the backend and store in database
@@ -80,9 +82,11 @@
 	};
 </script>
 
+<!-- <Navbar /> -->
 {#if open}
 	<div
 		class="w-dvw h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] justify-center items-start md:items-center p-2 py-14 sm:py-0 z-30 flex"
+		
 	>
 		<div class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
 			<button
@@ -153,6 +157,7 @@
 					>
 						Sign Up
 					</button>
+					<a href="/login" class="underline text-blue-700">Login &rarr;</a>
 				</div>
 			</form>
 		</div>
