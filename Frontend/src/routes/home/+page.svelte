@@ -25,7 +25,7 @@
 	import decoimg7 from '../../lib/Images/lanterns-1.jpg';
 
 	import review1 from '../../lib/Images/profile.jpg';
-	import Signup from '$lib/signup.svelte';
+	import Signup from '../signup/+page.svelte'
 
 	// import { onMount } from 'svelte';
 
@@ -171,8 +171,8 @@
 	}
 </script>
 
+<Signup {open} {togglemodal}/>
 <div class="Home">
-	<Signup {open} {togglemodal}/>
 	<Category_1 title="Your Occasion, Your Way" />
 	<div class="some-list w-[80%] mx-auto text-white">
 		<div class="browse-category py-10 relative">
@@ -220,6 +220,7 @@
 		<!-- browse-category end -->
 
 		<div class="popular-venu py-10 relative">
+			
 			<Headline headline="Popular Venue" no="20" />
 
 			<!-- pagination -->
@@ -242,6 +243,7 @@
 				{#each venueCards as venue}
 					<div
 						class="venue-card flex flex-col px-3 gap-5 justify-start items-start h-[22rem] w-[15rem] md:w-[22rem] md:h-[25rem]"
+						on:click={togglemodal}
 					>
 						<!--outerbox-->
 						<div class="img-container relative">
@@ -293,6 +295,7 @@
 				{#each decorationCard as deco}
 					<div
 						class="decoration-cards flex flex-col gap-5 justify-start items-start w-[15rem] h-auto md:w-[20rem] rounded-2xl"
+						on:click={togglemodal}
 					>
 						<div class="flex flex-col px-3 justify-center items-center">
 							<div

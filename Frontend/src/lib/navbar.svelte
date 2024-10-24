@@ -48,6 +48,7 @@
 				<li><a href="/services">Services</a></li>
 				<li><a href="/about">About</a></li>
 				<li><a href="/contact">Contact Us</a></li>
+				<li><a href="/signup">Sign Up</a></li>
 				<div
 					class="cursor-pointer hidden md:flex bg-[#50808e] rounded-full p-2 md:p-3 justify-center items-center"
 				>

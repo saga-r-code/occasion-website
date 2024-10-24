@@ -3,16 +3,26 @@
 	let email = '';
 	let password = '';
 	let confirmPassword = '';
+	let showPassword = false;
+	let showConfirmPassword = false;
+
+	function clearForm() {
+		username = '';
+		email = '';
+		password = '';
+		confirmPassword = '';
+	}
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
 		const data = {
 			username,
 			email,
 			password,
 			confirmPassword
 		};
+
+		//For Password check
 
 		try {
 			// Send the data to the backend and store in database
@@ -25,15 +35,27 @@
 			});
 
 			//For Password check
-			if (password === confirmPassword) {
-				alert('Account Created Sucessfully');
-			} else {
+			if (data.password !== data.confirmPassword) {
 				alert('Password and Confirm Password does not match');
+				return;
+			}
+
+			if (data.password.length < 8) {
+				alert('Password must be at least 8 characters long');
+				return;
+			}
+
+			//For email check
+			if (response.status === 409) {
+				alert('Email already exists. Please use a different email.');
+				return;
 			}
 
 			//response check
 			if (response.ok) {
 				console.log('Your message has been sent successfully!');
+				clearForm();
+				alert('Account Created Successfully');
 			} else {
 				console.log('Failed to send the message. Please try again.');
 			}
@@ -42,23 +64,25 @@
 			console.log('An error occurred. Please try again later.');
 		}
 	};
-
 	export let open = false;
-	export let togglemodal;
 
-	const toggleye = (id) => {
-		let eye = document.getElementById(id);
-		if (eye.type === 'password') {
-			eye.type = 'text';
-		} else {
-			eye.type = 'password';
-		}
+	function togglemodal() {
+		clearForm();
+		open = !open;
+	}
+
+	const togglePasswordVisibility = () => {
+		showPassword = !showPassword;
+	};
+
+	const toggleConfirmPasswordVisibility = () => {
+		showConfirmPassword = !showConfirmPassword;
 	};
 </script>
 
 {#if open}
 	<div
-		class="w-dvw h-dvh absolute bg-[rgba(0,0,0,0.7)] justify-center items-start md:items-center p-2 py-14 sm:py-0 z-30 flex"
+		class="w-dvw h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] justify-center items-start md:items-center p-2 py-14 sm:py-0 z-30 flex"
 	>
 		<div class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
 			<button
@@ -92,14 +116,16 @@
 
 					<input
 						type="password"
-						id="password"
+						id="passowrd"
 						bind:value={password}
 						required
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					/>
 					<button
-						class="fa-solid fa-eye absolute top-10 right-4 cursor-pointer"
-						on:click={() => toggleye('password')}
+						class="fa-solid absolute top-10 right-4 cursor-pointer"
+						on:click={togglePasswordVisibility}
+						class:fa-eye={showPassword}
+						class:fa-eye-slash={!showPassword}
 					></button>
 				</div>
 				<div class="mb-4 relative">
@@ -108,14 +134,16 @@
 					>
 					<input
 						type="password"
-						id="confirmPassword"
+						id="password"
 						bind:value={confirmPassword}
 						required
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					/>
 					<button
 						class="fa-solid fa-eye-slash absolute top-10 right-4 cursor-pointer"
-						on:click={() => toggleye('confirmPassword')}
+						on:click={toggleConfirmPasswordVisibility}
+						class:fa-eye={showConfirmPassword}
+						class:fa-eye-slash={!showConfirmPassword}
 					></button>
 				</div>
 				<div class="flex items-center justify-between">
