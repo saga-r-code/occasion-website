@@ -25,8 +25,8 @@
 	import decoimg7 from '../../lib/Images/lanterns-1.jpg';
 
 	import review1 from '../../lib/Images/profile.jpg';
-	import Signup from '../../lib/signup-page.svelte'
 	import Navbar from '$lib/navbar.svelte';
+	import LoginPage from '$lib/login-page.svelte';
 
 	// import { onMount } from 'svelte';
 
@@ -167,7 +167,7 @@
 </script>
 
 <Navbar />
-<Signup {open} {togglemodal}/>
+<LoginPage {open} {togglemodal}/>
 <div class="Home">
 	<Category_1 title="Your Occasion, Your Way" />
 	<div class="some-list w-[80%] mx-auto text-white">
@@ -207,7 +207,7 @@
 							/>
 						</div>
 						<div>
-							<h3 class="font-bold text-lg md:text-xl">{c.title}</h3>
+							<h3 class="font-bold text-lg md:text-xl mt-5">{c.title}</h3>
 						</div>
 					</div>
 				{/each}
@@ -215,7 +215,7 @@
 		</div>
 		<!-- browse-category end -->
 
-		<div class="popular-venu py-10 relative">
+		<div class="popular-venu  relative">
 			
 			<Headline headline="Popular Venue" no="20" />
 
@@ -269,7 +269,7 @@
 		<InfoContainer />
 		<!-- info-container end -->
 
-		<div class="decoration py-10 relative">
+		<div class="decoration  relative">
 			<Headline headline="Best Decoration And Event Plans" no="20" />
 			<div
 				class="decoration-list flex py-10 gap-x-3 sm:gap-x-6 overflow-x-auto lg:overflow-hidden lg:flex-wrap lg:gap-9"

@@ -35,7 +35,7 @@ router.post('/api/user/login', async (req, res) => {
         const existingUser = await pool.query(`SELECT * FROM user_login WHERE email = ?`, [email]);
 
         if (existingUser) {
-            console.log("User already Login")
+            console.log("User  Login")
             return res.status(200).send({ message: "User Login " });
         }
 

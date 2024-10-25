@@ -215,7 +215,7 @@
 			</div>
 		</div>
 
-		<div class="wedding-venues py-10 text-white">
+		<div class="wedding-venues  text-white">
 			<Headline headline="Ceremony Decorations" no="22" />
 
 			<!-- Venue cards -->

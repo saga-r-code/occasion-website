@@ -150,7 +150,7 @@
 		</div>
 		<!-- Category end -->
 
-		<div class="cards py-10 relative">
+		<div class="cards  relative">
 			<Headline headline="Event Decoration" no="20" />
 
 			<!-- pagination -->
@@ -171,7 +171,7 @@
 			</div>
 		</div>
 
-		<div class="cards py-10 relative">
+		<div class="cards  relative">
 			<Headline headline="Ultimate Venues" no="20" />
 
 			<!-- pagination -->
