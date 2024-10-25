@@ -67,6 +67,7 @@
 					id="email"
 					bind:value={email}
 					required
+					placeholder="Enter Your Email"
 					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				/>
 			</div>
@@ -77,6 +78,7 @@
 					id="password"
 					bind:value={password}
 					required
+					placeholder="Enter Your Password"
 					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				/>
 				<button class="fa-solid absolute top-10 right-4 cursor-pointer"></button>

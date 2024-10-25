@@ -32,26 +32,13 @@
 					/>
 					<i class="fa-solid fa-magnifying-glass text-white"></i>
 				</div>
-				
+
+				<li class="hover:underline hover:underline-offset-8"><a href="/home">Home</a></li>
 				<li class="hover:underline hover:underline-offset-8"><a href="/venue">Venue</a></li>
 				<li class="hover:underline hover:underline-offset-8"><a href="/services">Services</a></li>
 				<li class="hover:underline hover:underline-offset-8"><a href="/about">About</a></li>
 				<li class="hover:underline hover:underline-offset-8"><a href="/contact">Contact Us</a></li>
-				<li class="hover:underline hover:underline-offset-8 lg:hidden"><a href="/login">Login</a></li>
-				<li class="hover:underline hover:underline-offset-8 lg:hidden"><a href="/signup">SignUp</a></li>
-				<div class="hidden lg:flex gap-5">
-				<li class="no-underline">
-					<a href="/signup" class="bg-[#50808e] px-5 py-2 md:px-5 rounded-full active:bg-[#386370]">SIGNUP</a>
-				</li>
-				<li class="no-underline">
-					<a href="/login" class="border-[#50808e] border-2 rounded-full px-5 py-2 md:px-5">LOGIN</a>
-				</li>
-			</div>
-				<div
-					class="cursor-pointer hidden md:flex bg-[#50808e] rounded-full p-2 md:p-3 justify-center items-center"
-				>
-					<i class="fa-solid fa-magnifying-glass text-white"></i>
-				</div>
+				
 			</ul>
 		</div>
 	</div>

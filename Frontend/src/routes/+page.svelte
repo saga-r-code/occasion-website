@@ -3,6 +3,6 @@
 	import Home from './home/+page.svelte';
 </script>
 
-<Navbar />
+<!-- <Navbar /> -->
 
 <Home />

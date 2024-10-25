@@ -102,6 +102,7 @@
 						id="name"
 						bind:value={username}
 						required
+						placeholder="Enter Your Username"
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					/>
 				</div>
@@ -112,6 +113,7 @@
 						id="email"
 						bind:value={email}
 						required
+						placeholder="Enter  Your Email"
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					/>
 				</div>
@@ -123,6 +125,7 @@
 						id="passowrd"
 						bind:value={password}
 						required
+						placeholder="Enter Your Password"
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					/>
 					<button
@@ -141,6 +144,7 @@
 						id="password"
 						bind:value={confirmPassword}
 						required
+						placeholder="Confirm Your Password"
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					/>
 					<button

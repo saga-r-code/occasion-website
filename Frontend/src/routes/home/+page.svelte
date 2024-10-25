@@ -25,7 +25,8 @@
 	import decoimg7 from '../../lib/Images/lanterns-1.jpg';
 
 	import review1 from '../../lib/Images/profile.jpg';
-	import Signup from '../signup/+page.svelte'
+	import Signup from '../../lib/signup-page.svelte'
+	import Navbar from '$lib/navbar.svelte';
 
 	// import { onMount } from 'svelte';
 
@@ -155,13 +156,7 @@
 			description:
 				'I was a bit skeptical at first, but this turned out to be a great purchase. It works exactly as advertised, and I am very satisfied with my decision.'
 		},
-		{
-			id: 3,
-			img: review1,
-			title: 'Chota Biduuu',
-			description:
-				'I was a bit skeptical at first, but this turned out to be a great purchase. It works exactly as advertised, and I am very satisfied with my decision.'
-		}
+		
 	];
 
 	let open = false;
@@ -171,6 +166,7 @@
 	}
 </script>
 
+<Navbar />
 <Signup {open} {togglemodal}/>
 <div class="Home">
 	<Category_1 title="Your Occasion, Your Way" />
@@ -297,7 +293,7 @@
 						class="decoration-cards flex flex-col gap-5 justify-start items-start w-[15rem] h-auto md:w-[20rem] rounded-2xl"
 						on:click={togglemodal}
 					>
-						<div class="flex flex-col px-3 justify-center items-center">
+						<div class="flex flex-col  justify-center items-center">
 							<div
 								class="decoration-img relative hover:scale-105 h-[15rem] w-[15rem] md:w-[20rem] flex justify-center items-center rounded-2xl overflow-hidden"
 							>
@@ -319,18 +315,18 @@
 			<h1 class="text-3xl font-semibold mb-10">Reviews</h1>
 
 			<div
-				class="grid md:grid-cols-2 lg:flex lg:flex-wrap lg:justify-center lg:items-center gap-5 lg:gap-10 px-3"
+				class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-10 px-3"
 			>
 				{#each reviews as reviews}
 					<div
-						class="reviews-box hover:scale-105 border-white border-2 bg-[#1c2541] lg:w-[40%] xl:w-1/5 rounded-2xl relative"
+						class="reviews-box hover:scale-105 border-white border-2 bg-[#1c2541]  rounded-2xl relative"
 					>
 						<div class="detail-box py-5 px-3 flex flex-col justify-center items-center gap-5">
 							<div class="w-16 h-16 rounded-full overflow-hidden">
 								<img src={reviews.img} alt={reviews.title} class=" w-full h-full object-cover" />
 							</div>
 							<h2 class="font-bold text-xl">{reviews.title}</h2>
-							<p class="text-base w-11/12">{reviews.description}</p>
+							<p class="text-base w-11/12 ">{reviews.description}</p>
 						</div>
 					</div>
 				{/each}
