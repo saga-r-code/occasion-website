@@ -1,52 +1,56 @@
-// http://localhost:3000/api/user/signup
-
 import express from 'express';
 import pool from '../../Database/db.js';
+import { body, validationResult } from 'express-validator';
+import bcrypt from 'bcrypt';
 
 const router = express.Router();
 
 // POST route to signup user
-let conn;
-router.post('/api/user/signup', async (req, res) => {
+router.post('/api/user/signup', [
+    // Validate and sanitize input
+    body('username').notEmpty().withMessage('Username is required.'),
+    body('email').isEmail().withMessage('Please enter a valid email address.'),
+    body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long.'),
+    // Confirm password validation not stored in table
+    body('confirmPassword').custom((value, { req }) => {
+        if (value !== req.body.password) {
+            throw new Error('Passwords do not match.');
+        }
+        return true;
+    })
+], async (req, res) => {
+    let conn;
     try {
         const userInput = req.body;
 
-
-        // console.log('User  signup data:', JSON.stringify(userInput, null, 2));
-
-        //check password length
-        if (!userInput.password || userInput.password.length < 8) {
-            console.log("Password must be  at least 8 characters long");
-            return res.status(400).send({ message: "Password must be  at least 8 characters long" });
+        // Check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
         }
 
-        //check if email is already exists
-        const existingEmail = await pool.query(`SELECT * FROM user_signup WHERE email = ?`, [
-            userInput.email
-        ]);
+        // Check if email already exists
+        const existingEmail = await pool.query(`SELECT * FROM user_signup WHERE email = ?`, [userInput.email]);
         if (existingEmail.length > 0) {
-            console.log("Email is already exist")
+            console.log("Email already exists");
             return res.status(409).send({ message: "Email already exists" });
         }
 
+        // Hash the password before storing it
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(userInput.password, salt);
 
         conn = await pool.getConnection();
 
-        const query = `INSERT INTO user_signup (username, email, password)
-        VALUES (?, ?, ?)`;
-
-        console.log("Successfully Created")
-
-        //all data request through user input
-        const result = await conn.query(query, [
+        const query = `INSERT INTO user_signup (username, email, password) VALUES (?, ?, ?)`;
+        await conn.query(query, [
             userInput.username,
             userInput.email,
-            userInput.password,
-
+            hashedPassword, // Store the hashed password
         ]);
 
-        res.status(201).send("Account Create Successfully:");
-
+        console.log("Successfully Created");
+        res.status(201).send("Account Created Successfully:");
 
     } catch (error) {
         console.error('Error inserting user:', error.message);

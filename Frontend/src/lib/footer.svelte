@@ -17,7 +17,6 @@
 			<div class="venue-footer flex flex-col justify-center gap-5">
 				<h1 class="font-bold text-lg">Venue</h1>
 				<ul class="flex flex-col justify-center gap-1">
-					<li>Wedding</li>
 					<li>Birthday</li>
 					<li>Haldi</li>
 					<li>Party</li>

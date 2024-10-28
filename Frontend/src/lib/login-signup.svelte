@@ -12,8 +12,8 @@
 		password = '';
 	}
 
-	const handleSubmit = async () => {
-		// e.preventDefault(); // Prevent default form submission
+	const handleSubmit = async (e) => {
+		e.preventDefault(); // Prevent default form submission
 		const data = {
 			email,
 			password

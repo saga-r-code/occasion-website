@@ -13,8 +13,8 @@
 		confirmPassword = '';
 	}
 
-	const handleSubmit = async () => {
-		// e.preventDefault();
+	const handleSubmit = async (e) => {
+		e.preventDefault();
 		const data = {
 			username,
 			email,

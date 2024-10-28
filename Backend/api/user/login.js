@@ -1,21 +1,26 @@
-// http://localhost:3000/api/user/login
-
 import express from 'express';
 import pool from '../../Database/db.js';
+import { body, validationResult } from 'express-validator';
+import bcrypt from 'bcrypt';
 
 const router = express.Router();
 
 // POST route to login user
-router.post('/api/user/login', async (req, res) => {
+router.post('/api/user/login', [
+    // Validate and sanitize input
+    body('email').isEmail().withMessage('Please enter a valid email address.'),
+    body('password').notEmpty().withMessage('Password is required.')
+], async (req, res) => {
     try {
-        const { email, password } = req.body;
-
-        // Check if email and password are provided
-        if (!email || !password) {
-            return res.status(400).send({ message: "Email and password are required" });
+        // Check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
         }
 
-        // Check if the user exists and password matches
+        const { email, password } = req.body;
+
+        // Check if the user exists
         const userResult = await pool.query(`SELECT * FROM user_signup WHERE email = ?`, [email]);
 
         if (userResult.length === 0) {
@@ -25,24 +30,25 @@ router.post('/api/user/login', async (req, res) => {
 
         const user = userResult[0];
 
-
-        if (user.password !== password) {
+        // Compare the provided password with the hashed password stored in the database
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
             console.log("please check details")
-            return res.status(401).send({ message: "Invalid Credtional" });
+            return res.status(401).send({ message: "Invalid Credential" });
         }
 
         // Check if user already exists in user_login table
-        const existingUser = await pool.query(`SELECT * FROM user_login WHERE email = ?`, [email]);
+        const existingUser  = await pool.query(`SELECT * FROM user_login WHERE email = ?`, [email]);
 
-        if (existingUser) {
+        if (existingUser .length > 0) {
             console.log("User  Login")
-            return res.status(200).send({ message: "User Login " });
+            return res.status(200).send({ message: "User  Login " });
         }
 
         // Insert into user_login table
         const loginQuery = `INSERT INTO user_login (email, password) VALUES (?, ?)`;
-        await pool.query(loginQuery, [email, password]);
-        console.log("User Successfully Login")
+        await pool.query(loginQuery, [email, user.password]); // Store hashed password or just email
+        console.log("User  Successfully Login")
         res.status(200).send({ message: "Login successful" });
 
     } catch (error) {
