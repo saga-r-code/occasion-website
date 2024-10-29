@@ -22,7 +22,7 @@
 		// Check if email and password are provided
 		if (!email || !password) {
 			alert('please fill up the login page');
-			return
+			return;
 		}
 
 		try {
@@ -38,6 +38,8 @@
 			const result = await response.json();
 			console.log(result);
 			console.log(document.cookie); // Lists all accessible cookies for the current domain
+
+			
 
 
 			if (response.ok) {
