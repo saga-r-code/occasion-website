@@ -4,9 +4,6 @@
 	let password = '';
     let showPassword = false;
 
-
-	
-
 	function clearForm() {
 		email = '';
 		password = '';
@@ -30,7 +27,8 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(data)
+				body: JSON.stringify(data),
+				credentials: 'include' // Include cookies in request
 			});
 
 			const result = await response.json();
@@ -55,7 +53,7 @@
 </script>
 
 <div class="pages">
-	<div class="container xl:w-[80%] h-[100vh] mx-auto">
+	<div class="container xl:w-[80%] 2xl:h-[100vh] mx-auto">
 		<h1 class="text-5xl p-5 font-bold text-center text-white">Occasion Event Mangement</h1>
 		<div class="flex justify-around items-center flex-wrap p-2 gap-10 py-10 lg:py-20">
 			<Signup />

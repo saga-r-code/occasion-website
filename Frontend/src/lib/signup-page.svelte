@@ -29,7 +29,8 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(data)
+				body: JSON.stringify(data),
+				credentials: 'include' // Include cookies in request
 			});
 
 			//For Password check
@@ -48,6 +49,8 @@
 				alert('Email already exists. Please use a different email.');
 				return;
 			}
+
+			
 
 			//response check
 			if (response.ok) {

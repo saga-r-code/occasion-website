@@ -1,17 +1,23 @@
+// http://localhost:3000/api/user/signup
+
 import express from 'express';
 import pool from '../../Database/db.js';
 import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
+const jwt_key = process.env.JWT_SAFE_KEY || 'occasion_sagee'
 
 // POST route to signup user
 router.post('/api/user/signup', [
+
     // Validate and sanitize input
     body('username').notEmpty().withMessage('Username is required.'),
     body('email').isEmail().withMessage('Please enter a valid email address.'),
     body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long.'),
-    // Confirm password validation not stored in table
+    
+    // Confirm password validation
     body('confirmPassword').custom((value, { req }) => {
         if (value !== req.body.password) {
             throw new Error('Passwords do not match.');
@@ -50,7 +56,18 @@ router.post('/api/user/signup', [
         ]);
 
         console.log("Successfully Created");
-        res.status(201).send("Account Created Successfully:");
+
+        // Generate Token
+        const token = jwt.sign({ email: userInput.email }, jwt_key);
+
+        // Set token in cookie
+        res.cookie('token', token, {
+            httpOnly: true, // Prevents client-side access to the cookie
+            secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
+            sameSite: 'strict' // Restrict cookie to same-site requests
+        });
+
+        res.status(201).send({ message: "Account Created Successfully:", token: token });
 
     } catch (error) {
         console.error('Error inserting user:', error.message);

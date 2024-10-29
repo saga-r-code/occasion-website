@@ -22,6 +22,7 @@
 		// Check if email and password are provided
 		if (!email || !password) {
 			alert('please fill up the login page');
+			return
 		}
 
 		try {
@@ -30,14 +31,19 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(data)
+				body: JSON.stringify(data),
+				credentials: 'include' // Include cookies in request
 			});
 
 			const result = await response.json();
 			console.log(result);
+			console.log(document.cookie); // Lists all accessible cookies for the current domain
+
 
 			if (response.ok) {
 				alert('Login successful!');
+				
+				// Redirect to home page
 				clearForm();
 				window.location.href = 'http://localhost:5173/home';
 			} else {
@@ -59,8 +65,6 @@
 	const togglePasswordVisibility = () => {
 		showPassword = !showPassword;
 	};
-
-	
 </script>
 
 {#if open}
