@@ -5,24 +5,25 @@
 	}
 
 	const logout = async () => {
-		try {
-			const response = await fetch('http://localhost:3000/api/user/logout', {
-				method: 'POST',
-				credentials: 'include' // Send cookies with the request
-			});
+    try {
+        const response = await fetch('http://localhost:3000/api/user/logout', {
+            method: 'POST',
+            credentials: 'include' // Send cookies with the request
+        });
 
-			if (response.ok) {
-				alert('Logged out successfully!');
-				window.location.href = 'http://localhost:5173/login'; // Redirect to login page
-			} else {
-				console.log('Logout failed:', response.statusText);
-				alert('Logout failed. Please try again.');
-			}
-		} catch (error) {
-			console.error('Error during logout:', error);
-			alert('An error occurred. Please try again.');
-		}
-	};
+        if (response.ok) {
+            alert('Logged out successfully!');
+            window.location.href = 'http://localhost:5173/login'; // Redirect to login page
+        } else {
+            const errorData = await response.json();
+            console.log('Logout failed:', errorData.message );
+            alert('Logout failed: ' + (errorData.message || 'Please try again.'));
+        }
+    } catch (error) {
+        console.error('Error during logout:', error);
+        alert('An error occurred. Please try again.');
+    }
+};
 </script>
 
 <div class="bg-[#1c2541] text-white">
@@ -58,7 +59,9 @@
 				<li class="hover:underline hover:underline-offset-8"><a href="/services">Services</a></li>
 				<li class="hover:underline hover:underline-offset-8"><a href="/about">About</a></li>
 				<li class="hover:underline hover:underline-offset-8"><a href="/contact">Contact Us</a></li>
-				<li><button class="hover:underline hover:underline-offset-8" on:click={logout}>Logout</button></li>
+				<li>
+					<button class="hover:underline hover:underline-offset-8" on:click={logout}>Logout</button>
+				</li>
 			</ul>
 		</div>
 	</div>

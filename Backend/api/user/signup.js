@@ -14,7 +14,7 @@ router.post('/api/user/signup', [
 
     // Validate and sanitize input
     body('username').notEmpty().withMessage('Username is required.'),
-    body('email').isEmail().withMessage('Please enter a valid email address.'),
+    body('email').isEmail().toLowerCase().withMessage('Please enter a valid email address.'),
     body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long.'),
     
     // Confirm password validation

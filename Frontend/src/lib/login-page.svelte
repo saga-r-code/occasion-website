@@ -47,7 +47,7 @@
 				
 				// Redirect to home page
 				clearForm();
-				window.location.href = 'http://localhost:5173/home';
+				// window.location.href = 'http://localhost:5173/home';
 			} else {
 				alert('Invalid Credtional');
 			}

@@ -2,7 +2,8 @@
 	import Signup from './signup-page.svelte';
 	let email = '';
 	let password = '';
-    let showPassword = false;
+	let showPassword = false;
+	let isAdmin = 'admin123@gmail.com';
 
 	function clearForm() {
 		email = '';
@@ -37,7 +38,11 @@
 			if (response.ok) {
 				alert('Login successful!');
 				clearForm();
-				window.location.href = 'http://localhost:5173/home';
+				if (email === isAdmin) {
+					window.location.href = 'http://localhost:5173/admin';
+				} else {
+					window.location.href = 'http://localhost:5173/home';
+				}
 			} else {
 				alert('Invalid Credtional');
 			}
@@ -47,9 +52,9 @@
 		}
 	};
 
-    const  togglePasswordVisibility = () => {
-        showPassword = !showPassword;
-        }
+	const togglePasswordVisibility = () => {
+		showPassword = !showPassword;
+	};
 </script>
 
 <div class="pages">
@@ -78,7 +83,7 @@
 						<input
 							type="password"
 							id="password"
-                            bind:value={password}
+							bind:value={password}
 							required
 							placeholder="Enter Your Password"
 							class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

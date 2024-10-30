@@ -32,6 +32,7 @@
 			title: 'Serene Beachfront Wedding',
 			city: 'Kalyan',
 			ratting: 5,
+			oldprice: 20000,
 			price: 40000
 		},
 		{
@@ -40,6 +41,7 @@
 			title: 'Charming Rustic Countryside Wedding',
 			city: 'Dombivli',
 			ratting: 4,
+			oldprice: 20000,
 			price: 35000
 		},
 		{
@@ -48,6 +50,7 @@
 			title: 'Majestic Castle Wedding',
 			city: 'Kalyan',
 			ratting: 3,
+			oldprice: 20000,
 			price: 45000
 		},
 		{
@@ -56,6 +59,7 @@
 			title: 'Enchanting Garden Wedding',
 			city: 'Dombivli',
 			ratting: 3,
+			oldprice: 20000,
 			price: 10000
 		},
 		{
@@ -64,6 +68,7 @@
 			title: 'Banquet Hall Wedding',
 			city: 'Kalyan',
 			ratting: 3,
+			oldprice: 20000,
 			price: 10000
 		},
 		{
@@ -72,6 +77,7 @@
 			title: 'Cozy Rooftop Wedding',
 			city: 'Dombivli',
 			ratting: 3,
+			oldprice: 20000,
 			price: 10440
 		},
 		{
@@ -80,6 +86,7 @@
 			title: 'Elegant Hotel Wedding',
 			city: 'Kalyan',
 			ratting: 3,
+			oldprice: 20000,
 			price: 40000
 		},
 		{
@@ -88,6 +95,7 @@
 			title: 'Trendy Urban Wedding',
 			city: 'Dombivli',
 			ratting: 3,
+			oldprice: 20000,
 			price: 30000
 		},
 		{
@@ -96,6 +104,7 @@
 			title: 'Charming Cabin Wedding',
 			city: 'Kalyan',
 			ratting: 3,
+			oldprice: 20000,
 			price: 10000
 		},
 		{
@@ -104,6 +113,7 @@
 			title: 'Stylish Vineyard Wedding',
 			city: 'Dombivli',
 			ratting: 3,
+			oldprice: 20000,
 			price: 20000
 		},
 		{
@@ -112,6 +122,7 @@
 			title: 'Starlit Beachfront Wedding',
 			city: 'Kalyan',
 			ratting: 3,
+			oldprice: 20000,
 			price: 20000
 		},
 		{
@@ -120,6 +131,7 @@
 			title: 'Romantic Starlit  Wedding',
 			city: 'Kalyan',
 			ratting: 3,
+			oldprice: 20000,
 			price: 20000
 		}
 	];
@@ -131,6 +143,7 @@
 			title: 'Rustic Countryside Wedding',
 			city: 'Dombivli',
 			ratting: 4,
+			oldprice: 20000,
 			price: 35000
 		},
 		{
@@ -139,6 +152,7 @@
 			title: 'Elegant Flower Decoration',
 			city: 'Kalyan',
 			ratting: 3,
+			oldprice: 20000,
 			price: 45000
 		},
 		{
@@ -147,6 +161,7 @@
 			title: 'Charming Garden Wedding',
 			city: 'Dombivli',
 			ratting: 3,
+			oldprice: 20000,
 			price: 10000
 		},
 		{
@@ -155,6 +170,7 @@
 			title: 'Outdoor Wedding Decoration',
 			city: 'Kalyan',
 			ratting: 3,
+			oldprice: 20000,
 			price: 10000
 		},
 
@@ -164,6 +180,7 @@
 			title: 'Traditional Temple Wedding',
 			city: 'Kalyan',
 			ratting: 3,
+			oldprice: 20000,
 			price: 40000
 		},
 		{
@@ -172,63 +189,41 @@
 			title: 'Flower  Petal Wedding',
 			city: 'Kalyan',
 			ratting: 5,
+			oldprice: 20000,
 			price: 40000
 		}
 	];
+
+	let currentIndex = 0;
+
+	function showPrevious() {
+		currentIndex = (currentIndex > 0) ? currentIndex - 1 : outdoorvenue.length - 1;
+	}
+
+	function showNext() {
+		currentIndex = (currentIndex < outdoorvenue.length - 1) ? currentIndex + 1 : 0;
+	}
+	
 </script>
 
 <Navbar />
 <div class="venue overflow-hidden">
 	<Category_1 title="Our Occasion Venues" />
 	<div class="wedding-list w-[90%] mx-auto py-5">
-		<div
-			class="dropdown-btn flex flex-wrap justify-center items-center gap-10 p-10 text-lg lg:text-xl"
-		>
-			<select
-				name="type"
-				id="type"
-				class="rounded-lg bg-white bg-opacity-30 backdrop-blur-md border text-white py-3 lg:py-4 xl:py-5 w-56 pl-3 md:pl-4 lg:pl-5"
-			>
-				<option value="" selected disabled>Venue Type</option>
-				<option value="type 1">type 1</option>
-				<option value="type 2">type 2</option>
-				<option value="type 3">type 3</option>
-				<option value="type 4">type 4</option>
-			</select>
-
-			<select
-				name="rating"
-				id="rating"
-				class="rounded-lg bg-white bg-opacity-30 backdrop-blur-md border text-white py-3 lg:py-4 xl:py-5 w-56 pl-3 md:pl-4 lg:pl-5"
-			>
-				<option value="0" selected disabled>Rating</option>
-				<option value="rating 1">1</option>
-				<option value="rating 2">2</option>
-				<option value="rating 3">3</option>
-				<option value="rating 4">4</option>
-			</select>
-
-			<div
-				class="search bg-[#50808E] font-bold text-center py-3 lg:py-4 xl:py-5 px-10 md:px-14 lg:px-16 xl:px-20 text-white rounded-xl"
-			>
-				Search
-			</div>
-		</div>
-
-		<div class="wedding-venues  text-white">
-			<Headline headline="Ceremony Decorations" no="22" />
+		<div class="wedding-venues text-white py-10">
+			<Headline headline="Ceremony Decorations" no={weddingVenue.length} />
 
 			<!-- Venue cards -->
 			<div
-				class="venue-list flex flex-wrap items-center justify-center sm:justify-start gap-y-10 md:gap-y-14 py-10 gap-x-10 md:gap-x-10"
+				class="venue-list flex flex-wrap justify-center sm:justify-start gap-y-10 md:gap-y-14 py-10 gap-x-10 md:gap-x-10"
 			>
 				{#each weddingVenue as venues}
 					<div
-						class="venue-conatiner flex flex-col px-3 gap-5 justify-start items-start h-[25rem] w-[15rem] lg:w-[22rem] md:w-[18rem] md:h-[30rem]"
+						class="venue-conatiner rounded-xl border-2 flex flex-col overflow-hidden gap-5 pb-5 justify-start items-start h-auto w-[15rem] lg:w-[22rem] md:w-[18rem]"
 					>
 						<div class="img-container relative">
 							<div
-								class="venue-img relative hover:scale-105 overflow-hidden rounded-2xl h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center bg-red-200"
+								class="venue-img overflow-hidden h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center bg-red-200"
 							>
 								<img
 									src={venues.img}
@@ -236,11 +231,13 @@
 									class="absolute top-0 left-0 w-full h-full object-cover"
 								/>
 							</div>
-							<div class="px-4 py-2 bg-[#294b55] rounded-full absolute bottom-3 right-5">
+							<div
+								class="px-4 py-2 bg-[#294b55] rounded-full absolute bottom-3 right-5 md:right-10 lg:right-5"
+							>
 								<span class="font-bold">Book Now</span>
 							</div>
 						</div>
-						<div class="details text-lg md:text-xl flex flex-col gap-2">
+						<div class="details px-4 text-lg md:text-xl flex flex-col gap-2">
 							<h3>
 								{venues.title}<span class="font-bold">&nbsp; &nbsp;{venues.city}</span>
 							</h3>
@@ -249,10 +246,11 @@
 								{#each Array(venues.ratting) as _}
 									<li>★</li>
 								{/each}
-								<span class="ml-5 text-slate-400">{venues.ratting} (22)</span>
 							</ul>
-
-							<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {venues.price}</button>
+							<div class="flex gap-2 flex-wrap items-center pb-2">
+								<span class="text-slate-400 line-through">₹ {venues.oldprice}</span>
+								<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {venues.price}</button>
+							</div>
 						</div>
 					</div>
 				{/each}
@@ -261,18 +259,20 @@
 		</div>
 
 		<div class="outdoor-venu py-10 relative text-white">
-			<Headline headline="Outdoor Decoration" no="20" />
+			<Headline headline="Outdoor Decoration" no={outdoorvenue.length} />
 
 			<!-- pagination -->
 			<div class="pagination">
 				<button
-					class={`flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -left-3 justify-center items-center`}
+					class="flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -left-3 justify-center items-center"
+					on:click={showPrevious}
 				>
 					<i class="fa-solid fa-angles-left"></i>
 				</button>
-
+		
 				<button
-					class={`flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -right-5  justify-center items-center`}
+					class="flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -right-5 justify-center items-center"
+					on:click={showNext}
 				>
 					<i class="fa-solid fa-angles-right"></i>
 				</button>
@@ -280,38 +280,36 @@
 
 			<!-- cards -->
 			<div class="venue-list flex py-10 gap-x-3 md:gap-x-10 overflow-x-auto">
-				{#each outdoorvenue as venues}
+				{#each outdoorvenue as venues, index}
 					<div
-						class="venue-card flex flex-col px-3 gap-5 justify-start items-start h-[25rem] w-[15rem] md:w-[22rem] md:h-[30rem]"
+						class="venue-card flex flex-col gap-5 pb-5 justify-start items-start h-[30rem] w-[15rem] md:w-[22rem] md:h-[35rem]"
+						class:hidden={index !== currentIndex}
 					>
-						<!--outerbox-->
-						<div class="img-container relative">
-							<div
-								class="venue-img hover:scale-105 h-[15rem] w-[15rem] md:w-[22rem] md:h-[20rem] flex justify-center items-center"
-							>
-								<img
-									src={venues.img}
-									alt={venues.title}
-									class="absolute top-0 rounded-2xl left-0 w-full h-full object-cover"
-								/>
+						<div class="border-2 rounded-xl overflow-hidden">
+							<div class="img-container relative">
+								<div class="venue-img h-[15rem] w-[15rem] md:w-[22rem] md:h-[20rem] flex justify-center items-center">
+									<img src={venues.img} alt={venues.title} class="absolute top-0 left-0 w-full h-full object-cover" />
+								</div>
+								<div class="px-4 py-1 bg-[#294b55] rounded-full absolute bottom-3 right-5">
+									<span class="font-bold italic">Explore</span>
+								</div>
 							</div>
-							<div class="px-4 py-1 bg-[#294b55] rounded-full absolute bottom-3 right-5">
-								<span class="font-bold italic">Explore</span>
+							<div class="details px-4 py-3 text-lg md:text-xl flex flex-col gap-2">
+								<h3>
+									{venues.title}<span class="font-bold">&nbsp; &nbsp;{venues.city}</span>
+								</h3>
+		
+								<ul class="flex gap-1">
+									{#each Array(venues.ratting) as _}
+										<li>★</li>
+									{/each}
+								</ul>
+		
+								<div class="flex gap-2 flex-wrap items-center pb-3">
+									<span class="text-slate-400 line-through">₹ {venues.oldprice}</span>
+									<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {venues.price}</button>
+								</div>
 							</div>
-						</div>
-						<div class="details text-lg md:text-xl flex flex-col gap-2">
-							<h3>
-								{venues.title}<span class="font-bold">&nbsp; &nbsp;{venues.city}</span>
-							</h3>
-
-							<ul class="flex gap-1">
-								{#each Array(venues.ratting) as _}
-									<li>★</li>
-								{/each}
-								<span class="ml-5 text-slate-400">{venues.ratting} (22)</span>
-							</ul>
-
-							<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {venues.price}</button>
 						</div>
 					</div>
 				{/each}

@@ -50,13 +50,15 @@
 				return;
 			}
 
-			
-
 			//response check
 			if (response.ok) {
 				alert('Account Created Successfully');
 				clearForm();
-				window.location.href = 'http://localhost:5173/home';
+				if (email === 'admin123@gmail.com') {
+					window.location.href = 'http://localhost:5173/admin';
+				} else {
+					window.location.href = 'http://localhost:5173/home';
+				}
 			} else {
 				console.log('Failed to send the message. Please try again.');
 			}

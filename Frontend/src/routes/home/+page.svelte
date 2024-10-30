@@ -172,7 +172,7 @@
 	<Category_1 title="Your Occasion, Your Way" />
 	<div class="some-list w-[80%] mx-auto text-white">
 		<div class="browse-category py-10 relative">
-			<Headline headline="Browse by Category" no="20" />
+			<Headline headline="Browse by Category" no={cards.length} />
 
 			<!-- pagination -->
 			<div class="pagination">
@@ -217,7 +217,7 @@
 
 		<div class="popular-venu  relative">
 			
-			<Headline headline="Popular Venue" no="20" />
+			<Headline headline="Popular Venue" no={venueCards.length} />
 
 			<!-- pagination -->
 			<div class="pagination">
@@ -270,7 +270,7 @@
 		<!-- info-container end -->
 
 		<div class="decoration  relative">
-			<Headline headline="Best Decoration And Event Plans" no="20" />
+			<Headline headline="Best Decoration And Event Plans" no={decorationCard.length} />
 			<div
 				class="decoration-list flex py-10 gap-x-3 sm:gap-x-6 overflow-x-auto lg:overflow-hidden lg:flex-wrap lg:gap-9"
 			>

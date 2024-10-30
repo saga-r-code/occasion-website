@@ -1,4 +1,4 @@
-// http://localhost:3000/api/user/login 
+// http://localhost:3000/api/admin/login 
 
 import express from 'express';
 import pool from '../../Database/db.js';
@@ -11,7 +11,7 @@ const jwt_key = process.env.JWT_SAFE_KEY || 'occasion_sagee'
 
 
 // POST route to login user
-router.post('/api/user/login', [
+router.post('/api/admin/login', [
     // Validate and sanitize input
     body('email').isEmail().toLowerCase().withMessage('Please enter a valid email address.'),
     body('password').notEmpty().withMessage('Password is required.')
@@ -26,17 +26,17 @@ router.post('/api/user/login', [
         const { email, password } = req.body;
 
         // Check if the user exists
-        const userResult = await pool.query(`SELECT * FROM user_signup WHERE email = ?`, [email]);
+        const adminResult = await pool.query(`SELECT * FROM user_signup WHERE email = ?`, [email]);
 
-        if (userResult.length === 0) {
+        if (adminResult.length === 0) {
             console.log("please check details")
             return res.status(401).send({ message: "Invalid email please fill properly " });
         }
 
-        const user = userResult[0];
+        const admin = adminResult[0];
 
         // Compare the provided password with the hashed password stored in the database
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(password, admin.password);
         if (!isMatch) {
             console.log("please check details")
             return res.status(401).send({ message: "Invalid Credential" });
@@ -47,7 +47,7 @@ router.post('/api/user/login', [
 
 
         // Set token in cookie
-        res.cookie('token', token, {
+        res.cookie('admin_token', token, {
             httpOnly: true, // Prevents client-side access to the cookie
             secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
             sameSite: 'strict' // Restrict cookie to same-site requests
@@ -56,16 +56,16 @@ router.post('/api/user/login', [
         // Check if user already exists in user_login table
         const existingUser  = await pool.query(`SELECT * FROM user_login WHERE email = ?`, [email]);
 
-        if (existingUser .length > 0) {
-            console.log("User  Login")
-            return res.status(200).send({ message: "User  Login " , token: token});
-        }
+        // if (existingUser .length > 0) {
+        //     console.log("admin Login")
+        //     return res.status(200).send({ message: "admin Login " , token: token});
+        // }
 
-        // Insert into user_login table
-        const loginQuery = `INSERT INTO user_login (email, password) VALUES (?, ?)`;
-        await pool.query(loginQuery, [email, user.password]); // Store hashed password or just email
-        console.log("User  Successfully Login")
-        res.status(200).send({ message: "Login successful" });
+        // // Insert into user_login table
+        // const loginQuery = `INSERT INTO user_login (email, password) VALUES (?, ?)`;
+        // await pool.query(loginQuery, [email, admin.password]); // Store hashed password or just email
+        console.log("admin Successfully Login")
+        res.status(200).json({ message: "Login successful" });
 
     } catch (error) {
         console.error('Error during login:', error.message);

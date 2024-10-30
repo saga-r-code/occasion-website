@@ -151,7 +151,7 @@
 		<!-- Category end -->
 
 		<div class="cards  relative">
-			<Headline headline="Event Decoration" no="20" />
+			<Headline headline="Event Decoration" no={decorator.length} />
 
 			<!-- pagination -->
 			<div class="pagination">
@@ -164,7 +164,7 @@
 				</button>
 			</div>
 
-			<div class="venue-list flex overflow-x-auto gap-y-5 py-10 gap-x-10 md:gap-x-20">
+			<div class="venue-list flex overflow-x-auto gap-y-5 py-10 gap-x-10 ">
 				{#each decorator as event}
 					<Card {event} />
 				{/each}
@@ -172,7 +172,7 @@
 		</div>
 
 		<div class="cards  relative">
-			<Headline headline="Ultimate Venues" no="20" />
+			<Headline headline="Ultimate Venues" no={venues.length} />
 
 			<!-- pagination -->
 			<div class="pagination">
@@ -185,7 +185,7 @@
 				</button>
 			</div>
 
-			<div class="venue-list flex overflow-x-auto gap-y-5 py-10 gap-x-10 md:gap-x-20">
+			<div class="venue-list flex overflow-x-auto gap-y-5 py-10 gap-x-10 ">
 				{#each venues as event}
 					<Card {event} />
 				{/each}
