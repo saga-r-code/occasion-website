@@ -5,6 +5,13 @@ import pool from '../../Database/db.js';
 
 const router = express.Router();
 
+
+// Function to generate a random 6-digit number
+// const generateRandom = () => {
+//   return Math.floor(100000 + Math.random() * 900000); // Generates a number between 100000 and 999999
+// };
+
+
 // POST route to insert a new booking
 let conn;
 router.post('/api/user/booking', async (req, res) => {

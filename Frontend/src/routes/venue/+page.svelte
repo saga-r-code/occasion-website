@@ -282,7 +282,7 @@
 			<div class="venue-list flex py-10 gap-x-3 md:gap-x-10 overflow-x-auto">
 				{#each outdoorvenue as venues, index}
 					<div
-						class="venue-card flex flex-col gap-5 pb-5 justify-start items-start h-[30rem] w-[15rem] md:w-[22rem] md:h-[35rem]"
+						class="venue-card flex flex-col gap-5 pb-5  justify-start items-start  h-auto w-[15rem] md:w-[22rem] "
 						class:hidden={index !== currentIndex}
 					>
 						<div class="border-2 rounded-xl overflow-hidden">
@@ -305,9 +305,10 @@
 									{/each}
 								</ul>
 		
-								<div class="flex gap-2 flex-wrap items-center pb-3">
+								<div class="flex gap-2 flex-wrap items-center pb-3 ">
 									<span class="text-slate-400 line-through">₹ {venues.oldprice}</span>
 									<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {venues.price}</button>
+									
 								</div>
 							</div>
 						</div>
