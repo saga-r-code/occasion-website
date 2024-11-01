@@ -11,7 +11,7 @@ router.get('/api/admin/category', async (req, res) => {
         const result = await pool.query('SELECT * FROM category');
         
         const rows = Array.isArray(result[0]) ? result[0] : result;  // Adjust for array of arrays
-        console.log('Categories:', rows);
+        // console.log('Categories:', rows);
         
         res.json(rows);  // Send all categories as a JSON response
     } catch (error) {
@@ -21,4 +21,3 @@ router.get('/api/admin/category', async (req, res) => {
 });
 
 export default router;
-

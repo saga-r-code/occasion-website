@@ -283,7 +283,7 @@
 				{#each outdoorvenue as venues, index}
 					<div
 						class="venue-card flex flex-col gap-5 pb-5  justify-start items-start  h-auto w-[15rem] md:w-[22rem] "
-						class:hidden={index !== currentIndex}
+						
 					>
 						<div class="border-2 rounded-xl overflow-hidden">
 							<div class="img-container relative">
