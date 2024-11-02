@@ -22,12 +22,12 @@
 
 <div class="bg-[#1c2541] text-white">
 	<div class="w-[90%] m-auto">
-		<div class="navbar flex flex-wrap gap-4 justify-between items-center py-5">
+		<div class="navbar flex  gap-4 justify-between items-center py-4">
 			<a href="/home" class="text-3xl md:text-4xl font-semibold">Occasion</a>
 			<!-- icon -->
 
 			<ul
-				class={`bg-[#1c2541] z-40 md:bg-transparent right-0 w-full   py-10 top-16 flex flex-col justify-center items-center list-none gap-10 md:w-fit md:py-0 md:gap-7 md:flex md:flex-row md:static md:text-lg`}
+				class={`bg-[#1c2541]   justify-center items-center list-none`}
 			>
 				<li>
                     <button class="fa-solid fa-right-from-bracket text-2xl "  on:click={logout}></button>

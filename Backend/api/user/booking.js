@@ -17,7 +17,6 @@ let conn;
 router.post('/api/user/booking', async (req, res) => {
   try {
     const userInput = req.body; //get data from user input and catch through request
-
     console.log('User  Booking data:', JSON.stringify(userInput, null, 2));
 
     conn = await pool.getConnection(); //connect to database

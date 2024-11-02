@@ -6,6 +6,7 @@ import loginrouter from './api/user/login.js'
 import logoutrouter from './api/user/logout.js'
 import loginadmin from './api/admin/login.js'
 import category from './api/admin/category.js'
+import categoryManagementRouter from './api/admin/category_management.js'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
 
@@ -28,6 +29,7 @@ app.use(loginrouter) //app.use('/login', loginrouter)
 app.use(logoutrouter) //app.use('/logoutuser', logoutrouter)
 app.use(loginadmin) //app.use('/loginadmin', loginadmin)
 app.use(category) //app.use('/category',  category)
+app.use(categoryManagementRouter) //app.use('/category_management', categoryManagementRouter)
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

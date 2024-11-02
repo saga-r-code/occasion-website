@@ -1,13 +1,17 @@
 <script>
+	import Headline from '$lib/headline.svelte';
 	import { onMount } from 'svelte';
 
-	let categories = []; // Declare categories as a reactive variable
-	let image = '';
+
+	let categories = []; // Categories array
+	let outdoorvenue = [];
+	let selectedCategory = ''; // Bind selected category value
+	let image = ''; // Image file
 	let title = '';
 	let location = '';
-	let rating = '';
-	let oldPrice = '';
-	let newPrice = '';
+	let rating = 0;
+	let old_price = 0.0;
+	let new_price = 0.0;
 
 	let modal = false;
 
@@ -29,41 +33,143 @@
 		}
 	};
 
-	const handleSubmit = (event) => {
-		event.preventDefault(); // Prevent the default form submission
-		alert('submit');
-	};
+	//i think so this function show all data in db 
+	// const fetchOutdoorVenues = async () => {
+	// 	try {
+	// 		const response = await fetch('http://localhost:3000/api/admin/category_management');
+	// 		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+	// 		outdoorvenue = await response.json();
+	// 	} catch (error) {
+	// 		console.error('Error fetching outdoor venues:', error);
+	// 	}
+	// };
+
+
+	
+	async function handleSubmit(e) {
+		e.preventDefault();
+
+		// Create FormData
+		const formData = new FormData();
+		formData.append('image', image); // Append the image file
+		formData.append('category_name', selectedCategory); // Add category_id from selectedCategory
+		formData.append('title', title);
+		formData.append('location', location);
+		formData.append('rating', rating);
+		formData.append('old_price', old_price);
+		formData.append('new_price', new_price);
+
+		console.log('Submitting data:', {
+			category_name: selectedCategory,
+			title,
+			location,
+			rating,
+			old_price: old_price,
+			new_price: new_price,
+			image
+		});
+
+		try {
+			const response = await fetch('http://localhost:3000/api/admin/category_management', {
+				method: 'POST',
+				body: formData
+			});
+			// Check response status
+			if (response.ok) {
+				console.log('Your message has been sent successfully!');
+
+				const newsection = {
+					image: URL.createObjectURL(image),
+					category_name: selectedCategory,
+					title: title,
+					location: location,
+					rating: rating,
+					old_price: old_price,
+					new_price: new_price
+				};
+
+				outdoorvenue = [...outdoorvenue, newsection];
+			} else {
+				console.log('Failed to send the message. Please try again.');
+			}
+		} catch (error) {
+			console.error('Error submitting the form:', error);
+			console.log('An error occurred. Please try again later.');
+		}
+
+		// Clear the form inputs after submission
+		image = '';
+		selectedCategory = ''; // Clear selected category
+		title = '';
+		location = '';
+		rating = 0;
+		old_price = 0.0;
+		new_price = 0.0;
+	}
 
 	// Fetch categories when the component mounts
 	onMount(() => {
 		fetchCategory();
+		// fetchOutdoorVenues(); 
 	});
 </script>
 
 <div>
 	<div class="flex justify-center items-center py-10">
 		<button
-			on:click={() => (modal = !modal)}
+			on:click={toggle}
 			class=" bg-red-500 text-white font-bold text-lg px-5 py-2 rounded-md hover:bg-red-600 mb-4"
 		>
 			Add Item
 		</button>
 	</div>
 	{#if modal}
-		<div class="max-w-md mx-auto bg-white rounded-lg border-2 shadow-lg p-6">
-			<h2 class="text-xl font-semibold text-center">Add Item</h2>
-			<form on:submit={handleSubmit} class="flex flex-col gap-4">
+		<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-30">
+			<form
+				on:submit={handleSubmit}
+				enctype="multipart/form-data"
+				class="max-w-md mx-auto top-32 rounded-lg border-2 shadow-lg p-6 flex flex-col gap-4 bg-white relative"
+			>
+				<button class="fa-solid fa-xmark absolute right-5 text-2xl font-bold" on:click={toggle}
+				></button>
+				<h2 class="text-xl font-semibold text-center mt-10">Add Item</h2>
+
+				<!-- Image Input -->
 				<div>
 					<label for="image" class="block text-sm font-medium text-gray-700">Image URL:</label>
 					<input
 						type="file"
 						id="image"
-						bind:value={image}
-						placeholder="Enter image URL"
+						name="image"
+						on:change={(e) => {
+							image = e.target.files[0]; // Capture selected image file
+							console.log('Selected image file:', image); // Log to verify file capture
+						}}
 						required
 						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 					/>
 				</div>
+
+				<!-- Category Select -->
+				<div>
+					<label for="category" class="block text-sm font-medium text-gray-700"
+						>Select Category:</label
+					>
+					<select
+						id="category"
+						name="category"
+						bind:value={selectedCategory}
+						required
+						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+					>
+						<option value="" disabled selected>Choose a category</option>
+						{#each categories as category}
+							<option value={category.category_name}>{category.category_name}</option>
+						{/each}
+					</select>
+				</div>
+
+				<!-- Text Inputs -->
 				<div>
 					<label for="title" class="block text-sm font-medium text-gray-700">Title:</label>
 					<input
@@ -100,51 +206,108 @@
 					/>
 				</div>
 				<div>
-					<label for="oldPrice" class="block text-sm font-medium text-gray-700">Old Price:</label>
+					<label for="old_price" class="block text-sm font-medium text-gray-700">Old Price:</label>
 					<input
 						type="number"
-						id="oldPrice"
-						bind:value={oldPrice}
+						id="old_price"
+						bind:value={old_price}
+						step="0.01"
 						placeholder="Enter old price"
 						required
 						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 					/>
 				</div>
 				<div>
-					<label for="newPrice" class="block text-sm font-medium text-gray-700">New Price:</label>
+					<label for="new_Price" class="block text-sm font-medium text-gray-700">New Price:</label>
 					<input
 						type="number"
-						id="newPrice"
-						bind:value={newPrice}
+						id="new_Price"
+						bind:value={new_price}
+						step="0.01"
 						placeholder="Enter new price"
 						required
 						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 					/>
 				</div>
-				<div>
-					<label for="category" class="block text-sm font-medium text-gray-700"
-						>Select Category:</label
+
+				<!-- Submit Button -->
+				<div class="mt-4">
+					<button
+						type="submit"
+						class="w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600"
+						on:click={(modal = false)}
 					>
-					<select
-						id="category"
-						name="category"
-						required
-						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
-					>
-						<option value="" disabled selected>Choose a category</option>
-						{#each categories as category}
-							<option value={category.category_id}>{category.category_name}</option>
-						{/each}
-					</select>
+						Add Item
+					</button>
 				</div>
 			</form>
-			<div class="mt-4">
-				<button
-					on:click={handleSubmit}
-					class="w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600"
-					>Add Item</button
-				>
-			</div>
 		</div>
 	{/if}
+
+	<div class="w-[90%] mx-auto">
+		<div class="outdoor-venu py-10 relative text-white">
+			<Headline headline="Outdoor Decoration" no={outdoorvenue.length} />
+
+			<!-- pagination -->
+			{#if outdoorvenue.length >= 1}
+				<div class="pagination">
+					<button
+						class="flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -left-3 justify-center items-center"
+					>
+						<i class="fa-solid fa-angles-left"></i>
+					</button>
+
+					<button
+						class="flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -right-5 justify-center items-center"
+					>
+						<i class="fa-solid fa-angles-right"></i>
+					</button>
+				</div>
+			{/if}
+
+			<!-- cards -->
+			<div class="venue-list flex py-10 gap-x-3 md:gap-x-10 overflow-x-auto">
+				{#each outdoorvenue as venues, index}
+					<div
+						class="venue-card flex flex-col gap-5 pb-5 justify-start items-start h-auto w-[15rem] md:w-[22rem]"
+					>
+						<div class="border-2 rounded-xl overflow-hidden">
+							<div class="img-container relative">
+								<div
+									class="venue-img h-[15rem] w-[15rem] md:w-[22rem] md:h-[20rem] flex justify-center items-center"
+								>
+									<img
+										src={venues.image}
+										alt={venues.title}
+										class="absolute top-0 left-0 w-full h-full object-cover"
+									/>
+								</div>
+								<div class="px-4 py-1 bg-[#294b55] rounded-full absolute bottom-3 right-5">
+									<span class="font-bold italic">Explore</span>
+								</div>
+							</div>
+							<div class="details px-4 py-3 text-lg md:text-xl flex flex-col gap-2">
+								<h3>
+									{venues.title}<span class="font-bold">&nbsp; &nbsp;{venues.location}</span>
+								</h3>
+
+								<ul class="flex gap-1">
+									{#each Array(venues.rating) as _}
+										<li>★</li>
+									{/each}
+								</ul>
+
+								<div class="flex gap-2 flex-wrap items-center pb-3">
+									<span class="text-slate-400 line-through">₹ {venues.old_price}</span>
+									<button class="py-2 w-[7rem] rounded-full bg-[#50808e]"
+										>₹ {venues.new_price}</button
+									>
+								</div>
+							</div>
+						</div>
+					</div>
+				{/each}
+			</div>
+		</div>
+	</div>
 </div>
