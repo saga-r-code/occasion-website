@@ -31,7 +31,7 @@
 			img: venueimg1,
 			title: 'Serene Beachfront Wedding',
 			city: 'Kalyan',
-			ratting: 5,
+			rating: 3,
 			oldprice: 20000,
 			price: 40000
 		},
@@ -40,7 +40,7 @@
 			img: venueimg2,
 			title: 'Charming Rustic Countryside Wedding',
 			city: 'Dombivli',
-			ratting: 4,
+			rating: 4,
 			oldprice: 20000,
 			price: 35000
 		},
@@ -49,7 +49,7 @@
 			img: venueimg3,
 			title: 'Majestic Castle Wedding',
 			city: 'Kalyan',
-			ratting: 3,
+			rating: 5,
 			oldprice: 20000,
 			price: 45000
 		},
@@ -58,7 +58,7 @@
 			img: venueimg4,
 			title: 'Enchanting Garden Wedding',
 			city: 'Dombivli',
-			ratting: 3,
+			rating: 2,
 			oldprice: 20000,
 			price: 10000
 		},
@@ -67,7 +67,7 @@
 			img: venueimg5,
 			title: 'Banquet Hall Wedding',
 			city: 'Kalyan',
-			ratting: 3,
+			rating: 3,
 			oldprice: 20000,
 			price: 10000
 		},
@@ -76,7 +76,7 @@
 			img: venueimg6,
 			title: 'Cozy Rooftop Wedding',
 			city: 'Dombivli',
-			ratting: 3,
+			rating: 3,
 			oldprice: 20000,
 			price: 10440
 		},
@@ -85,7 +85,7 @@
 			img: venueimg7,
 			title: 'Elegant Hotel Wedding',
 			city: 'Kalyan',
-			ratting: 3,
+			rating: 4,
 			oldprice: 20000,
 			price: 40000
 		},
@@ -94,7 +94,7 @@
 			img: venueimg8,
 			title: 'Trendy Urban Wedding',
 			city: 'Dombivli',
-			ratting: 3,
+			rating: 1,
 			oldprice: 20000,
 			price: 30000
 		},
@@ -103,7 +103,7 @@
 			img: venueimg9,
 			title: 'Charming Cabin Wedding',
 			city: 'Kalyan',
-			ratting: 3,
+			rating: 5,
 			oldprice: 20000,
 			price: 10000
 		},
@@ -112,7 +112,7 @@
 			img: venueimg10,
 			title: 'Stylish Vineyard Wedding',
 			city: 'Dombivli',
-			ratting: 3,
+			rating: 5,
 			oldprice: 20000,
 			price: 20000
 		},
@@ -121,7 +121,7 @@
 			img: venueimg11,
 			title: 'Starlit Beachfront Wedding',
 			city: 'Kalyan',
-			ratting: 3,
+			rating: 22,
 			oldprice: 20000,
 			price: 20000
 		},
@@ -130,7 +130,7 @@
 			img: venueimg12,
 			title: 'Romantic Starlit  Wedding',
 			city: 'Kalyan',
-			ratting: 3,
+			rating: 3,
 			oldprice: 20000,
 			price: 20000
 		}
@@ -142,7 +142,7 @@
 			img: outdoorimg1,
 			title: 'Rustic Countryside Wedding',
 			city: 'Dombivli',
-			ratting: 4,
+			rating: 3,
 			oldprice: 20000,
 			price: 35000
 		},
@@ -151,7 +151,7 @@
 			img: outdoorimg2,
 			title: 'Elegant Flower Decoration',
 			city: 'Kalyan',
-			ratting: 3,
+			rating: 5,
 			oldprice: 20000,
 			price: 45000
 		},
@@ -160,7 +160,7 @@
 			img: outdoorimg3,
 			title: 'Charming Garden Wedding',
 			city: 'Dombivli',
-			ratting: 3,
+			rating: 3,
 			oldprice: 20000,
 			price: 10000
 		},
@@ -169,7 +169,7 @@
 			img: outdoorimg4,
 			title: 'Outdoor Wedding Decoration',
 			city: 'Kalyan',
-			ratting: 3,
+			rating: 2,
 			oldprice: 20000,
 			price: 10000
 		},
@@ -179,7 +179,7 @@
 			img: outdoorimg5,
 			title: 'Traditional Temple Wedding',
 			city: 'Kalyan',
-			ratting: 3,
+			rating: 3,
 			oldprice: 20000,
 			price: 40000
 		},
@@ -188,7 +188,7 @@
 			img: outdoorimg6,
 			title: 'Flower  Petal Wedding',
 			city: 'Kalyan',
-			ratting: 5,
+			rating: 3,
 			oldprice: 20000,
 			price: 40000
 		}
@@ -196,14 +196,23 @@
 
 	let currentIndex = 0;
 
+	//for rating sysytem
+	// function setRating(venue, newRating) {
+	//     // Create a new venue object to trigger reactivity
+	//     const updatedVenue = { ...venue, rating: 3ewRating };
+	//     const index = weddingVenue.findIndex(v => v.id === venue.id);
+	//     if (index !== -1) {
+	//         weddingVenue[index] = updatedVenue; // Update the venue in the array
+	//     }
+	// }
+
 	function showPrevious() {
-		currentIndex = (currentIndex > 0) ? currentIndex - 1 : outdoorvenue.length - 1;
+		currentIndex = currentIndex > 0 ? currentIndex - 1 : outdoorvenue.length - 1;
 	}
 
 	function showNext() {
-		currentIndex = (currentIndex < outdoorvenue.length - 1) ? currentIndex + 1 : 0;
+		currentIndex = currentIndex < outdoorvenue.length - 1 ? currentIndex + 1 : 0;
 	}
-	
 </script>
 
 <Navbar />
@@ -243,8 +252,13 @@
 							</h3>
 
 							<ul class="flex gap-1">
-								{#each Array(venues.ratting) as _}
-									<li>★</li>
+								{#each Array(5) as _, index}
+									<button
+										class:active={index < venues.rating}
+										style="color: {index < venues.rating ? 'gold' : 'gray'}"
+									>
+										★
+									</button>
 								{/each}
 							</ul>
 							<div class="flex gap-2 flex-wrap items-center pb-2">
@@ -265,14 +279,12 @@
 			<div class="pagination">
 				<button
 					class="flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -left-3 justify-center items-center"
-					
 				>
 					<i class="fa-solid fa-angles-left"></i>
 				</button>
-		
+
 				<button
 					class="flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -right-5 justify-center items-center"
-					
 				>
 					<i class="fa-solid fa-angles-right"></i>
 				</button>
@@ -282,33 +294,43 @@
 			<div class="venue-list flex py-10 gap-x-3 md:gap-x-10 overflow-x-auto">
 				{#each outdoorvenue as venues, index}
 					<div
-						class="venue-card flex flex-col gap-5 pb-5  justify-start items-start  h-auto w-[15rem] md:w-[22rem] "
-						
+						class="venue-card flex flex-col gap-5 pb-5 justify-start items-start w-[15rem] md:w-[22rem]"
 					>
-						<div class="border-2 rounded-xl overflow-hidden">
+						<div class="border-2 rounded-xl overflow-hidden h-[32rem]">
 							<div class="img-container relative">
-								<div class="venue-img h-[15rem] w-[15rem] md:w-[22rem] md:h-[20rem] flex justify-center items-center">
-									<img src={venues.img} alt={venues.title} class="absolute top-0 left-0 w-full h-full object-cover" />
+								<div
+									class="venue-img h-[15rem] w-[15rem] md:w-[22rem] md:h-[20rem] flex justify-center items-center"
+								>
+									<img
+										src={venues.img}
+										alt={venues.title}
+										class="absolute top-0 left-0 w-full h-full object-cover"
+									/>
 								</div>
 								<div class="px-4 py-1 bg-[#294b55] rounded-full absolute bottom-3 right-5">
 									<span class="font-bold italic">Explore</span>
 								</div>
 							</div>
-							<div class="details px-4 py-3 text-lg md:text-xl flex flex-col gap-2">
+							<div
+								class="details px-4 py-3 text-lg md:text-xl flex flex-col gap-2 h-[15rem] md:h-[10rem] my-2 overflow-scroll"
+							>
 								<h3>
 									{venues.title}<span class="font-bold">&nbsp; &nbsp;{venues.city}</span>
 								</h3>
-		
 								<ul class="flex gap-1">
-									{#each Array(venues.ratting) as _}
-										<li>★</li>
+									{#each Array(5) as _, index}
+										<button
+											class:active={index < venues.rating}
+											style="color: {index < venues.rating ? 'gold' : 'gray'}"
+										>
+											★
+										</button>
 									{/each}
 								</ul>
-		
-								<div class="flex gap-2 flex-wrap items-center pb-3 ">
+
+								<div class="flex gap-2 flex-wrap items-center pb-3">
 									<span class="text-slate-400 line-through">₹ {venues.oldprice}</span>
 									<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {venues.price}</button>
-									
 								</div>
 							</div>
 						</div>

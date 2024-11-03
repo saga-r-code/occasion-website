@@ -2,16 +2,15 @@
 	import Headline from '$lib/headline.svelte';
 	import { onMount } from 'svelte';
 
-
 	let categories = []; // Categories array
-	let outdoorvenue = [];
+	let venue = [];
 	let selectedCategory = ''; // Bind selected category value
 	let image = ''; // Image file
 	let title = '';
 	let location = '';
 	let rating = 0;
-	let old_price = 0.0;
-	let new_price = 0.0;
+	let old_price = 0;
+	let new_price = 0;
 
 	let modal = false;
 
@@ -33,19 +32,6 @@
 		}
 	};
 
-	//i think so this function show all data in db 
-	// const fetchOutdoorVenues = async () => {
-	// 	try {
-	// 		const response = await fetch('http://localhost:3000/api/admin/category_management');
-	// 		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-	// 		outdoorvenue = await response.json();
-	// 	} catch (error) {
-	// 		console.error('Error fetching outdoor venues:', error);
-	// 	}
-	// };
-
-
-	
 	async function handleSubmit(e) {
 		e.preventDefault();
 
@@ -88,7 +74,7 @@
 					new_price: new_price
 				};
 
-				outdoorvenue = [...outdoorvenue, newsection];
+				venue = [...venue, newsection];
 			} else {
 				console.log('Failed to send the message. Please try again.');
 			}
@@ -110,7 +96,16 @@
 	// Fetch categories when the component mounts
 	onMount(() => {
 		fetchCategory();
-		// fetchOutdoorVenues(); 
+		venue = [
+			{
+				image: 'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1hZ2V8ZW58MHx8MHx8fDA%3D',
+				title: 'Test Venue',
+				location: 'Test Location',
+				rating: 4,
+				old_price: 100,
+				new_price: 80
+			}
+		];
 	});
 </script>
 
@@ -124,7 +119,7 @@
 		</button>
 	</div>
 	{#if modal}
-		<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-30">
+		<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50">
 			<form
 				on:submit={handleSubmit}
 				enctype="multipart/form-data"
@@ -246,10 +241,10 @@
 
 	<div class="w-[90%] mx-auto">
 		<div class="outdoor-venu py-10 relative text-white">
-			<Headline headline="Outdoor Decoration" no={outdoorvenue.length} />
+			<Headline headline="Outdoor Decoration" no={venue.length} />
 
 			<!-- pagination -->
-			{#if outdoorvenue.length >= 1}
+			{#if venue.length >= 1}
 				<div class="pagination">
 					<button
 						class="flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -left-3 justify-center items-center"
@@ -267,12 +262,17 @@
 
 			<!-- cards -->
 			<div class="venue-list flex py-10 gap-x-3 md:gap-x-10 overflow-x-auto">
-				{#each outdoorvenue as venues, index}
+				{#each venue as venues, index}
 					<div
 						class="venue-card flex flex-col gap-5 pb-5 justify-start items-start h-auto w-[15rem] md:w-[22rem]"
 					>
 						<div class="border-2 rounded-xl overflow-hidden">
 							<div class="img-container relative">
+								<div
+									class="absolute right-5 top-3 z-50 bg-red-600 flex justify-center items-center w-10 h-10 rounded-md"
+								>
+									<button class="fa-sharp fa-solid fa-trash text-lg z-10"></button>
+								</div>
 								<div
 									class="venue-img h-[15rem] w-[15rem] md:w-[22rem] md:h-[20rem] flex justify-center items-center"
 								>
@@ -281,9 +281,6 @@
 										alt={venues.title}
 										class="absolute top-0 left-0 w-full h-full object-cover"
 									/>
-								</div>
-								<div class="px-4 py-1 bg-[#294b55] rounded-full absolute bottom-3 right-5">
-									<span class="font-bold italic">Explore</span>
 								</div>
 							</div>
 							<div class="details px-4 py-3 text-lg md:text-xl flex flex-col gap-2">
