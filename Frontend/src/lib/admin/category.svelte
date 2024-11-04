@@ -1,5 +1,6 @@
 <script>
 	import Headline from '$lib/headline.svelte';
+	import { error } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 
 	let categories = []; // Categories array
@@ -11,13 +12,20 @@
 	let rating = 0;
 	let old_price = 0;
 	let new_price = 0;
+	let category_name = '';
 
 	let modal = false;
+	let insertCategory = false;
 
 	function toggle() {
 		modal = !modal;
 	}
 
+	function categoryadd() {
+		insertCategory = !insertCategory;
+	}
+
+	//category display in dropdown
 	const fetchCategory = async () => {
 		try {
 			const response = await fetch('http://localhost:3000/api/admin/category');
@@ -32,6 +40,7 @@
 		}
 	};
 
+	//display card
 	const fetchCategoryItem = async () => {
 		try {
 			const response = await fetch('http://localhost:3000/api/admin/category_item');
@@ -45,7 +54,7 @@
 			const result = fetchItem.map((item) => {
 				if (item.image && item.image.data) {
 					// Convert buffer data array to a Base64 string
-					const base64toImage = btoa(String.fromCharCode(...new Uint8Array(item.image.data)));//0 to 255 binarycode then use Uint8Array means 
+					const base64toImage = btoa(String.fromCharCode(...new Uint8Array(item.image.data))); //0 to 255 binarycode then use Uint8Array means
 					// Prepend the data type for use in an <img> src attribute
 					item.image = `data:image/jpeg;base64,${base64toImage}`;
 				}
@@ -56,11 +65,42 @@
 
 			// const encodedData = window.btoa('Hello, world'); // encode a string
 			// const decodedData = window.atob(encodedData); // decode the string
-
 		} catch (error) {
 			console.error('Error fetching categories:', error);
 		}
 	};
+
+	async function handleAddcategory(e) {
+		confirm('Add  new category');
+		e.preventDefault();
+
+		try {
+			// Ensure category_name is defined and valid
+			if (!category_name) {
+				console.log('Category name cannot be empty.');
+				return;
+			}
+			// Send the data to the backend and store in database
+			const response = await fetch('http://localhost:3000/api/admin/category', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ category_name: category_name })
+			});
+			//response check
+			if (response.ok) {
+				console.log('Your message has been sent successfully!');
+			} else {
+				console.log('Failed to send the message. Please try again.');
+			}
+		} catch (error) {
+			console.error('Error submitting the form:', error);
+			console.log('An error occurred. Please try again later.');
+		}
+
+		category_name = '';
+	}
 
 	async function handleSubmit(e) {
 		e.preventDefault();
@@ -125,8 +165,29 @@
 		new_price = 0.0;
 	}
 
-	async function handleDeleteItem() {
-		const confirmed = confirm('Are you sure you want to delete this item?');
+	// delete cards
+	async function handleDeleteItem(item_id) {
+		// const confirmed = confirm('Are you sure you want to delete this item?');
+
+		try {
+			const response = await fetch(`http://localhost:3000/api/admin/category_delete/${item_id}`, {
+				method: 'DELETE'
+			});
+
+			if (response.ok) {
+				const result = await response.json();
+				alert(result.message);
+
+				// Remove deleted item from the venue array in the frontend
+				venue = venue.filter((item) => item.item_id !== item_id);
+			} else {
+				const error = await response.json();
+				alert('Item deleted');
+			}
+		} catch (error) {
+			console.error('Error deleting item:', error);
+			alert('An error occurred while deleting the item.');
+		}
 	}
 
 	// Fetch categories when the component mounts
@@ -137,16 +198,36 @@
 </script>
 
 <div class="conatiner">
-	<div class="flex justify-center items-center pt-10">
+	<div class="flex justify-between flex-wrap gap-5 mx-auto w-[80%] pt-10">
 		<button
 			on:click={toggle}
 			class=" bg-red-500 text-white font-bold text-lg px-5 py-2 rounded-md hover:bg-red-600 mb-4"
 		>
 			Add Item
 		</button>
+		<div class="space-x-4 space-y-4 sm:space-y-0">
+			<select
+				id="category"
+				name="category"
+				bind:value={selectedCategory}
+				required
+				class="rounded-lg bg-white border-slate-300 bg-opacity-30 backdrop-blur-lg border py-3 pr-10 pl-5 xl"
+			>
+				<option value="" disabled selected>Choose a category</option>
+				{#each categories as category}
+					<option value={category.category_name}>{category.category_name}</option>
+				{/each}
+			</select>
+
+			<button
+				class=" bg-blue-500 text-white font-bold text-lg px-5 py-2 rounded-md hover:bg-blue-600 mb-4"
+			>
+				Search
+			</button>
+		</div>
 	</div>
 	{#if modal}
-		<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50">
+		<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-40">
 			<form
 				on:submit={handleSubmit}
 				enctype="multipart/form-data"
@@ -154,7 +235,7 @@
 			>
 				<button class="fa-solid fa-xmark absolute right-5 text-2xl font-bold" on:click={toggle}
 				></button>
-				<h2 class="text-xl font-semibold text-center mt-10">Add Item</h2>
+				<h2 class="text-xl font-semibold text-center mt-10 text-wrap">Add New Venue Form</h2>
 
 				<!-- Image Input -->
 				<div>
@@ -177,18 +258,26 @@
 					<label for="category" class="block text-sm font-medium text-gray-700"
 						>Select Category:</label
 					>
-					<select
-						id="category"
-						name="category"
-						bind:value={selectedCategory}
-						required
-						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
-					>
-						<option value="" disabled selected>Choose a category</option>
-						{#each categories as category}
-							<option value={category.category_name}>{category.category_name}</option>
-						{/each}
-					</select>
+					<div class="flex gap-3 justify-center items-center">
+						<select
+							id="category"
+							name="category"
+							bind:value={selectedCategory}
+							required
+							class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+						>
+							<option value="" disabled selected>Choose a category</option>
+							{#each categories as category}
+								<option value={category.category_name}>{category.category_name}</option>
+							{/each}
+						</select>
+						<button
+							class="bg-slate-500 flex justify-center items-center rounded-md"
+							on:click={categoryadd}
+						>
+							<button class="fa-solid fa-plus text-white p-[.65rem]"></button>
+						</button>
+					</div>
 				</div>
 
 				<!-- Text Inputs -->
@@ -266,6 +355,42 @@
 		</div>
 	{/if}
 
+	{#if insertCategory}
+		<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50">
+			<form
+				on:submit={handleAddcategory}
+				class="max-w-md mx-auto top-[42%] -right-96 rounded-lg border-2 shadow-lg p-6 flex flex-col gap-4 bg-white relative"
+			>
+				<button class="fa-solid fa-xmark absolute right-5 text-2xl font-bold" on:click={categoryadd}
+				></button>
+				<h2 class="text-xl font-semibold text-center mt-8">Add Category Form</h2>
+
+				<!-- Text Inputs -->
+				<div>
+					<label for="title" class="block text-sm font-medium text-gray-700">Title:</label>
+					<input
+						type="text"
+						id="title"
+						bind:value={category_name}
+						required
+						placeholder="Enter title"
+						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+					/>
+				</div>
+
+				<!-- Submit Button -->
+				<div class="mt-4">
+					<button
+						type="submit"
+						class="w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600"
+					>
+						Add Category
+					</button>
+				</div>
+			</form>
+		</div>
+	{/if}
+
 	<div class="w-[90%] mx-auto">
 		<div class="wedding-item text-white py-10">
 			<Headline headline="Ceremony Decorations" no={venue.length} />
@@ -282,7 +407,9 @@
 							<div
 								class="absolute z-20 right-5 top-5 bg-red-500 rounded-md hover:bg-red-600 active:shadow-inner active:bg-red-500"
 							>
-								<button class="fa-solid fa-trash w-9 h-9 text-xl" on:click={handleDeleteItem}
+								<button
+									class="fa-solid fa-trash w-9 h-9 text-xl"
+									on:click={() => handleDeleteItem(item.item_id)}
 								></button>
 							</div>
 							<div
@@ -311,7 +438,9 @@
 								{/each}
 							</ul> -->
 							<div class="flex gap-2 flex-wrap items-center py-2">
-								<span class="text-slate-400 line-through">₹ {item.old_price}</span>
+								<span class="text-slate-400 line-through"
+									>{item.old_price > 0 ? `₹ ${item.old_price}` : ''}</span
+								>
 								<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {item.new_price}</button>
 							</div>
 						</div>
@@ -325,6 +454,6 @@
 
 <style>
 	.conatiner {
-	background-image: linear-gradient(to bottom, #142b4e, #0a3656, #00405d, #004a62, #075466);
-}
+		background-image: linear-gradient(to bottom, #142b4e, #0a3656, #00405d, #004a62, #075466);
+	}
 </style>

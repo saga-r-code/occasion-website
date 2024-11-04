@@ -1,3 +1,5 @@
+// http://localhost:3000/api/admin/category_managemen
+
 import express from 'express';
 import pool from '../../Database/db.js';
 import multer from 'multer';

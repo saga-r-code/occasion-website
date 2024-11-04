@@ -8,12 +8,14 @@ import loginadmin from './api/admin/login.js'
 import category from './api/admin/category.js'
 import categoryManagementRouter from './api/admin/category_management.js'
 import category_item from './api/admin/category_item_fetch.js'
+import category_delete from './api/admin/category_item_delete.js'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
 
 
 const app = express();
 const port = 3000;
+
 
 app.use(cors({
   origin: 'http://localhost:5173',
@@ -32,8 +34,8 @@ app.use(loginadmin) //app.use('/loginadmin', loginadmin)
 app.use(category) //app.use('/category',  category)
 app.use(categoryManagementRouter) //app.use('/category_management', categoryManagementRouter)
 app.use(category_item) //app.use('/categoryitem', category_item)
+app.use(category_delete) //app.use('/categorydelete', category_delete)
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
-  // console.log('User input:', userInput);
 });

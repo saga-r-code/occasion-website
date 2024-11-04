@@ -1,4 +1,4 @@
-// http://localhost:3000/api/admin/category_item_fetch 
+// http://localhost:3000/api/admin/category_fetch 
 
 
 import express from 'express';

@@ -13,8 +13,8 @@ const router = express.Router();
 
 
 // POST route to insert a new booking
-let conn;
 router.post('/api/user/booking', async (req, res) => {
+  let conn;
   try {
     const userInput = req.body; //get data from user input and catch through request
     console.log('User  Booking data:', JSON.stringify(userInput, null, 2));

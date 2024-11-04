@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 const jwt_key = process.env.JWT_SAFE_KEY || 'occasion_sagee'
+// console.log(jwt_key)
 
 
 // POST route to login user
