@@ -232,7 +232,7 @@
 					>
 						<div class="img-container relative">
 							<div
-								class="venue-img overflow-hidden h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center bg-red-200"
+								class="venue-img overflow-hidden h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center "
 							>
 								<img
 									src={venues.img}

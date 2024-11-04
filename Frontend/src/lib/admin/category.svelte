@@ -32,6 +32,36 @@
 		}
 	};
 
+	const fetchCategoryItem = async () => {
+		try {
+			const response = await fetch('http://localhost:3000/api/admin/category_item');
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			const fetchItem = await response.json();
+			// console.log(fetchItem)
+
+			// Convert Buffer data to Base64 for each item
+			const result = fetchItem.map((item) => {
+				if (item.image && item.image.data) {
+					// Convert buffer data array to a Base64 string
+					const base64toImage = btoa(String.fromCharCode(...new Uint8Array(item.image.data)));//0 to 255 binarycode then use Uint8Array means 
+					// Prepend the data type for use in an <img> src attribute
+					item.image = `data:image/jpeg;base64,${base64toImage}`;
+				}
+				return item;
+			});
+
+			venue = result;
+
+			// const encodedData = window.btoa('Hello, world'); // encode a string
+			// const decodedData = window.atob(encodedData); // decode the string
+
+		} catch (error) {
+			console.error('Error fetching categories:', error);
+		}
+	};
+
 	async function handleSubmit(e) {
 		e.preventDefault();
 
@@ -64,6 +94,8 @@
 			if (response.ok) {
 				console.log('Your message has been sent successfully!');
 
+				const imageBuffer = await response.json();
+
 				const newsection = {
 					image: URL.createObjectURL(image),
 					category_name: selectedCategory,
@@ -93,24 +125,19 @@
 		new_price = 0.0;
 	}
 
+	async function handleDeleteItem() {
+		const confirmed = confirm('Are you sure you want to delete this item?');
+	}
+
 	// Fetch categories when the component mounts
 	onMount(() => {
 		fetchCategory();
-		venue = [
-			{
-				image: 'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1hZ2V8ZW58MHx8MHx8fDA%3D',
-				title: 'Test Venue',
-				location: 'Test Location',
-				rating: 4,
-				old_price: 100,
-				new_price: 80
-			}
-		];
+		fetchCategoryItem();
 	});
 </script>
 
-<div>
-	<div class="flex justify-center items-center py-10">
+<div class="conatiner">
+	<div class="flex justify-center items-center pt-10">
 		<button
 			on:click={toggle}
 			class=" bg-red-500 text-white font-bold text-lg px-5 py-2 rounded-md hover:bg-red-600 mb-4"
@@ -240,71 +267,64 @@
 	{/if}
 
 	<div class="w-[90%] mx-auto">
-		<div class="outdoor-venu py-10 relative text-white">
-			<Headline headline="Outdoor Decoration" no={venue.length} />
+		<div class="wedding-item text-white py-10">
+			<Headline headline="Ceremony Decorations" no={venue.length} />
 
-			<!-- pagination -->
-			{#if venue.length >= 1}
-				<div class="pagination">
-					<button
-						class="flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -left-3 justify-center items-center"
-					>
-						<i class="fa-solid fa-angles-left"></i>
-					</button>
-
-					<button
-						class="flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -right-5 justify-center items-center"
-					>
-						<i class="fa-solid fa-angles-right"></i>
-					</button>
-				</div>
-			{/if}
-
-			<!-- cards -->
-			<div class="venue-list flex py-10 gap-x-3 md:gap-x-10 overflow-x-auto">
-				{#each venue as venues, index}
+			<!-- Venue cards -->
+			<div
+				class="venue-list flex flex-wrap justify-center sm:justify-start gap-y-10 md:gap-y-14 py-10 gap-x-10 md:gap-x-10"
+			>
+				{#each venue as item}
 					<div
-						class="venue-card flex flex-col gap-5 pb-5 justify-start items-start h-auto w-[15rem] md:w-[22rem]"
+						class="venue-conatiner rounded-xl border-2 flex flex-col overflow-hidden gap-5 pb-5 justify-start items-start h-auto w-[15rem] lg:w-[22rem] md:w-[18rem]"
 					>
-						<div class="border-2 rounded-xl overflow-hidden">
-							<div class="img-container relative">
-								<div
-									class="absolute right-5 top-3 z-50 bg-red-600 flex justify-center items-center w-10 h-10 rounded-md"
-								>
-									<button class="fa-sharp fa-solid fa-trash text-lg z-10"></button>
-								</div>
-								<div
-									class="venue-img h-[15rem] w-[15rem] md:w-[22rem] md:h-[20rem] flex justify-center items-center"
-								>
-									<img
-										src={venues.image}
-										alt={venues.title}
-										class="absolute top-0 left-0 w-full h-full object-cover"
-									/>
-								</div>
+						<div class="img-container relative">
+							<div
+								class="absolute z-20 right-5 top-5 bg-red-500 rounded-md hover:bg-red-600 active:shadow-inner active:bg-red-500"
+							>
+								<button class="fa-solid fa-trash w-9 h-9 text-xl" on:click={handleDeleteItem}
+								></button>
 							</div>
-							<div class="details px-4 py-3 text-lg md:text-xl flex flex-col gap-2">
-								<h3>
-									{venues.title}<span class="font-bold">&nbsp; &nbsp;{venues.location}</span>
-								</h3>
+							<div
+								class="venue-img overflow-hidden h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center"
+							>
+								<img
+									src={item.image}
+									alt={item.title}
+									class="absolute top-0 left-0 w-full h-full object-cover"
+								/>
+							</div>
+						</div>
+						<div class="details px-4 text-lg md:text-xl flex flex-col gap-2">
+							<h3>
+								{item.title}<span class="font-bold">&nbsp; &nbsp;{item.location}</span>
+							</h3>
 
-								<ul class="flex gap-1">
-									{#each Array(venues.rating) as _}
-										<li>★</li>
-									{/each}
-								</ul>
-
-								<div class="flex gap-2 flex-wrap items-center pb-3">
-									<span class="text-slate-400 line-through">₹ {venues.old_price}</span>
-									<button class="py-2 w-[7rem] rounded-full bg-[#50808e]"
-										>₹ {venues.new_price}</button
+							<!-- <ul class="flex gap-1">
+								{#each Array(5) as _, index}
+									<button
+										class:active={index < item.rating}
+										style="color: {index < item.rating ? 'gold' : 'gray'}"
 									>
-								</div>
+										★
+									</button>
+								{/each}
+							</ul> -->
+							<div class="flex gap-2 flex-wrap items-center py-2">
+								<span class="text-slate-400 line-through">₹ {item.old_price}</span>
+								<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {item.new_price}</button>
 							</div>
 						</div>
 					</div>
 				{/each}
 			</div>
+			<!-- Venue List end -->
 		</div>
 	</div>
 </div>
+
+<style>
+	.conatiner {
+	background-image: linear-gradient(to bottom, #142b4e, #0a3656, #00405d, #004a62, #075466);
+}
+</style>
