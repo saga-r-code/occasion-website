@@ -10,7 +10,7 @@
 
 <style>
 	 .admin-side{
-		height: 100vh;
+		
 		background-image: linear-gradient(to bottom, #142b4e, #0a3656, #00405d, #004a62, #075466);
 	}
 </style>

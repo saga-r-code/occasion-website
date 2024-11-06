@@ -1,6 +1,5 @@
 <script>
 	import Headline from '$lib/headline.svelte';
-	import { error } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 
 	let categories = []; // Categories array
@@ -9,13 +8,17 @@
 	let image = ''; // Image file
 	let title = '';
 	let location = '';
-	let rating = 0;
 	let old_price = 0;
 	let new_price = 0;
 	let category_name = '';
 
 	let modal = false;
 	let insertCategory = false;
+
+	$: filteredVenue =
+		selectedCategory === 'All Venues' || !selectedCategory
+			? venue
+			: venue.filter((item) => item.category_name === selectedCategory);
 
 	function toggle() {
 		modal = !modal;
@@ -111,7 +114,7 @@
 		formData.append('category_name', selectedCategory); // Add category_id from selectedCategory
 		formData.append('title', title);
 		formData.append('location', location);
-		formData.append('rating', rating);
+
 		formData.append('old_price', old_price);
 		formData.append('new_price', new_price);
 
@@ -119,7 +122,6 @@
 			category_name: selectedCategory,
 			title,
 			location,
-			rating,
 			old_price: old_price,
 			new_price: new_price,
 			image
@@ -141,7 +143,6 @@
 					category_name: selectedCategory,
 					title: title,
 					location: location,
-					rating: rating,
 					old_price: old_price,
 					new_price: new_price
 				};
@@ -157,38 +158,55 @@
 
 		// Clear the form inputs after submission
 		image = '';
-		selectedCategory = ''; // Clear selected category
+		selectedCategory = ''; 
 		title = '';
 		location = '';
-		rating = 0;
-		old_price = 0.0;
-		new_price = 0.0;
+		old_price = 0;
+		new_price = 0;
 	}
 
 	// delete cards
 	async function handleDeleteItem(item_id) {
-		// const confirmed = confirm('Are you sure you want to delete this item?');
+		const confirmed = confirm('Are you sure you want to delete this item?');
 
-		try {
-			const response = await fetch(`http://localhost:3000/api/admin/category_delete/${item_id}`, {
-				method: 'DELETE'
-			});
+		if (confirmed) {
+			try {
+				const response = await fetch(`http://localhost:3000/api/admin/category_delete/${item_id}`, {
+					method: 'DELETE'
+				});
 
-			if (response.ok) {
-				const result = await response.json();
-				alert(result.message);
+				if (response.ok) {
+					const result = await response.json();
+					alert(result.message);
 
-				// Remove deleted item from the venue array in the frontend
-				venue = venue.filter((item) => item.item_id !== item_id);
-			} else {
-				const error = await response.json();
-				alert('Item deleted');
+					// Remove deleted item from the venue array in the frontend
+					venue = venue.filter((item) => item.item_id !== item_id);
+					venue = [...venue]; // Ensure reactivity
+				} else {
+					const error = await response.json();
+					alert('Error' + error.message);
+
+					// This fetches the latest data again from the server
+					// fetchCategoryItem();
+				}
+			} catch (error) {
+				console.error('Error deleting item:', error);
+				alert('An error occurred while deleting the item.');
 			}
-		} catch (error) {
-			console.error('Error deleting item:', error);
-			alert('An error occurred while deleting the item.');
+		} else {
+			alert('Item deletion canceled.');
 		}
 	}
+
+	const handleClearForm = () => {
+		image = '';
+		selectedCategory = '';
+		title = '';
+		location = '';
+		old_price = 0;
+		new_price = 0;
+	}
+	
 
 	// Fetch categories when the component mounts
 	onMount(() => {
@@ -197,7 +215,7 @@
 	});
 </script>
 
-<div class="conatiner">
+<div class="conatiner h-auto">
 	<div class="flex justify-between flex-wrap gap-5 mx-auto w-[80%] pt-10">
 		<button
 			on:click={toggle}
@@ -207,25 +225,25 @@
 		</button>
 		<div class="space-x-4 space-y-4 sm:space-y-0">
 			<select
+
 				id="category"
 				name="category"
 				bind:value={selectedCategory}
 				required
-				class="rounded-lg bg-white border-slate-300 bg-opacity-30 backdrop-blur-lg border py-3 pr-10 pl-5 xl"
+				class="rounded-lg text-white font-semibold bg-white/10 tracking-wider text-[17px] border-slate-300 bg-opacity-30 backdrop-blur-lg border py-3 pr-10 pl-5 xl"
 			>
 				<option value="" disabled selected>Choose a category</option>
 				{#each categories as category}
-					<option value={category.category_name}>{category.category_name}</option>
+					<!-- Add this line -->
+					<option value={category.category_name}>{category.category_name}
+						
+					</option>
 				{/each}
+				<option value="All Venues">All Venues</option>
 			</select>
-
-			<button
-				class=" bg-blue-500 text-white font-bold text-lg px-5 py-2 rounded-md hover:bg-blue-600 mb-4"
-			>
-				Search
-			</button>
 		</div>
 	</div>
+
 	{#if modal}
 		<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-40">
 			<form
@@ -235,7 +253,7 @@
 			>
 				<button class="fa-solid fa-xmark absolute right-5 text-2xl font-bold" on:click={toggle}
 				></button>
-				<h2 class="text-xl font-semibold text-center mt-10 text-wrap">Add New Venue Form</h2>
+				<h2 class="text-xl font-semibold text-center mt-8 text-wrap">Add New Venue Form</h2>
 
 				<!-- Image Input -->
 				<div>
@@ -303,19 +321,7 @@
 						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 					/>
 				</div>
-				<div>
-					<label for="rating" class="block text-sm font-medium text-gray-700">Rating:</label>
-					<input
-						type="number"
-						id="rating"
-						bind:value={rating}
-						min="1"
-						max="5"
-						placeholder="Enter rating (1-5)"
-						required
-						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
-					/>
-				</div>
+
 				<div>
 					<label for="old_price" class="block text-sm font-medium text-gray-700">Old Price:</label>
 					<input
@@ -342,13 +348,20 @@
 				</div>
 
 				<!-- Submit Button -->
-				<div class="mt-4">
+				<div class="mt-4 flex gap-10 ">
 					<button
 						type="submit"
 						class="w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600"
 						on:click={(modal = false)}
 					>
 						Add Item
+					</button>
+					<button
+						type="submit"
+						class="w-full bg-green-500 text-white font-bold py-2 rounded-md hover:bg-green-600"
+						on:click={(handleClearForm)}
+					>
+						Clear Form 
 					</button>
 				</div>
 			</form>
@@ -393,13 +406,12 @@
 
 	<div class="w-[90%] mx-auto">
 		<div class="wedding-item text-white py-10">
-			<Headline headline="Ceremony Decorations" no={venue.length} />
-
+			<Headline headline={selectedCategory || 'All Venues'} no={filteredVenue.length} />
 			<!-- Venue cards -->
 			<div
 				class="venue-list flex flex-wrap justify-center sm:justify-start gap-y-10 md:gap-y-14 py-10 gap-x-10 md:gap-x-10"
 			>
-				{#each venue as item}
+				{#each filteredVenue as item}
 					<div
 						class="venue-conatiner rounded-xl border-2 flex flex-col overflow-hidden gap-5 pb-5 justify-start items-start h-auto w-[15rem] lg:w-[22rem] md:w-[18rem]"
 					>
@@ -427,16 +439,6 @@
 								{item.title}<span class="font-bold">&nbsp; &nbsp;{item.location}</span>
 							</h3>
 
-							<!-- <ul class="flex gap-1">
-								{#each Array(5) as _, index}
-									<button
-										class:active={index < item.rating}
-										style="color: {index < item.rating ? 'gold' : 'gray'}"
-									>
-										★
-									</button>
-								{/each}
-							</ul> -->
 							<div class="flex gap-2 flex-wrap items-center py-2">
 								<span class="text-slate-400 line-through"
 									>{item.old_price > 0 ? `₹ ${item.old_price}` : ''}</span
@@ -451,9 +453,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.conatiner {
-		background-image: linear-gradient(to bottom, #142b4e, #0a3656, #00405d, #004a62, #075466);
-	}
-</style>

@@ -196,15 +196,7 @@
 
 	let currentIndex = 0;
 
-	//for rating sysytem
-	// function setRating(venue, newRating) {
-	//     // Create a new venue object to trigger reactivity
-	//     const updatedVenue = { ...venue, rating: 3ewRating };
-	//     const index = weddingVenue.findIndex(v => v.id === venue.id);
-	//     if (index !== -1) {
-	//         weddingVenue[index] = updatedVenue; // Update the venue in the array
-	//     }
-	// }
+	
 
 	function showPrevious() {
 		currentIndex = currentIndex > 0 ? currentIndex - 1 : outdoorvenue.length - 1;
@@ -251,16 +243,7 @@
 								{venues.title}<span class="font-bold">&nbsp; &nbsp;{venues.city}</span>
 							</h3>
 
-							<ul class="flex gap-1">
-								{#each Array(5) as _, index}
-									<button
-										class:active={index < venues.rating}
-										style="color: {index < venues.rating ? 'gold' : 'gray'}"
-									>
-										★
-									</button>
-								{/each}
-							</ul>
+							
 							<div class="flex gap-2 flex-wrap items-center pb-2">
 								<span class="text-slate-400 line-through">₹ {venues.oldprice}</span>
 								<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {venues.price}</button>
@@ -296,7 +279,7 @@
 					<div
 						class="venue-card flex flex-col gap-5 pb-5 justify-start items-start w-[15rem] md:w-[22rem]"
 					>
-						<div class="border-2 rounded-xl overflow-hidden h-[32rem]">
+						<div class="border-2 rounded-xl overflow-hidden h-[30rem]">
 							<div class="img-container relative">
 								<div
 									class="venue-img h-[15rem] w-[15rem] md:w-[22rem] md:h-[20rem] flex justify-center items-center"
@@ -317,16 +300,7 @@
 								<h3>
 									{venues.title}<span class="font-bold">&nbsp; &nbsp;{venues.city}</span>
 								</h3>
-								<ul class="flex gap-1">
-									{#each Array(5) as _, index}
-										<button
-											class:active={index < venues.rating}
-											style="color: {index < venues.rating ? 'gold' : 'gray'}"
-										>
-											★
-										</button>
-									{/each}
-								</ul>
+								
 
 								<div class="flex gap-2 flex-wrap items-center pb-3">
 									<span class="text-slate-400 line-through">₹ {venues.oldprice}</span>

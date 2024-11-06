@@ -13,7 +13,7 @@ const router = express.Router();
 router.post('/api/admin/category_management', upload.single('image'), async (req, res) => {
     let conn;
     try {
-        const { category_name, title, location, rating, old_price, new_price } = req.body;
+        const { category_name, title, location, old_price, new_price } = req.body;
 
         // Compress and resize the image using sharp
         let imageBuffer = null;
@@ -28,8 +28,8 @@ router.post('/api/admin/category_management', upload.single('image'), async (req
         conn = await pool.getConnection();
 
         const query = `
-            INSERT INTO category_management (category_name, title, location, rating, old_price, new_price, image) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO category_management (category_name, title, location, old_price, new_price, image) 
+            VALUES (?, ?, ?, ?, ?, ?)
         `;
 
         // Insert the data, including the image buffer
@@ -37,14 +37,13 @@ router.post('/api/admin/category_management', upload.single('image'), async (req
             category_name,
             title,
             location,
-            rating,
             old_price,
             new_price,
             imageBuffer,
         ]);
 
         console.log("Admin Input:", {
-            category_name, title, location, rating, old_price, new_price
+            category_name, title, location, old_price, new_price
         });
         if (imageBuffer) {
             console.log("Image Buffer Size:", imageBuffer.length);
@@ -56,7 +55,6 @@ router.post('/api/admin/category_management', upload.single('image'), async (req
                 category_name,
                 title,
                 location,
-                rating,
                 old_price,
                 new_price,
                 image: req.file ? req.file.originalname : null
