@@ -1,6 +1,7 @@
 <script>
 	import Headline from '$lib/headline.svelte';
 	import { onMount } from 'svelte';
+	import Bookingform from './bookingform.svelte';
 
 	let categories = []; // Categories array
 	let venue = [];
@@ -14,6 +15,7 @@
 
 	let modal = false;
 	let insertCategory = false;
+	let booking = false;
 
 	$: filteredVenue =
 		selectedCategory === 'All Venues' || !selectedCategory
@@ -22,6 +24,10 @@
 
 	function toggle() {
 		modal = !modal;
+	}
+
+	function bookingToggle() {
+		booking = !booking;
 	}
 
 	function categoryadd() {
@@ -73,6 +79,7 @@
 		}
 	};
 
+	//Category_nameAdd
 	async function handleAddcategory(e) {
 		confirm('Add  new category');
 		e.preventDefault();
@@ -158,7 +165,7 @@
 
 		// Clear the form inputs after submission
 		image = '';
-		selectedCategory = ''; 
+		selectedCategory = '';
 		title = '';
 		location = '';
 		old_price = 0;
@@ -205,8 +212,7 @@
 		location = '';
 		old_price = 0;
 		new_price = 0;
-	}
-	
+	};
 
 	// Fetch categories when the component mounts
 	onMount(() => {
@@ -225,19 +231,16 @@
 		</button>
 		<div class="space-x-4 space-y-4 sm:space-y-0">
 			<select
-
 				id="category"
 				name="category"
 				bind:value={selectedCategory}
 				required
 				class="rounded-lg text-white font-semibold bg-white/10 tracking-wider text-[17px] border-slate-300 bg-opacity-30 backdrop-blur-lg border py-3 pr-10 pl-5 xl"
-			>
+			>	
 				<option value="" disabled selected>Choose a category</option>
 				{#each categories as category}
 					<!-- Add this line -->
-					<option value={category.category_name}>{category.category_name}
-						
-					</option>
+					<option value={category.category_name}>{category.category_name} </option>
 				{/each}
 				<option value="All Venues">All Venues</option>
 			</select>
@@ -293,7 +296,7 @@
 							class="bg-slate-500 flex justify-center items-center rounded-md"
 							on:click={categoryadd}
 						>
-							<button class="fa-solid fa-plus text-white p-[.65rem]"></button>
+							<span class="fa-solid fa-plus text-white p-[.65rem]"></span>
 						</button>
 					</div>
 				</div>
@@ -348,7 +351,7 @@
 				</div>
 
 				<!-- Submit Button -->
-				<div class="mt-4 flex gap-10 ">
+				<div class="mt-4 flex gap-10">
 					<button
 						type="submit"
 						class="w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600"
@@ -359,9 +362,9 @@
 					<button
 						type="submit"
 						class="w-full bg-green-500 text-white font-bold py-2 rounded-md hover:bg-green-600"
-						on:click={(handleClearForm)}
+						on:click={handleClearForm}
 					>
-						Clear Form 
+						Clear Form
 					</button>
 				</div>
 			</form>
@@ -404,7 +407,7 @@
 		</div>
 	{/if}
 
-	<div class="w-[90%] mx-auto">
+	<div class="w-[90%] mx-auto h-full">
 		<div class="wedding-item text-white py-10">
 			<Headline headline={selectedCategory || 'All Venues'} no={filteredVenue.length} />
 			<!-- Venue cards -->
@@ -417,7 +420,7 @@
 					>
 						<div class="img-container relative">
 							<div
-								class="absolute z-20 right-5 top-5 bg-red-500 rounded-md hover:bg-red-600 active:shadow-inner active:bg-red-500"
+								class="absolute z-20 left-5 top-5 bg-red-500 rounded-md hover:bg-red-600 active:shadow-inner active:bg-red-500"
 							>
 								<button
 									class="fa-solid fa-trash w-9 h-9 text-xl"
@@ -445,6 +448,12 @@
 								>
 								<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {item.new_price}</button>
 							</div>
+
+							<div
+								class="my-2 bg-green-500 px-4 rounded-xl hover:bg-green-600 active:bg-green-500 text-lg font-bold py-2 w-fit"
+							>
+								<button class="text-wrap" on:click={bookingToggle}>Add Booking Form</button>
+							</div>
 						</div>
 					</div>
 				{/each}
@@ -452,4 +461,8 @@
 			<!-- Venue List end -->
 		</div>
 	</div>
+
+	{#if booking}
+		<Bookingform />
+	{/if}
 </div>

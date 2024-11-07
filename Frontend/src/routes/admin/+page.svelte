@@ -4,7 +4,7 @@
 </script>
 
 <Navbar />
-<div class="admin-side bg-white h-[100vh]">
+<div class="admin-side bg-white h-full">
 	<Category />
 </div>
 
