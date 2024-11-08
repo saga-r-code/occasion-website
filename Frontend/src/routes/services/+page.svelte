@@ -22,6 +22,7 @@
 	import Venue4 from '../../lib/Images/venue-4.jpeg'
 	import Venue5 from '../../lib/Images/venue-5.jpeg'
 	import Venue6 from '../../lib/Images/venue-6.jpeg'
+	import BookingPage from '$lib/booking-page.svelte';
 
 
 
@@ -125,6 +126,7 @@
 </script>
 
 <Navbar />
+<BookingPage />
 <div class="services">
 	<Category_1 title="Occasion Services " />
 	<div class="services-container w-[80%] mx-auto text-white">

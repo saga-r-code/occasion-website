@@ -36,7 +36,7 @@
 		<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50 overflow-scroll">
 			<form
 				on:submit={handleBookingForm}
-				class="max-w-md mx-auto top-10 rounded-lg border-2 shadow-lg p-6 flex flex-col gap-4 bg-white relative"
+				class="max-w-md mx-auto top-24 rounded-lg border-2 shadow-lg p-6 flex flex-col gap-4 bg-white relative"
 			>
 				<button
 					class="fa-solid fa-xmark absolute right-5 text-2xl font-bold"
@@ -47,16 +47,13 @@
 				<!-- Image Inputs -->
 				<div>
 					<label for="image" class="block text-sm font-medium text-gray-700">Upload Images:</label>
-
-					{#each Array(5) as _, index}
 						<input
 							type="file"
-							id={`image_${index}`}
-							accept="image/*"
+							id="image"
 							class="mt-1 border w-full border-gray-300 rounded-md p-2"
 							required
+							multiple
 						/>
-					{/each}
 				</div>
 
 				<!-- Title Input -->

@@ -194,17 +194,6 @@
 		}
 	];
 
-	let currentIndex = 0;
-
-	
-
-	function showPrevious() {
-		currentIndex = currentIndex > 0 ? currentIndex - 1 : outdoorvenue.length - 1;
-	}
-
-	function showNext() {
-		currentIndex = currentIndex < outdoorvenue.length - 1 ? currentIndex + 1 : 0;
-	}
 </script>
 
 <Navbar />
@@ -255,62 +244,48 @@
 			<!-- Venue List end -->
 		</div>
 
-		<div class="outdoor-venu py-10 relative text-white">
-			<Headline headline="Outdoor Decoration" no={outdoorvenue.length} />
+		<div class="wedding-venues text-white py-10">
+			<Headline headline="Outdoor Venues" no={outdoorvenue.length} />
 
-			<!-- pagination -->
-			<div class="pagination">
-				<button
-					class="flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -left-3 justify-center items-center"
-				>
-					<i class="fa-solid fa-angles-left"></i>
-				</button>
-
-				<button
-					class="flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -right-5 justify-center items-center"
-				>
-					<i class="fa-solid fa-angles-right"></i>
-				</button>
-			</div>
-
-			<!-- cards -->
-			<div class="venue-list flex py-10 gap-x-3 md:gap-x-10 overflow-x-auto">
-				{#each outdoorvenue as venues, index}
+			<!-- Venue cards -->
+			<div
+				class="venue-list flex flex-wrap justify-center sm:justify-start gap-y-10 md:gap-y-14 py-10 gap-x-10 md:gap-x-10"
+			>
+				{#each outdoorvenue as venues}
 					<div
-						class="venue-card flex flex-col gap-5 pb-5 justify-start items-start w-[15rem] md:w-[22rem]"
+						class="venue-conatiner rounded-xl border-2 flex flex-col overflow-hidden gap-5 pb-5 justify-start items-start h-auto w-[15rem] lg:w-[22rem] md:w-[18rem]"
 					>
-						<div class="border-2 rounded-xl overflow-hidden h-[30rem]">
-							<div class="img-container relative">
-								<div
-									class="venue-img h-[15rem] w-[15rem] md:w-[22rem] md:h-[20rem] flex justify-center items-center"
-								>
-									<img
-										src={venues.img}
-										alt={venues.title}
-										class="absolute top-0 left-0 w-full h-full object-cover"
-									/>
-								</div>
-								<div class="px-4 py-1 bg-[#294b55] rounded-full absolute bottom-3 right-5">
-									<span class="font-bold italic">Explore</span>
-								</div>
+						<div class="img-container relative">
+							<div
+								class="venue-img overflow-hidden h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center "
+							>
+								<img
+									src={venues.img}
+									alt={venues.title}
+									class="absolute top-0 left-0 w-full h-full object-cover"
+								/>
 							</div>
 							<div
-								class="details px-4 py-3 text-lg md:text-xl flex flex-col gap-2 h-[15rem] md:h-[10rem] my-2 overflow-scroll"
+								class="px-4 py-2 bg-[#294b55] rounded-full absolute bottom-3 right-5 md:right-10 lg:right-5"
 							>
-								<h3>
-									{venues.title}<span class="font-bold">&nbsp; &nbsp;{venues.city}</span>
-								</h3>
-								
+								<span class="font-bold">Book Now</span>
+							</div>
+						</div>
+						<div class="details px-4 text-lg md:text-xl flex flex-col gap-2">
+							<h3>
+								{venues.title}<span class="font-bold">&nbsp; &nbsp;{venues.city}</span>
+							</h3>
 
-								<div class="flex gap-2 flex-wrap items-center pb-3">
-									<span class="text-slate-400 line-through">₹ {venues.oldprice}</span>
-									<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {venues.price}</button>
-								</div>
+							
+							<div class="flex gap-2 flex-wrap items-center pb-2">
+								<span class="text-slate-400 line-through">₹ {venues.oldprice}</span>
+								<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {venues.price}</button>
 							</div>
 						</div>
 					</div>
 				{/each}
 			</div>
+			<!-- Venue List end -->
 		</div>
 		<!-- Wediing-venues end -->
 
