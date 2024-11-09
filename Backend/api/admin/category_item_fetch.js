@@ -6,6 +6,7 @@ import pool from '../../Database/db.js';
 
 const router = express.Router();
 
+//Get All Category
 router.get('/api/admin/category_item', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM category_management');

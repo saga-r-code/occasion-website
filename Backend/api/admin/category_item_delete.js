@@ -20,7 +20,7 @@ router.delete('/api/admin/category_delete/:item_id', async (req, res) => {
         const result = await pool.query('DELETE FROM category_management WHERE item_id = ?', [item_id]);
 
         // Check the result of the deletion
-        if (result.rowCount > 0) {
+        if (result.affectedRows > 0) {
             res.status(200).json({ message: `Item with ID ${item_id} deleted successfully` });
         } else {
             res.status(404).json({ message: 'Category not found' });

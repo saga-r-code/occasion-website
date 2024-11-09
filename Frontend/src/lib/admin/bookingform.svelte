@@ -42,6 +42,7 @@
 			<form
 				on:submit={handleBookingForm}
 				class="max-w-md mx-auto top-24 rounded-lg border-2 shadow-lg p-6 flex flex-col gap-4 bg-white relative"
+				enctype="multipart/form-data"
 			>
 				<button
 					class="fa-solid fa-xmark absolute right-5 text-2xl font-bold"
@@ -161,7 +162,10 @@
 
 	{#if customItem}
 	<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50">
-		<form class="max-w-md mx-auto top-16 md:left-20 xl:left-72 rounded-lg border-2 shadow-lg p-6 flex flex-col gap-4 bg-white relative">
+		<form class="max-w-md mx-auto top-16 md:left-20 xl:left-72 rounded-lg border-2 shadow-lg p-6 flex flex-col gap-4 bg-white relative"
+		enctype="multipart/form-data"
+		>
+			
 			<button
 					class="fa-solid fa-xmark absolute right-5 text-2xl font-bold"
 					on:click={customizationAdd}

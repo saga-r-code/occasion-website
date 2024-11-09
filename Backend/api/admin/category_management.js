@@ -15,6 +15,7 @@ router.post('/api/admin/category_management', upload.single('image'), async (req
     try {
         const { category_name, title, location, old_price, new_price } = req.body;
 
+        
         // Compress and resize the image using sharp
         let imageBuffer = null;
         if (req.file) {

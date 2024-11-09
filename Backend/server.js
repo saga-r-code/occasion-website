@@ -9,6 +9,10 @@ import category from './api/admin/category.js'
 import categoryManagementRouter from './api/admin/category_management.js'
 import category_item from './api/admin/category_item_fetch.js'
 import category_delete from './api/admin/category_item_delete.js'
+import inclusionRouter from './api/admin/inclusion_table.js'
+import imagesRouter from './api/admin/images_tables.js'
+import customizationRouter from './api/admin/customization_table.js'
+
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
 
@@ -35,6 +39,9 @@ app.use(category) //app.use('/category',  category)
 app.use(categoryManagementRouter) //app.use('/category_management', categoryManagementRouter)
 app.use(category_item) //app.use('/categoryitem', category_item)
 app.use(category_delete) //app.use('/categorydelete', category_delete)
+app.use(inclusionRouter) //app.use('/inclusion', inclusionRouter)
+app.use(imagesRouter) //app.use('/images', imagesRouter)
+app.use(customizationRouter) //app.use('/customization', customizationRouter)
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
