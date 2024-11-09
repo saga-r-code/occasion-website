@@ -1,13 +1,12 @@
-<!-- Script Section -->
 <script>
-  // Import Images
-  import img1 from '../lib/Images/Engagement.jpg';
+   import { onMount } from 'svelte';
+  import img1 from '../lib/Images/lantern-2.jpg';
   import img2 from '../lib/Images/anniversary.jpg';
   import img3 from '../lib/Images/babyshower.jpg';
   import img4 from '../lib/Images/decoration-3.jpeg';
   import img5 from '../lib/Images/flower.jpg';
+  import img6 from '../lib/Images/chairs-2.jpg';
 
-  // Define Images Array
   const images = [
     { id: 1, img: img1 },
     { id: 2, img: img2 },
@@ -16,6 +15,99 @@
     { id: 5, img: img5 },
   ];
 
+  const inclusions = [
+    {
+      id: 1,
+      inclusion: "Arch of 150 Balloons in  Pastel Pink, Pastel Green and Purple colors"
+    },
+    {
+      id: 2,
+      inclusion: "8 Mermaid Theme Paper Cutouts"
+    },
+    {
+      id: 3,
+      inclusion: "4 Balloon Pillars (16 Theme Balloons in each Pillars)"
+    },
+    {
+      id: 4,
+      inclusion: "6 Mermaid Themed Foil Balloons (1 Mermaid Tail Foil Balloon, 2 Sea Shells Foil Balloons, 1 Mermaid Foil Balloon and 2 Pink Stars Foil Balloons)"
+    },
+    {
+      id: 5,
+      inclusion: "Arch of 150 Balloons in  Pastel Pink, Pastel Green and Purple colors"
+    },
+    {
+      id: 6,
+      inclusion: "8 BT Balloons"
+    },
+  ]
+
+  const customization = [
+    {
+      id: 1,
+      img: img1,
+      title: "Flower Decoration",
+      desc: "Unleash fun with our 6x10 ft Jungle Giraffe Inflatable Bouncy! Exclusively for kids, quick 3-hour setup for instant playtime joy.",
+      price: 5000
+    },
+    {
+      id: 2,
+      img: img2,
+      title: "Flower Decoration",
+      desc: "Unleash fun with our 6x10 ft Jungle Giraffe Inflatable Bouncy! Exclusively for kids, quick 3-hour setup for instant playtime joy.",
+      price: 5000
+    },
+    {
+      id: 3,
+      img: img3,
+      title: "Flower Decoration",
+      desc: "Unleash fun with our 6x10 ft Jungle Giraffe Inflatable Bouncy! Exclusively for kids, quick 3-hour setup for instant playtime joy.",
+      price: 5000
+    },
+    {
+      id: 4,
+      img: img4,
+      title: "Flower Decoration",
+      desc: "Unleash fun with our 6x10 ft Jungle Giraffe Inflatable Bouncy! Exclusively for kids, quick 3-hour setup for instant playtime joy.",
+      price: 5000
+    },
+    {
+      id: 5,
+      img: img5,
+      title: "Flower Decoration",
+      desc: "Unleash fun with our 6x10 ft Jungle Giraffe Inflatable Bouncy! Exclusively for kids, quick 3-hour setup for instant playtime joy.",
+      price: 5000
+    },
+    {
+      id: 6,
+      img: img6,
+      title: "Flower Decoration",
+      desc: "Unleash fun with our 6x10 ft Jungle Giraffe Inflatable Bouncy! Exclusively for kids, quick 3-hour setup for instant playtime joy.",
+      price: 5000
+    },
+    
+
+  ]
+
+
+  let interval;
+  let currentIndex = 0
+  let val = 0
+
+  onMount(() => {
+    interval = setInterval(() => {
+      currentIndex = (currentIndex + 1) % images.length;
+    }, 3000); // change image every 3 seconds
+  });
+
+  function previousImage() {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+  }
+
+  function nextImage() {
+    currentIndex = (currentIndex + 1) % images.length;
+  }
+
   // Define Close Form Variable
   let closeForm = false;
 
@@ -23,6 +115,20 @@
   function togglemodal() {
     closeForm = !closeForm;
   }
+
+  //add quantity
+  function addQty() {
+    val++
+  }
+  //less quantity
+  function lessQty() {
+    val--
+    if(val < 0) {
+       val = 0
+    }
+  }
+
+
 </script>
 
 <!-- Conditional Rendering -->
@@ -37,23 +143,147 @@
       </div>
 
       <!-- Modal Content -->
-      <div class="flex justify-center mb-10 mt-10 lg:gap-10 items-center h-full flex-wrap md:flex-nowrap">
+      <div class="flex justify-center mb-10 mt-10  items-center h-full flex-wrap md:flex-nowrap">
         <!-- Image Container -->
-        <div class="img-container h-full w-full py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24 flex justify-center items-center">
-          <div class="w-full h-full bg-red-300 flex justify-center items-center flex-col">
-            <div class="w-full h-full bg-red-400"></div>
-            <div class="w-full h-[25vh] bg-red-500 flex justify-center items-center gap-10 overflow-scroll">
-                <div class="w-40 h-40 bg-red-100"></div>
-                <div class="w-40 h-40 bg-red-100"></div>
-                <div class="w-40 h-40 bg-red-100"></div>
-                <div class="w-40 h-40 bg-red-100"></div>
+        <div class="img-container h-full w-full md:w-[50vw] py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24 ">
+          <div class="w-full h-full relative bg-red- shadow-xl rounded-md overflow-hidden  border-2 flex justify-center items-center flex-col">
+
+            <!-- pagination -->
+			<div class="pagination">
+				<button
+        on:click={previousImage}
+					class="flex bg-white w-10 h-10 md:w-[50px] md:h-[50px] rounded-full text-center absolute z-10 top-[45%] md:top-[40%] left-3 justify-center items-center"
+				>
+					<i class="fa-solid fa-angles-left"></i>
+				</button>
+
+				<button
+        on:click={nextImage}
+					class="flex bg-white w-10 h-10 md:w-[50px] md:h-[50px] rounded-full text-center absolute z-10 top-[45%] md:top-[40%] right-3 justify-center items-center"
+				>
+					<i class="fa-solid fa-angles-right"></i>
+				</button>
+			</div>
+
+
+      <div class="w-full h-full flex justify-center items-center overflow-x-auto">
+        {#each images as image, index}
+          <div
+            class={`w-full h-full overflow-hidden flex justify-center items-center ${
+              index === currentIndex ? 'active' : ''
+            }`}
+          >
+            <img src={image.img} alt={'image'} class="w-full h-full object-cover" />
+          </div>
+        {/each}
+      </div>
+
+           <div class="w-full h-[20vh] flex py-4 px-3 justify-center items-center gap-10 overflow-x-auto ">
+            {#each images as image}
+            <div class="w-24 h-24 overflow-hidden flex justify-center items-center">
+                <img
+                    src={image.img}
+                    alt={'image'}
+                    class="w-full h-full object-cover"
+                />
             </div>
+            {/each}
+              </div>           
+           
+
           </div>
         </div>
 
         <!-- Info Container -->
-        <div class="info-container h-full w-full py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24 flex justify-center items-center">
-          <div class="w-full h-full bg-red-300"></div>
+        <div class="info-container h-full w-full md:w-[50vw] py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24 overflow-y-scroll ">
+          <div class="w-full h-full flex flex-col gap-y-10">
+             <!--heading-->
+            <div class="heading border-2 shadow-xl px-5 py-3 flex justify-center gap-2 flex-col">
+              <h1 class="text-2xl font-semibold text-wrap">Dinosaur Happy Birthday Theme Decor</h1>
+              <h3 class="text-base">Make your child's birthday one to remember with our exclusive dinosaur- theme birthday décor</h3>
+            </div>
+
+          <!--Details-->
+            <div class="details border-2 shadow-xl px-5 py-3  flex justify-center gap-2 flex-col">
+              <h2 class="text-2xl font-bold">₹ 4999</h2>
+              <hr>
+              <form class="flex flex-col justify-center  mt-3 gap-3">  
+                <div class="flex justify-center items-center gap-5">
+                  <i class="fa-solid fa-location-dot text-2xl"></i>
+                  <input
+                  type="number"
+                  id="pincode"
+                  placeholder="Enter Pincdoe"
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                  required
+                  />
+                </div>              
+                <div class="flex justify-center items-center gap-5">
+                  <i class="fa-solid fa-phone text-xl"></i>
+                  <input
+                  type="tel"
+                  id="number"
+                  placeholder="+91 "
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                  required
+                  />
+                </div>
+                <div class="flex justify-center items-center gap-5">
+                  <i class="fa-solid fa-calendar-days text-2xl"></i>
+                  <input
+                  type="date"
+                  id="number"
+                  placeholder=""
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                  required
+                  />
+                </div>
+              </form>
+              <div class="bg-blue-500 px-5 py-2 text-center my-3 rounded-md">
+              <button class="text-white font-bold text-lg">Book Now -></button>
+              </div>
+            </div>
+
+          <!--Inclusion-->
+            <div class="inclusions border-2 shadow-xl px-5 py-3  flex justify-center gap-2 flex-col">
+              <h2 class="text-2xl font-bold">Inclusions</h2>
+              <p>Below are the included details, please note that no additional items are provided.</p>
+              <hr>
+              <ul class="mt-3">
+                {#each inclusions as inclu}
+                <li class="flex gap-5">
+                  <i class="fa-duotone fa-solid fa-check text-green-600 font-extrabold text-xl"></i>
+                  <p>{inclu.inclusion}</p>
+                </li>
+                {/each}
+              </ul>             
+            </div>
+
+             <!-- customization -->
+             <div class="customization border-2 shadow-xl px-5 py-3  flex justify-center gap-2 flex-col">
+              <h2 class="text-2xl font-bold">Customization</h2>
+              <hr>
+              <div class="custom-item mt-4 grid sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3">
+                {#each customization as custom}
+                  <div class="h-auto border-2 p-1 rounded-sm ">
+                  <img src={custom.img} alt={custom.title} class="w-full sm:h-[20vh] lg:h-[12vh] object-cover">
+                  <div class="details flex justify-center items-start flex-col gap-2 px-2 mt-2">
+                    <h4 class="text-lg font-semibold">{custom.title}</h4>
+                    <p class="text-sm h-16 overflow-y-scroll">{custom.desc}</p>
+                    <p class="text-base font-bold">₹ {custom.price}</p>
+                    <div class="flex justify-start items-center gap-3 my-2">
+                      <button on:click={lessQty} class="fa-solid fa-minus bg-red-500 text-white p-2 rounded-md"></button>
+                      <input type="text" id="quantity" value={val} class=" block w-1/4 text-center border border-gray-300 rounded-md p-1" />
+                      <button on:click={addQty} class="fa-solid fa-plus bg-green-500 text-white p-2 rounded-md"></button>
+                    </div>
+                  </div>
+                </div>
+                {/each}
+              </div>
+              <!-- custom-item end  -->
+            </div>
+
+          </div>
         </div>
       </div>
     </div>

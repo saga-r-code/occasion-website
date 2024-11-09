@@ -221,7 +221,7 @@
 	});
 </script>
 
-<div class={`conatiner ${selectedCategory.length >=4 ? 'h-[100vh]' : 'h-auto'} h-[100vh] `}>
+<div class={`conatiner ${selectedCategory.length >=4 ? 'h-[100vh]' : 'h-auto'} h-[100vh] overflow-hidden`}>
 	<div class="flex justify-between flex-wrap gap-5 mx-auto w-[80%] pt-10">
 		<button
 			on:click={toggle}
@@ -235,7 +235,7 @@
 				name="category"
 				bind:value={selectedCategory}
 				required
-				class="rounded-lg text-white font-semibold bg-white/10 tracking-wider text-[17px] border-slate-300 bg-opacity-30 backdrop-blur-lg border py-3 pr-10 pl-5 xl"
+				class="rounded-lg w-full text-white font-semibold bg-white/10 tracking-wider text-[17px] border-slate-300 bg-opacity-30 backdrop-blur-lg border py-3 pr-10 pl-5 xl"
 			>	
 				<option value="" disabled selected>Choose a category</option>
 				{#each categories as category}
@@ -375,7 +375,7 @@
 		<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50">
 			<form
 				on:submit={handleAddcategory}
-				class="max-w-md mx-auto top-[42%] -right-96 rounded-lg border-2 shadow-lg p-6 flex flex-col gap-4 bg-white relative"
+				class="max-w-md mx-auto top-[42%] md:left-20 xl:left-72 rounded-lg border-2 shadow-lg p-6 flex flex-col gap-4 bg-white relative"
 			>
 				<button class="fa-solid fa-xmark absolute right-5 text-2xl font-bold" on:click={categoryadd}
 				></button>
