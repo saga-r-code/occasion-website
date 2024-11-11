@@ -93,6 +93,25 @@
   let interval;
   let currentIndex = 0
   let val = 0
+  let custom_item_price = 0
+  let quantity = customization.map(() => 0)
+
+  function totalCustomizationPrice() {
+    custom_item_price = quantity.reduce((total, qty, idx) => total + qty * customization[idx].price)
+  }
+
+  function addItem(index) {
+    quantity[index]++;
+    totalCustomizationPrice()
+  }
+
+  function lessItem(index) {
+    if (quantity[index] > 0) {
+      quantity[index]--;
+      totalCustomizationPrice()
+    }
+  }
+  
 
   onMount(() => {
     interval = setInterval(() => {
@@ -116,19 +135,6 @@
     closeForm = !closeForm;
   }
 
-  //add quantity
-  function addQty() {
-    val++
-  }
-  //less quantity
-  function lessQty() {
-    val--
-    if(val < 0) {
-       val = 0
-    }
-  }
-
-
 </script>
 
 <!-- Conditional Rendering -->
@@ -138,12 +144,13 @@
     <!-- Modal Content -->
     <div class="bg-white m-5 h-full relative overflow-y-scroll">
       <!-- Close Button -->
-      <div class="">
+      <div>
         <button class="fa-solid fa-circle-xmark text-4xl absolute top-10 right-3 md:right-10" on:click={togglemodal}></button>
       </div>
 
       <!-- Modal Content -->
       <div class="flex justify-center mb-10 mt-10  items-center h-full flex-wrap md:flex-nowrap">
+
         <!-- Image Container -->
         <div class="img-container h-full w-full md:w-[50vw] py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24 ">
           <div class="w-full h-full relative bg-red- shadow-xl rounded-md overflow-hidden  border-2 flex justify-center items-center flex-col">
@@ -263,8 +270,9 @@
              <div class="customization border-2 shadow-xl px-5 py-3  flex justify-center gap-2 flex-col">
               <h2 class="text-2xl font-bold">Customization</h2>
               <hr>
+              <h2 class="text-2xl font-bold text-right">₹ {custom_item_price}</h2>
               <div class="custom-item mt-4 grid sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3">
-                {#each customization as custom}
+                {#each customization as custom,index}
                   <div class="h-auto border-2 p-1 rounded-sm ">
                   <img src={custom.img} alt={custom.title} class="w-full sm:h-[20vh] lg:h-[12vh] object-cover">
                   <div class="details flex justify-center items-start flex-col gap-2 px-2 mt-2">
@@ -272,9 +280,9 @@
                     <p class="text-sm h-16 overflow-y-scroll">{custom.desc}</p>
                     <p class="text-base font-bold">₹ {custom.price}</p>
                     <div class="flex justify-start items-center gap-3 my-2">
-                      <button on:click={lessQty} class="fa-solid fa-minus bg-red-500 text-white p-2 rounded-md"></button>
-                      <input type="text" id="quantity" value={val} class=" block w-1/4 text-center border border-gray-300 rounded-md p-1" />
-                      <button on:click={addQty} class="fa-solid fa-plus bg-green-500 text-white p-2 rounded-md"></button>
+                      <button on:click={() => lessItem(index)} class="fa-solid fa-minus bg-red-500 text-white p-2 rounded-md"></button>
+                      <input type="text" id="quantity" value={quantity[index]} class=" block w-1/4 text-center border border-gray-300 rounded-md p-1" />
+                      <button on:click={() => addItem(index)} class="fa-solid fa-plus bg-green-500 text-white p-2 rounded-md"></button>
                     </div>
                   </div>
                 </div>
@@ -283,9 +291,29 @@
               <!-- custom-item end  -->
             </div>
 
+            <!-- location -->
+            <div class="details border-2 shadow-xl px-5 py-3  flex justify-center gap-2  flex-col">
+              <h2 class="text-2xl font-bold">Location</h2>
+              <hr>
+              <div class="details  mt-3">
+                <p class="text-lg">At Your Location</p>
+              </div>
+
+              <div class="flex flex-col justify-center items-start xl:items-end">
+                <div class="flex gap-2">
+                <p class="text-lg font-semibold">Total Price:-</p>
+                <h2 class="text-xl font-bold">₹ 5000</h2>  
+                </div>
+                <button class="bg-blue-600 shadow-lg mt-2 px-3 py-2 rounded-md text-white font-semibold">Book Now</button>
+                </div> 
+            </div>
+
+          
+
           </div>
         </div>
       </div>
+
     </div>
   </div>
 {/if}

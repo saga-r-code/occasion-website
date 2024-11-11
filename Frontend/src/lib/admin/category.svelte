@@ -12,6 +12,7 @@
 	let old_price = 0;
 	let new_price = 0;
 	let category_name = '';
+	 let bookingPageSelectedTitle = ''
 
 	let modal = false;
 	let insertCategory = false;
@@ -112,6 +113,7 @@
 		category_name = '';
 	}
 
+	//form sumbition
 	async function handleSubmit(e) {
 		e.preventDefault();
 
@@ -205,6 +207,27 @@
 		}
 	}
 
+	//selected Title for booking
+	async function fetchTitle(itemId) {
+        try {
+            const response = await fetch(`http://localhost:3000/api/admin/category_fetch/${itemId}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const item = await response.json();
+            bookingPageSelectedTitle = item.title; // Set selectedTitle and trigger reactivity
+        } catch (error) {
+            console.error('Error fetching title:', error);
+            bookingPageSelectedTitle = 'Error loading title'; // Fallback title
+        }
+    }
+
+    function openForm(itemId) {
+        bookingPageSelectedTitle = ""; // Clear any previous title
+        booking = true; // Show the booking form
+        fetchTitle(itemId); // Fetch the title for the selected item
+    }
+
 	const handleClearForm = () => {
 		image = '';
 		selectedCategory = '';
@@ -221,7 +244,7 @@
 	});
 </script>
 
-<div class={`conatiner ${selectedCategory.length >=4 ? 'h-[100vh]' : 'h-auto'} h-[100vh] overflow-hidden`}>
+<div class={`conatiner ${selectedCategory.length >=4 ? 'h-[100vh]' : 'h-auto'} h-[100vh]`}>
 	<div class="flex justify-between flex-wrap gap-5 mx-auto w-[80%] pt-10">
 		<button
 			on:click={toggle}
@@ -407,7 +430,7 @@
 		</div>
 	{/if}
 
-	<div class="w-[90%] mx-auto h-full">
+	<div class="w-[90%] mx-auto h-auto">
 		<div class="wedding-item text-white py-10">
 			<Headline headline={selectedCategory || 'All Venues'} no={filteredVenue.length} />
 			<!-- Venue cards -->
@@ -452,7 +475,7 @@
 							<div
 								class="my-2 bg-green-500 px-4 rounded-xl hover:bg-green-600 active:bg-green-500 text-lg font-bold py-2 w-fit"
 							>
-								<button class="text-wrap" on:click={bookingToggle}>Add Booking Form</button>
+								<button class="text-wrap" on:click={() => openForm(item.item_id)}>Add Booking Form</button>
 							</div>
 						</div>
 					</div>
@@ -463,6 +486,10 @@
 	</div>
 
 	{#if booking}
-		<Bookingform />
+		<Bookingform {bookingPageSelectedTitle} {bookingToggle} {booking} />
 	{/if}
 </div>
+
+<style>
+	
+</style>

@@ -1,28 +1,42 @@
 <script>
-	let close = false;
+	export let booking;
+	export let bookingPageSelectedTitle = "";
+	export let bookingToggle;
 	let customItem  = false
+	
+	let images = []
+	let title = ''
+	let description = ''
+	let price = 0
+	let discount = 0
+	let inclusion = []
 
-	function customizationAdd() {
+	let cust_id = 0
+	let cust_image = ''
+	let cust_title = ''
+	let cust_desc = ''
+	let cust_price = 0
+	let customization =[]
+
+	function customizationForm() {
 		customItem = !customItem;
 	}
 
-	function bookingToggle() {
-		close = !close;
-	}
-
+	//inclusion input add
 	function addInputBox() {
 		const inputBox = document.createElement('input');
 		inputBox.type = 'text';
 		inputBox.placeholder = "Enter Inclusion...";
 		inputBox.className = 'mt-1 border w-full border-gray-300 rounded-md p-2 inclusion-input';
 		inputBox.required = true;
-
+		
 		// Select the inclusion container div and insert the new input box before the confirm button
 		const form = document.querySelector('form');
 		const confirmButton = form.querySelector('.confirm-button');
 		form.insertBefore(inputBox, confirmButton);
 	}
-
+	
+	//inclusion input delete
 	function deleteInputBox() {
 		const inputBoxes = document.querySelectorAll('.inclusion-input');
 		if (inputBoxes.length > 1) {
@@ -30,17 +44,44 @@
 		}
 	}
 
-	async function handleBookingForm(event) {
-		event.preventDefault();
+	//customization item add
+	function addCustomizationItem() {
+		if (cust_title && cust_desc && cust_price) {
+			customization = [
+				...customization,
+				{
+					cust_id : customization.length + 1,
+					cust_title: cust_title,
+					cust_desc: cust_desc,
+					cust_price: cust_price
+				}
+			];
+			// Clear form fields after adding the item
+			cust_image = '';
+			cust_title = '';
+			cust_desc = '';
+			cust_price = 0;
+		}
+	}
+
+	//customization item delete
+	function deleteCustomization(id){
+		customization = customization.filter(item => item.cust_id !== id);
+	}		
+
+	async function handleBookingForm() {
+		
 		// Handle form submission logic here
 	}
+
+
 </script>
 
 <div>
-	{#if !close}
+	{#if booking}
 		<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50 overflow-scroll">
 			<form
-				on:submit={handleBookingForm}
+				on:submit|preventDefault={handleBookingForm}
 				class="max-w-md mx-auto top-24 rounded-lg border-2 shadow-lg p-6 flex flex-col gap-4 bg-white relative"
 				enctype="multipart/form-data"
 			>
@@ -48,7 +89,10 @@
 					class="fa-solid fa-xmark absolute right-5 text-2xl font-bold"
 					on:click={bookingToggle}
 				></button>
-				<h2 class="text-xl font-semibold text-center mt-8">Add Booking Form</h2>
+				<div class="text-center mt-8">
+					<h2 class="text-xl font-semibold ">Add Booking Form</h2>
+					<h1 class="text-lg font-bold">{bookingPageSelectedTitle ? bookingPageSelectedTitle : 'Loading...'}</h1>
+				</div>
 
 				<!-- Image Inputs -->
 				<div>
@@ -56,6 +100,7 @@
 						<input
 							type="file"
 							id="image"
+							bind:value={images}
 							class="mt-1 border w-full border-gray-300 rounded-md p-2"
 							required
 							multiple
@@ -68,6 +113,7 @@
 					<input
 						type="text"
 						id="title"
+						bind:value={title}
 						placeholder="Enter title"
 						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 						required
@@ -81,6 +127,7 @@
 					>
 					<textarea
 						id="description"
+						bind:value={description}
 						placeholder="Enter description"
 						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 						rows="3"
@@ -88,25 +135,25 @@
 					></textarea>
 				</div>
 
-				<!-- Old Price Input -->
+				<!--  Price Input -->
 				<div>
-					<label for="old_price" class="block text-sm font-medium text-gray-700">Old Price:</label>
+					<label for="price" class="block text-sm font-medium text-gray-700">Price:</label>
 					<input
 						type="number"
-						id="old_price"
-						placeholder="Enter old price"
+						id="price"
+						bind:value={price}
 						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 						required
 					/>
 				</div>
 
-				<!-- New Price Input -->
+				<!--  Discound Input -->
 				<div>
-					<label for="new_price" class="block text-sm font-medium text-gray-700">New Price:</label>
+					<label for="price" class="block text-sm font-medium text-gray-700">Discount:</label>
 					<input
 						type="number"
-						id="new_price"
-						placeholder="Enter new price"
+						id="price"
+						bind:value={discount}
 						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 						required
 					/>
@@ -126,6 +173,7 @@
 						<input
 							type="text"
 							id="inclusion"
+							bind:value={inclusion}
 							placeholder="Enter Inclusion..."
 							class="inclusion-input mt-1 block w-full border border-gray-300 rounded-md p-2"
 							required
@@ -143,8 +191,7 @@
 				<!-- customizations -->
 				<div class="mt-3 flex justify-between items-center gap-3">
 					<label for="customization" class="block text-lg  font-bold text-gray-70">Customizations:</label>
-					
-					<button class="flex justify-center items-center text-blue-500 underline" on:click={customizationAdd}><span>Go here &nbsp; </span><i class="fa-solid fa-arrow-right "></i></button>	
+					<button class="flex justify-center items-center text-blue-500 underline" on:click={customizationForm}><span>Go here &nbsp; </span><i class="fa-solid fa-arrow-right "></i></button>	
 				</div>
 
 				<!-- Submit Button -->
@@ -160,22 +207,31 @@
 		</div>
 	{/if}
 
+
 	{#if customItem}
-	<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50">
-		<form class="max-w-md mx-auto top-16 md:left-20 xl:left-72 rounded-lg border-2 shadow-lg p-6 flex flex-col gap-4 bg-white relative"
+	<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50 overflow-scroll ">
+		<form class="max-w-md mx-auto top-16 md:left-20 xl:left-72 rounded-lg border-2  shadow-lg p-6 flex flex-col gap-4 bg-white relative"
 		enctype="multipart/form-data"
+		on:submit|preventDefault={addCustomizationItem}
 		>
 			
 			<button
 					class="fa-solid fa-xmark absolute right-5 text-2xl font-bold"
-					on:click={customizationAdd}
-				></button>
+					on:click={customizationForm}>
+				</button>
+				
+				<div class="text-center">
 				<h2 class="text-xl font-semibold text-center mt-8">Add Customization Form</h2>
+				<h1 class="text-lg font-bold">{bookingPageSelectedTitle ? bookingPageSelectedTitle : 'Loading...'}</h1>
+				</div>
+
+			<!-- Image Input -->
 			<div>
 				<label for="cust_image" class="block text-sm font-medium text-gray-700">Upload Images:</label>
 					<input
 						type="file"
 						id="cust_image"
+						bind:value={cust_image}
 						class="mt-1 border w-full border-gray-300 rounded-md p-2"
 						required
 						
@@ -188,6 +244,7 @@
 			<input
 				type="text"
 				id="cust_title"
+				bind:value={cust_title}
 				placeholder="Enter title"
 				class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 				required
@@ -201,6 +258,7 @@
 			>
 			<textarea
 				id="cust_description"
+				bind:value={cust_desc}
 				placeholder="Enter description"
 				class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 				rows="3"
@@ -214,11 +272,13 @@
 			<input
 				type="number"
 				id="cust_price"
+				bind:value={cust_price}
 				placeholder="Enter price"
 				class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 				required
 			/>
 			</div>
+
 
 			<!--Add Item  -->
 			<div class="mt-4 confirm-button">
@@ -227,9 +287,32 @@
 					class="w-full text-lg bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600"
 				>
 					Add Custom Item
-				</button>
+				</button>	
 			</div>
-
+			
+			<!-- List Item -->
+			<div class="my-3  ">
+				<h2 class="text-lg font-semibold mb-4">List of Custom Items</h2>
+				{#each customization as customItem (customItem.cust_id)}
+				<div class="mb-5">
+				<div class="flex justify-between">
+					<div class="flex justify-center items-start gap-3">
+						<button
+						type="button"
+						class="bg-red-600 rounded-md"
+						on:click={deleteCustomization(customItem.cust_id)}
+					>
+						<span class="fa-solid fa-trash text-white flex justify-center items-center  p-2"></span>
+					</button>
+						<h2 class="font-bold text-lg">{customItem.cust_title}</h2>
+					</div>
+					<h3 class="font-bold   text-lg">₹ {customItem.cust_price}</h3>
+				</div>
+				<p class="mx-10">{customItem.cust_desc}</p>
+			</div>
+				{/each}
+				
+			</div>
 		</form>
 		</div>	
 	{/if}
