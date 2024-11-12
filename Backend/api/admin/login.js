@@ -26,7 +26,7 @@ router.post('/api/admin/login', [
         const { email, password } = req.body;
 
         // Check if the user exists
-        const adminResult = await pool.query(`SELECT * FROM user_signup WHERE email = ?`, [email]);
+        const adminResult = await pool.query(`SELECT * FROM admin_signup WHERE email = ?`, [email]);
 
         if (adminResult.length === 0) {
             console.log("please check details")
@@ -54,7 +54,7 @@ router.post('/api/admin/login', [
         });
 
         // Check if user already exists in user_login table
-        const existingUser  = await pool.query(`SELECT * FROM user_login WHERE email = ?`, [email]);
+        const existingUser  = await pool.query(`SELECT * FROM admin_login WHERE email = ?`, [email]);
 
         // if (existingUser .length > 0) {
         //     console.log("admin Login")

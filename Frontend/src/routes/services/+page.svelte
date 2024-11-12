@@ -4,7 +4,6 @@
 	import Headline from '$lib/headline.svelte';
 	import InfoContainer from '$lib/info-container.svelte';
 	import Navbar from '$lib/navbar.svelte';
-	import Card from './card.svelte';
 
 	import Service1 from '../../lib/Images/service-2.jpeg'
 	import Service2 from '../../lib/Images/service-3.webp'
@@ -123,13 +122,21 @@
 	];
 
 	
+
+	let closeForm = false;
+
+	function togglemodal() {
+		closeForm = !closeForm;
+	}
+
+	
 </script>
 
 <Navbar />
-<BookingPage />
+<BookingPage {closeForm} {togglemodal}/>
 <div class="services">
 	<Category_1 title="Occasion Services " />
-	<div class="services-container w-[80%] mx-auto text-white">
+	<div class="services-container w-[90%] mx-auto text-white">
 		<div class="category py-10">
 			<h1 class="text-3xl font-semibold">Services Category</h1>
 
@@ -147,7 +154,7 @@
 						</div>
 						<h2 class="font-medium text-xl text-center">{list.name}</h2>
 					</div>
-				{/each}
+					{/each}
 			</div>
 		</div>
 		<!-- Category end -->
@@ -155,20 +162,33 @@
 		<div class="cards  relative">
 			<Headline headline="Event Decoration" no={decorator.length} />
 
-			<!-- pagination -->
-			<div class="pagination">
-				<button class={`flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -left-5 justify-center items-center`}>
-					<i class="fa-solid fa-angles-left"></i>
-				</button>
-
-				<button class={`flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -right-5  justify-center items-center`}>
-					<i class="fa-solid fa-angles-right"></i>
-				</button>
-			</div>
-
-			<div class="venue-list flex overflow-x-auto gap-y-5 py-10 gap-x-10 ">
+			<div class="venue-list grid sm:grid-cols-2 lg:flex lg:flex-wrap py-10 gap-x-3 md:gap-x-16 items-center">
 				{#each decorator as event}
-					<Card {event} />
+				<div
+				class="venue-conatiner flex flex-col px-3 gap-5 justify-start items-start h-[22rem] w-[15rem] lg:w-[20rem] md:w-[18rem] md:h-[28rem]"
+				on:click={togglemodal}>
+				<div class="img-container relative">
+					<div
+						class="venue-img relative overflow-hidden hover:scale-105 rounded-2xl h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center bg-red-200"
+					>
+						<img
+							src={event.img}
+							alt={event.title}
+							class="absolute top-0 left-0 w-full h-full object-cover"
+						/>
+					</div>
+					<div class="px-4 py-2 bg-[#294b55] rounded-full absolute bottom-3 right-5">
+						<span class="font-bold">Book Now</span>
+					</div>
+				</div>
+				<div class="details text-lg md:text-xl">
+					<h3>
+						{event.title}<span class="font-bold">&nbsp;{event.city}</span>
+					</h3>
+			
+					
+				</div>
+			</div>
 				{/each}
 			</div>
 		</div>
@@ -176,20 +196,33 @@
 		<div class="cards  relative">
 			<Headline headline="Ultimate Venues" no={venues.length} />
 
-			<!-- pagination -->
-			<div class="pagination">
-				<button class={`flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -left-5 justify-center items-center`}>
-					<i class="fa-solid fa-angles-left"></i>
-				</button>
-
-				<button class={`flex absolute bg-[#50808e] w-10 h-10 md:w-[50px] md:h-[50px] rounded-full z-10 top-[40%] -right-5  justify-center items-center`}>
-					<i class="fa-solid fa-angles-right"></i>
-				</button>
-			</div>
-
-			<div class="venue-list flex overflow-x-auto gap-y-5 py-10 gap-x-10 ">
+			<div class="venue-list grid sm:grid-cols-2 lg:flex lg:flex-wrap py-10 gap-x-3 md:gap-x-16 items-center ">
 				{#each venues as event}
-					<Card {event} />
+				<div
+				class="venue-conatiner flex flex-col px-3 gap-5 justify-start items-start h-[22rem] w-[15rem] lg:w-[20rem] md:w-[18rem] md:h-[28rem]"
+				on:click={togglemodal}>
+				<div class="img-container relative">
+					<div
+						class="venue-img relative overflow-hidden hover:scale-105 rounded-2xl h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center bg-red-200"
+					>
+						<img
+							src={event.img}
+							alt={event.title}
+							class="absolute top-0 left-0 w-full h-full object-cover"
+						/>
+					</div>
+					<div class="px-4 py-2 bg-[#294b55] rounded-full absolute bottom-3 right-5">
+						<span class="font-bold">Book Now</span>
+					</div>
+				</div>
+				<div class="details text-lg md:text-xl">
+					<h3>
+						{event.title}<span class="font-bold">&nbsp;{event.city}</span>
+					</h3>
+			
+					
+				</div>
+			</div>
 				{/each}
 			</div>
 		</div>

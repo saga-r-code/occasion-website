@@ -22,8 +22,10 @@
 			alert('please fill up the login page');
 		}
 
+		const apiPath = email === isAdmin ? 'http://localhost:3000/api/admin/login' : 'http://localhost:3000/api/user/login';
+
 		try {
-			const response = await fetch('http://localhost:3000/api/user/login', {
+			const response = await fetch(apiPath, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -39,9 +41,9 @@
 				alert('Login successful!');
 				clearForm();
 				if (email === isAdmin) {
-					window.location.href = 'http://localhost:5173/admin';
+					window.location.href = '/admin';
 				} else {
-					window.location.href = 'http://localhost:5173/home';
+					window.location.href = '/home';
 				}
 			} else {
 				alert('Invalid Credtional');

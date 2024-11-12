@@ -5,7 +5,7 @@
 
 	let categories = []; // Categories array
 	let venue = [];
-	let selectedCategory = ''; // Bind selected category value
+	let selectedCategory = 'All Venues'; // Bind selected category value
 	let image = ''; // Image file
 	let title = '';
 	let location = '';
@@ -18,10 +18,22 @@
 	let insertCategory = false;
 	let booking = false;
 
-	$: filteredVenue =
-		selectedCategory === 'All Venues' || !selectedCategory
-			? venue
-			: venue.filter((item) => item.category_name === selectedCategory);
+	// Group venues by category
+	$: groupedVenues = selectedCategory === 'All Venues' || !selectedCategory
+    ? venue
+    : venue.filter((item) => item.category_name === selectedCategory);
+
+  $: categories = [
+    ...new Set(venue.map((item) => item.category_name)),
+  ];
+
+  // Get unique categories from the venue data
+  $: categories = [
+    ...new Set(venue.map((item) => item.category_name)),
+  ];
+
+  // Optionally add 'All Venues' at the end of the categories array
+  $: categoriesWithAll = [...categories, 'All Venues'];
 
 	function toggle() {
 		modal = !modal;
@@ -254,18 +266,16 @@
 		</button>
 		<div class="space-x-4 space-y-4 sm:space-y-0">
 			<select
-				id="category"
-				name="category"
-				bind:value={selectedCategory}
-				required
-				class="rounded-lg w-full text-white font-semibold bg-white/10 tracking-wider text-[17px] border-slate-300 bg-opacity-30 backdrop-blur-lg border py-3 pr-10 pl-5 xl"
-			>	
-				<option value="" disabled selected>Choose a category</option>
-				{#each categories as category}
-					<!-- Add this line -->
-					<option value={category.category_name}>{category.category_name} </option>
-				{/each}
-				<option value="All Venues">All Venues</option>
+			  id="category"
+			  name="category"
+			  bind:value={selectedCategory}
+			  required
+			  class="rounded-lg w-full text-white font-semibold bg-white/10 tracking-wider text-[17px] border-slate-300 bg-opacity-30 backdrop-blur-lg border py-3 pr-10 pl-5 xl"
+			>  
+			  <option value="" disabled selected>Choose a category</option>
+			  {#each categoriesWithAll as category}
+				<option value={category}>{category}</option>
+			  {/each}
 			</select>
 		</div>
 	</div>
@@ -430,60 +440,41 @@
 		</div>
 	{/if}
 
-	<div class="w-[90%] mx-auto h-auto">
-		<div class="wedding-item text-white py-10">
-			<Headline headline={selectedCategory || 'All Venues'} no={filteredVenue.length} />
-			<!-- Venue cards -->
-			<div
-				class="venue-list flex flex-wrap justify-center sm:justify-start gap-y-10 md:gap-y-14 py-10 gap-x-10 md:gap-x-10"
-			>
-				{#each filteredVenue as item}
-					<div
-						class="venue-conatiner rounded-xl border-2 flex flex-col overflow-hidden gap-5 pb-5 justify-start items-start h-auto w-[15rem] lg:w-[22rem] md:w-[18rem]"
-					>
-						<div class="img-container relative">
-							<div
-								class="absolute z-20 left-5 top-5 bg-red-500 rounded-md hover:bg-red-600 active:shadow-inner active:bg-red-500"
-							>
-								<button
-									class="fa-solid fa-trash w-9 h-9 text-xl"
-									on:click={() => handleDeleteItem(item.item_id)}
-								></button>
-							</div>
-							<div
-								class="venue-img overflow-hidden h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center"
-							>
-								<img
-									src={item.image}
-									alt={item.title}
-									class="absolute top-0 left-0 w-full h-full object-cover"
-								/>
-							</div>
-						</div>
-						<div class="details px-4 text-lg md:text-xl flex flex-col gap-2">
-							<h3>
-								{item.title}<span class="font-bold">&nbsp; &nbsp;{item.location}</span>
-							</h3>
-
-							<div class="flex gap-2 flex-wrap items-center py-2">
-								<span class="text-slate-400 line-through"
-									>{item.old_price > 0 ? `₹ ${item.old_price}` : ''}</span
-								>
-								<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {item.new_price}</button>
-							</div>
-
-							<div
-								class="my-2 bg-green-500 px-4 rounded-xl hover:bg-green-600 active:bg-green-500 text-lg font-bold py-2 w-fit"
-							>
-								<button class="text-wrap" on:click={() => openForm(item.item_id)}>Add Booking Form</button>
-							</div>
-						</div>
-					</div>
-				{/each}
+	
+<div class="w-[90%] mx-auto h-auto text-white mt-10">
+	{#each categories as category}
+	  <div class="category-section">
+		<!-- Display category headline -->
+		<Headline headline={category} no={groupedVenues.filter((item) => item.category_name === category).length} />
+  
+		<!-- Venue cards for this category -->
+		<div class="venue-list flex flex-wrap justify-center sm:justify-start gap-y-10 md:gap-y-14 py-10 gap-x-10 md:gap-x-10">
+		  {#each groupedVenues.filter((item) => item.category_name === category) as item}
+			<div class="venue-container rounded-xl border-2 flex flex-col overflow-hidden gap-5 pb-5 justify-start items-start h-auto w-[15rem] lg:w-[22rem] md:w-[18rem]">
+			  <div class="img-container relative">
+				<div class="absolute z-20 left-5 top-5 bg-red-500 rounded-md hover:bg-red-600 active:shadow-inner active:bg-red-500">
+				  <button class="fa-solid fa-trash w-9 h-9 text-xl" on:click={() => handleDeleteItem(item.item_id)}></button>
+				</div>
+				<div class="venue-img overflow-hidden h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center">
+				  <img src={item.image} alt={item.title} class="absolute top-0 left-0 w-full h-full object-cover" />
+				</div>
+			  </div>
+			  <div class="details px-4 text-lg md:text-xl flex flex-col gap-2">
+				<h3>{item.title}<span class="font-bold">&nbsp; &nbsp;{item.location}</span></h3>
+				<div class="flex gap-2 flex-wrap items-center py-2">
+				  <span class="text-slate-400 line-through">{item.old_price > 0 ? `₹ ${item.old_price}` : ''}</span>
+				  <button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {item.new_price}</button>
+				</div>
+				<div class="my-2 bg-green-500 px-4 rounded-xl hover:bg-green-600 active:bg-green-500 text-lg font-bold py-2 w-fit">
+				  <button class="text-wrap" on:click={() => openForm(item.item_id)}>Add Booking Form</button>
+				</div>
+			  </div>
 			</div>
-			<!-- Venue List end -->
+		  {/each}
 		</div>
-	</div>
+	  </div>
+	{/each}
+  </div>
 
 	{#if booking}
 		<Bookingform {bookingPageSelectedTitle} {bookingToggle} {booking} />

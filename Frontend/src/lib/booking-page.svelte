@@ -113,22 +113,22 @@
   }
   
 
-  onMount(() => {
-    interval = setInterval(() => {
-      currentIndex = (currentIndex + 1) % images.length;
-    }, 3000); // change image every 3 seconds
-  });
+  // onMount(() => {
+  //   interval = setInterval(() => {
+  //     currentIndex = (currentIndex + 1) % images.length;
+  //   }, 3000); // change image every 3 seconds
+  // });
 
-  function previousImage() {
-    currentIndex = (currentIndex - 1 + images.length) % images.length;
-  }
+  // function previousImage() {
+  //   currentIndex = (currentIndex - 1 + images.length) % images.length;
+  // }
 
-  function nextImage() {
-    currentIndex = (currentIndex + 1) % images.length;
-  }
+  // function nextImage() {
+  //   currentIndex = (currentIndex + 1) % images.length;
+  // }
 
   // Define Close Form Variable
-  let closeForm = false;
+  export let closeForm = false;
 
   // Define Toggle Modal Function
   function togglemodal() {
@@ -138,14 +138,15 @@
 </script>
 
 <!-- Conditional Rendering -->
-{#if !closeForm}
+{#if closeForm}
   <!-- Modal Container -->
   <div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50 overflow-scroll overflow-x-hidden">
     <!-- Modal Content -->
     <div class="bg-white m-5 h-full relative overflow-y-scroll">
       <!-- Close Button -->
       <div>
-        <button class="fa-solid fa-circle-xmark text-4xl absolute top-10 right-3 md:right-10" on:click={togglemodal}></button>
+        <button class="fa-solid fa-circle-xmark text-4xl absolute top-10 right-3 md:right-10" 
+        on:click={togglemodal}></button>
       </div>
 
       <!-- Modal Content -->
@@ -156,24 +157,26 @@
           <div class="w-full h-full relative bg-red- shadow-xl rounded-md overflow-hidden  border-2 flex justify-center items-center flex-col">
 
             <!-- pagination -->
+             <!--  on:click={previousImage} -->
+               <!-- on:click={nextImage} -->
 			<div class="pagination">
 				<button
-        on:click={previousImage}
+       
 					class="flex bg-white w-10 h-10 md:w-[50px] md:h-[50px] rounded-full text-center absolute z-10 top-[45%] md:top-[40%] left-3 justify-center items-center"
 				>
 					<i class="fa-solid fa-angles-left"></i>
 				</button>
 
 				<button
-        on:click={nextImage}
+        
 					class="flex bg-white w-10 h-10 md:w-[50px] md:h-[50px] rounded-full text-center absolute z-10 top-[45%] md:top-[40%] right-3 justify-center items-center"
 				>
 					<i class="fa-solid fa-angles-right"></i>
 				</button>
 			</div>
 
-
-      <div class="w-full h-full flex justify-center items-center overflow-x-auto">
+      <img src={img1} alt={'image'} class="w-full h-full object-cover" />
+      <!-- <div class="w-full h-full flex justify-center items-center overflow-x-auto">
         {#each images as image, index}
           <div
             class={`w-full h-full overflow-hidden flex justify-center items-center ${
@@ -183,7 +186,7 @@
             <img src={image.img} alt={'image'} class="w-full h-full object-cover" />
           </div>
         {/each}
-      </div>
+      </div> -->
 
            <div class="w-full h-[20vh] flex py-4 px-3 justify-center items-center gap-10 overflow-x-auto ">
             {#each images as image}
@@ -212,9 +215,20 @@
 
           <!--Details-->
             <div class="details border-2 shadow-xl px-5 py-3  flex justify-center gap-2 flex-col">
-              <h2 class="text-2xl font-bold">₹ 4999</h2>
+              <h2 class="text-2xl font-bold text-right">₹ 4999</h2>
               <hr>
               <form class="flex flex-col justify-center  mt-3 gap-3">  
+                <div class="flex justify-center items-center gap-5">
+                  <i class="fa-solid fa-user text-2xl"></i>
+                  <input
+                  type="text"
+                  id="name"
+                  placeholder="Enter Your Full Name"
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                  required
+                  />
+                </div>
+
                 <div class="flex justify-center items-center gap-5">
                   <i class="fa-solid fa-location-dot text-2xl"></i>
                   <input
@@ -224,7 +238,8 @@
                   class="mt-1 block w-full border border-gray-300 rounded-md p-2"
                   required
                   />
-                </div>              
+                </div>  
+
                 <div class="flex justify-center items-center gap-5">
                   <i class="fa-solid fa-phone text-xl"></i>
                   <input
@@ -235,6 +250,7 @@
                   required
                   />
                 </div>
+               
                 <div class="flex justify-center items-center gap-5">
                   <i class="fa-solid fa-calendar-days text-2xl"></i>
                   <input
@@ -245,9 +261,10 @@
                   required
                   />
                 </div>
+                <p class="text-sm text-gray-500 mx-10">Select any date for us to come and decorate your space.</p>
               </form>
               <div class="bg-blue-500 px-5 py-2 text-center my-3 rounded-md">
-              <button class="text-white font-bold text-lg">Book Now -></button>
+              <button class="text-white font-bold text-lg">Book Now</button>
               </div>
             </div>
 
@@ -291,21 +308,18 @@
               <!-- custom-item end  -->
             </div>
 
-            <!-- location -->
+            <!-- pricing -->
             <div class="details border-2 shadow-xl px-5 py-3  flex justify-center gap-2  flex-col">
-              <h2 class="text-2xl font-bold">Location</h2>
+              <h2 class="text-2xl font-bold">Contact</h2>
               <hr>
-              <div class="details  mt-3">
-                <p class="text-lg">At Your Location</p>
-              </div>
 
-              <div class="flex flex-col justify-center items-start xl:items-end">
-                <div class="flex gap-2">
-                <p class="text-lg font-semibold">Total Price:-</p>
-                <h2 class="text-xl font-bold">₹ 5000</h2>  
-                </div>
-                <button class="bg-blue-600 shadow-lg mt-2 px-3 py-2 rounded-md text-white font-semibold">Book Now</button>
-                </div> 
+              <p class="flex flex-col gap-3 text-balance">If any queries, please contact</p>
+               <a href="https://api.whatsapp.com/send?phone=919820938124" target="_blank" class="fa-solid fa-phone  flex gap-4"><p class="text-balance font-normal font-sans">91+ 9820938124</p></a>
+
+             
+              <a href="https://api.whatsapp.com/send?phone=919820938124" target="_blank" class="fa-solid fa-envelope  flex gap-4"><p class="text-balance font-normal font-sans">shah.sagar2006@gmail.com</p></a>
+
+             
             </div>
 
           

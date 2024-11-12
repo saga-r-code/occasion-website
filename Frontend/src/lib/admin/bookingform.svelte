@@ -32,8 +32,8 @@
 		
 		// Select the inclusion container div and insert the new input box before the confirm button
 		const form = document.querySelector('form');
-		const confirmButton = form.querySelector('.confirm-button');
-		form.insertBefore(inputBox, confirmButton);
+		const inclusionabove = form.querySelector('.inclusions');
+		form.insertBefore(inputBox, inclusionabove);
 	}
 	
 	//inclusion input delete
@@ -189,13 +189,13 @@
 				</div>
 
 				<!-- customizations -->
-				<div class="mt-3 flex justify-between items-center gap-3">
+				<div class="mt-3 flex justify-between items-center gap-3 inclusions">
 					<label for="customization" class="block text-lg  font-bold text-gray-70">Customizations:</label>
 					<button class="flex justify-center items-center text-blue-500 underline" on:click={customizationForm}><span>Go here &nbsp; </span><i class="fa-solid fa-arrow-right "></i></button>	
 				</div>
 
 				<!-- Submit Button -->
-				<div class="mt-4 confirm-button">
+				<div class="mt-4 ">
 					<button
 						type="submit"
 						class="w-full text-lg bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600"
