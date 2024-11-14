@@ -14,7 +14,19 @@ const router = express.Router();
 router.post('/api/admin/customization_table', upload.single('custom_image'), async (req, res) => {
     let conn;
     try {
-        const { custom_title, custom_desc, custom_price } = req.body;
+        // Extract data from the request body
+        const { custom_title, custom_desc, custom_price, booking_id } = req.body;
+        console.log(req.body);
+
+        // Connect to the database
+        conn = await pool.getConnection();
+
+        // Validate booking_id exists
+        const bookingExist = await conn.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
+        console.log(bookingExist);
+        if (bookingExist.length === 0) {
+            return res.status(404).json({ message: 'Invalid Booking Id' });
+        }
 
         // Compress and resize the image using sharp
         let imageBuffer = null;
@@ -25,42 +37,41 @@ router.post('/api/admin/customization_table', upload.single('custom_image'), asy
                 .toBuffer();
         }
 
-        // Connect to the database
-        conn = await pool.getConnection();
-
-        // SQL query with placeholders
+        // SQL query with placeholders to insert customization item
         const result = await conn.query(`
-            INSERT INTO customization_item (custom_image, custom_title, custom_desc, custom_price) 
-            VALUES (?, ?, ?, ?)
+            INSERT INTO customization_item (custom_image, custom_title, custom_desc, custom_price, booking_id) 
+            VALUES (?, ?, ?, ?, ?)
         `, [
             imageBuffer, // Image buffer first
             custom_title,
             custom_desc, 
-            custom_price
+            custom_price,
+            booking_id
         ]);
 
         // Get the insertId to return the custom_id
         const custom_id = Number(result.insertId);
 
         console.log("Added Data:", {
-            custom_id, custom_title, custom_desc, custom_price
+            custom_id, custom_title, custom_desc, custom_price, booking_id
         });
         if (imageBuffer) {
             console.log("Image Buffer Size:", imageBuffer.length);
             console.log("Image Buffer Preview:", imageBuffer.slice(0, 20)); // Log only the first 20 bytes
         }
 
+        // Respond with the created customization item
         res.status(201).send({
             data: {
                 custom_id, // Return the inserted ID
                 custom_title,
                 custom_desc, 
                 custom_price,
+                booking_id,
                 image: req.file ? req.file.originalname : null
             }
         });
-    }
-    catch (error) {
+    } catch (error) {
         console.error('Error inserting data:', error.message);
         res.status(500).send({ message: 'Internal Server Error' });
     } finally {

@@ -10,17 +10,26 @@ router.post('/api/admin/inclusion_table', async (req, res) => {
     let conn;
     try {
         conn = await pool.getConnection();
-        const { inclusion_desc } = req.body;
+        const { inclusion_desc, booking_id } = req.body;
 
-        console.log('Inclusion description:', inclusion_desc); 
+        console.log('Inclusion description:', req.body); 
 
-        const result = await conn.query('INSERT INTO inclusions (inclusion_desc) VALUES (?)', [inclusion_desc]);
+        //validate booking_id exist
+        const bookingExist = await conn.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
+        console.log(bookingExist)
+        if(bookingExist.length === 0){
+            return res.status(404).json({ message: 'Invalid Booking Id' });
+        }
+
+        const result = await conn.query('INSERT INTO inclusions (inclusion_desc, booking_id) VALUES (?, ?)', [inclusion_desc, booking_id]);
+
+        console.log(result)
         
         if (result.affectedRows === 1) {
             const insertID = Number(result.insertId); // Convert to a regular number
             console.log('Insert successful, ID:', insertID); 
             return res.json({ 
-                message: 'Inclusion added successfully', 
+                message: 'Inclusion addedbooki successfully', 
                 id: insertID, 
                 inclusion_desc: inclusion_desc 
             });

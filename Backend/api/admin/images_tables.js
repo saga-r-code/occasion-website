@@ -17,11 +17,21 @@ router.post('/api/admin/images_table', upload.array('image', 12), async (req, re
     try {
         conn = await pool.getConnection();
 
+        // Extract booking_id from the request body
+        const { booking_id } = req.body;
+
+        // Check if files were uploaded
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ message: 'No files uploaded' });
         }
 
-        // Loop through each file in req.files array and process them
+        // Validate booking_id exists
+        const bookingExist = await conn.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
+        if (bookingExist.length === 0) {
+            return res.status(404).json({ message: 'Invalid Booking Id' });
+        }
+
+        // Process each file in req.files array
         const imagePromises = req.files.map(async (file) => {
             let imageBuffer = null;
             try {
@@ -31,12 +41,12 @@ router.post('/api/admin/images_table', upload.array('image', 12), async (req, re
                     .jpeg({ quality: 80 }) // Convert to JPEG format with 80% quality
                     .toBuffer();
 
-                // Insert the image buffer into the database
-                const result = await conn.query('INSERT INTO multi_images (image) VALUES (?)', [imageBuffer]);
+                // Insert the image buffer and booking_id into the database
+                const result = await conn.query('INSERT INTO multi_images (image, booking_id) VALUES (?, ?)', [imageBuffer, booking_id]);
 
-                // Log the image buffer size
+                // Log the image buffer size and preview
                 console.log("Image Buffer Size:", imageBuffer.length);
-                console.log("Image Buffer Preview:", imageBuffer.slice(0, 20)); 
+                console.log("Image Buffer Preview:", imageBuffer.slice(0, 20));
 
                 return result.insertId; 
             } catch (error) {
@@ -51,18 +61,23 @@ router.post('/api/admin/images_table', upload.array('image', 12), async (req, re
         // Convert BigInt to Number to avoid JSON serialization error
         const addImageIdsNumbers = addImageIds.map(id => Number(id));
 
+        // Send response with success message and image IDs
         res.json({
             message: 'Images added successfully',
             image_ids: addImageIdsNumbers, 
             image_names: req.files.map(file => file.originalname),
         });
-        
+
     } catch (error) {
         console.error('Error inserting images:', error.message);
         res.status(500).send({ message: 'Internal Server Error' });
     } finally {
         if (conn) {
-            await conn.release();
+            try {
+                await conn.release();
+            } catch (releaseError) {
+                console.error('Error releasing database connection:', releaseError.message);
+            }
         }
     }
 });

@@ -142,7 +142,8 @@
   <!-- Modal Container -->
   <div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50 overflow-scroll overflow-x-hidden">
     <!-- Modal Content -->
-    <div class="bg-white m-5 h-full relative overflow-y-scroll">
+    <div class="bg-white m-5 h-full relative overflow-y-scroll ">
+      
       <!-- Close Button -->
       <div>
         <button class="fa-solid fa-circle-xmark text-4xl absolute top-10 right-3 md:right-10" 
@@ -153,7 +154,7 @@
       <div class="flex justify-center mb-10 mt-10  items-center h-full flex-wrap md:flex-nowrap">
 
         <!-- Image Container -->
-        <div class="img-container h-full w-full md:w-[50vw] py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24 ">
+        <div class="img-container h-full w-full md:w-[40vw] py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24 ">
           <div class="w-full h-full relative bg-red- shadow-xl rounded-md overflow-hidden  border-2 flex justify-center items-center flex-col">
 
             <!-- pagination -->
@@ -198,14 +199,15 @@
                 />
             </div>
             {/each}
-              </div>           
+            </div>           
            
-
+              
           </div>
+          
         </div>
 
         <!-- Info Container -->
-        <div class="info-container h-full w-full md:w-[50vw] py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24 overflow-y-scroll ">
+        <div class="info-container relative h-full w-full md:w-[60vw] py-14 my-24 md:px-3 lg:px-7 xl:px-14 2xl:px-24 overflow-y-scroll ">
           <div class="w-full h-full flex flex-col gap-y-10">
              <!--heading-->
             <div class="heading border-2 shadow-xl px-5 py-3 flex justify-center gap-2 flex-col">
@@ -318,11 +320,14 @@
 
              
               <a href="https://api.whatsapp.com/send?phone=919820938124" target="_blank" class="fa-solid fa-envelope  flex gap-4"><p class="text-balance font-normal font-sans">shah.sagar2006@gmail.com</p></a>
-
-             
             </div>
 
-          
+            <!-- Book -->
+            <div class="details rounded-md shadow-xl px-5 py-3 text-white bg-blue-500 text-center font-semibold text-xl  flex justify-center gap-2  flex-col">
+             Book Now
+              
+            </div>
+            
 
           </div>
         </div>

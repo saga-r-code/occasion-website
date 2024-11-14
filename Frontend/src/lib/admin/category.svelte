@@ -19,6 +19,7 @@
 	let booking = false;
 
 	// Group venues by category
+	
 	$: groupedVenues = selectedCategory === 'All Venues' || !selectedCategory
     ? venue
     : venue.filter((item) => item.category_name === selectedCategory);
@@ -256,7 +257,7 @@
 	});
 </script>
 
-<div class={`conatiner ${selectedCategory.length >=4 ? 'h-[100vh]' : 'h-auto'} h-[100vh]`}>
+<div class={`conatiner h-auto`}>
 	<div class="flex justify-between flex-wrap gap-5 mx-auto w-[80%] pt-10">
 		<button
 			on:click={toggle}
@@ -475,6 +476,7 @@
 	  </div>
 	{/each}
   </div>
+
 
 	{#if booking}
 		<Bookingform {bookingPageSelectedTitle} {bookingToggle} {booking} />
