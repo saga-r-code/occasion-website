@@ -33,6 +33,8 @@ app.use(cookieParser());
 
 app.use(express.json())
 
+app.use(express.urlencoded({extended: true}))
+
 app.use(bookingrouter) //app.use('/booking', bookingrouter)
 app.use(signuprouter) //app.use('/signup', signuprouter)
 app.use(loginrouter) //app.use('/login', loginrouter)

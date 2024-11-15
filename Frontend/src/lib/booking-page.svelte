@@ -6,6 +6,7 @@
   import img4 from '../lib/Images/decoration-3.jpeg';
   import img5 from '../lib/Images/flower.jpg';
   import img6 from '../lib/Images/chairs-2.jpg';
+	import LoginPage from './login-page.svelte';
 
   const images = [
     { id: 1, img: img1 },
@@ -129,32 +130,39 @@
 
   // Define Close Form Variable
   export let closeForm = false;
+  let open = false
+  
 
   // Define Toggle Modal Function
   function togglemodal() {
     closeForm = !closeForm;
   }
 
+  function toggleLoginPage(){
+    open = !open
+  }
+
 </script>
 
+<LoginPage {open} {toggleLoginPage}/>
 <!-- Conditional Rendering -->
 {#if closeForm}
   <!-- Modal Container -->
-  <div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50 overflow-scroll overflow-x-hidden">
+  <div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-40 overflow-scroll overflow-x-hidden">
     <!-- Modal Content -->
     <div class="bg-white m-5 h-full relative overflow-y-scroll ">
       
       <!-- Close Button -->
-      <div>
-        <button class="fa-solid fa-circle-xmark text-4xl absolute top-10 right-3 md:right-10" 
-        on:click={togglemodal}></button>
-      </div>
+      <button
+      class="fa-solid fa-xmark text-2xl -mt-3 absolute bg-black text-white rounded-full px-2  top-10 right-10 float-right cursor-pointer"
+      on:click={togglemodal}
+    ></button>
 
       <!-- Modal Content -->
       <div class="flex justify-center mb-10 mt-10  items-center h-full flex-wrap md:flex-nowrap">
 
         <!-- Image Container -->
-        <div class="img-container h-full w-full md:w-[40vw] py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24 ">
+        <div class="img-container h-full w-full md:w-[50vw] py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24 ">
           <div class="w-full h-full relative bg-red- shadow-xl rounded-md overflow-hidden  border-2 flex justify-center items-center flex-col">
 
             <!-- pagination -->
@@ -207,7 +215,7 @@
         </div>
 
         <!-- Info Container -->
-        <div class="info-container relative h-full w-full md:w-[60vw] py-14 my-24 md:px-3 lg:px-7 xl:px-14 2xl:px-24 overflow-y-scroll ">
+        <div class="info-container relative h-full w-full md:w-[50vw] py-14 my-24 md:px-3 lg:px-7 xl:px-14 2xl:px-24 overflow-y-scroll ">
           <div class="w-full h-full flex flex-col gap-y-10">
              <!--heading-->
             <div class="heading border-2 shadow-xl px-5 py-3 flex justify-center gap-2 flex-col">
@@ -266,7 +274,7 @@
                 <p class="text-sm text-gray-500 mx-10">Select any date for us to come and decorate your space.</p>
               </form>
               <div class="bg-blue-500 px-5 py-2 text-center my-3 rounded-md">
-              <button class="text-white font-bold text-lg">Book Now</button>
+              <button class="text-white font-bold text-lg" on:click={toggleLoginPage}>Book Now</button>
               </div>
             </div>
 
@@ -323,10 +331,10 @@
             </div>
 
             <!-- Book -->
-            <div class="details rounded-md shadow-xl px-5 py-3 text-white bg-blue-500 text-center font-semibold text-xl  flex justify-center gap-2  flex-col">
+            <button class="details rounded-md shadow-xl px-5 py-3 text-white bg-blue-500 text-center font-semibold text-xl  flex justify-center gap-2  flex-col" on:click={toggleLoginPage}>
              Book Now
               
-            </div>
+            </button>
             
 
           </div>

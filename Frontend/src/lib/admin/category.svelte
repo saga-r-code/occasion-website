@@ -5,7 +5,7 @@
 
 	let categories = []; // Categories array
 	let venue = [];
-	let selectedCategory = 'All Venues'; // Bind selected category value
+	let selectedCategory = ''; // Bind selected category value
 	let image = ''; // Image file
 	let title = '';
 	let location = '';
@@ -24,9 +24,7 @@
     ? venue
     : venue.filter((item) => item.category_name === selectedCategory);
 
-  $: categories = [
-    ...new Set(venue.map((item) => item.category_name)),
-  ];
+
 
   // Get unique categories from the venue data
   $: categories = [
@@ -56,6 +54,7 @@
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
 			const fetchedCategories = await response.json();
+			// console.log(fetchedCategories)
 			const result = Array.isArray(fetchedCategories) ? fetchedCategories : [];
 			categories = result;
 		} catch (error) {
@@ -228,7 +227,7 @@
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const item = await response.json();
-            bookingPageSelectedTitle = item.title; // Set selectedTitle and trigger reactivity
+            bookingPageSelectedTitle = item.category_name; // Set selectedTitle and trigger reactivity
         } catch (error) {
             console.error('Error fetching title:', error);
             bookingPageSelectedTitle = 'Error loading title'; // Fallback title
@@ -321,10 +320,10 @@
 							required
 							class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 						>
-							<option value="" disabled selected>Choose a category</option>
-							{#each categories as category}
-								<option value={category.category_name}>{category.category_name}</option>
-							{/each}
+						<option value="" disabled selected>Choose a category</option>
+						{#each categories as category}
+						  <option value={category}>{category}</option>
+						{/each}
 						</select>
 						<button
 							class="bg-slate-500 flex justify-center items-center rounded-md"
@@ -451,22 +450,22 @@
 		<!-- Venue cards for this category -->
 		<div class="venue-list flex flex-wrap justify-center sm:justify-start gap-y-10 md:gap-y-14 py-10 gap-x-10 md:gap-x-10">
 		  {#each groupedVenues.filter((item) => item.category_name === category) as item}
-			<div class="venue-container rounded-xl border-2 flex flex-col overflow-hidden gap-5 pb-5 justify-start items-start h-auto w-[15rem] lg:w-[22rem] md:w-[18rem]">
+			<div class="venue-container bg-white text-black shadow-lg shadow-gray-900  rounded-xl border-2 flex flex-col overflow-hidden gap-5 pb-5 justify-start items-start h-auto w-[15rem] lg:w-[22rem] md:w-[18rem]">
 			  <div class="img-container relative">
-				<div class="absolute z-20 left-5 top-5 bg-red-500 rounded-md hover:bg-red-600 active:shadow-inner active:bg-red-500">
+				<div class="absolute z-20 left-5 top-5 text-white bg-red-500 rounded-md hover:bg-red-600 active:shadow-inner active:bg-red-500">
 				  <button class="fa-solid fa-trash w-9 h-9 text-xl" on:click={() => handleDeleteItem(item.item_id)}></button>
 				</div>
 				<div class="venue-img overflow-hidden h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center">
-				  <img src={item.image} alt={item.title} class="absolute top-0 left-0 w-full h-full object-cover" />
+				  <img src={item.image} alt={item.title} class="absolute top-0 left-0 border-b-2 border-gray-300 w-full h-full object-cover" />
 				</div>
 			  </div>
 			  <div class="details px-4 text-lg md:text-xl flex flex-col gap-2">
 				<h3>{item.title}<span class="font-bold">&nbsp; &nbsp;{item.location}</span></h3>
 				<div class="flex gap-2 flex-wrap items-center py-2">
-				  <span class="text-slate-400 line-through">{item.old_price > 0 ? `₹ ${item.old_price}` : ''}</span>
-				  <button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {item.new_price}</button>
+				  <span class="text-slate-500 line-through">{item.old_price > 0 ? `₹ ${item.old_price}` : ''}</span>
+				  <button class="py-2 w-[7rem] rounded-full bg-green-200 shadow-md">₹ {item.new_price}</button>
 				</div>
-				<div class="my-2 bg-green-500 px-4 rounded-xl hover:bg-green-600 active:bg-green-500 text-lg font-bold py-2 w-fit">
+				<div class="my-2 bg-blue-500 shadow-xl px-4 rounded-xl text-white hover:shadow-inner hover:bg-blue-600 active:bg-blue-500 text-lg font-bold py-2 w-fit">
 				  <button class="text-wrap" on:click={() => openForm(item.item_id)}>Add Booking Form</button>
 				</div>
 			  </div>

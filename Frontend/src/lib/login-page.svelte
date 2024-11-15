@@ -71,7 +71,7 @@
 
 {#if open}
 	<div
-		class="w-dvw h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] justify-center items-start md:items-center p-2 py-14 sm:py-0 z-30 flex"
+		class="w-dvw h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] justify-center items-start md:items-center p-2 py-14 sm:py-0 z-50 flex"
 	>
 		<div class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
 			<button

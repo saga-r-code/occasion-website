@@ -62,7 +62,7 @@
 					<i class="fa-solid fa-magnifying-glass text-white"></i>
 				</div>
 
-				<li class="hover:underline hover:underline-offset-8"><a href="/home">Home</a></li>
+				<!-- <li class="hover:underline hover:underline-offset-8"><a href="/home">Home</a></li> -->
 				<li class="hover:underline hover:underline-offset-8"><a href="/venue">Venue</a></li>
 				<li class="hover:underline hover:underline-offset-8"><a href="/services">Services</a></li>
 				<li class="hover:underline hover:underline-offset-8"><a href="/about">About</a></li>

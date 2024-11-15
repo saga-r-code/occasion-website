@@ -4,9 +4,9 @@
 	import img from '../lib/Images/lantern-2.jpg';
 </script>
 
-<div class="info-container pb-14 md:py-14 text-white">
+<div class="info-container pb-14 text-white">
 	<div
-		class="info rounded-xl w-full shadow-2xl h-auto p-3 sm:p-10 gap-10 flex flex-col justify-between items-center relative xl:px-30 2xl:px-40 2xl:gap-10 xl:flex-row 2xl:h-[30rem]"
+		class="info rounded-xl w-full shadow-lg h-auto p-3 sm:p-10 gap-10 flex flex-col justify-between items-center relative xl:px-30 2xl:px-40 2xl:gap-10 xl:flex-row 2xl:h-[30rem]"
 	>
 		<div
 			class="img bg-slate-200 relative h-52 sm:h-[20rem] w-full 2xl:w-[25rem] flex justify-center items-center"

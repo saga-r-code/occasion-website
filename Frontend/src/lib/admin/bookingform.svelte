@@ -12,11 +12,11 @@
 	let images = []
 	let imagesInput;
 	let cust_id = 0
-	let cust_image = null
-	let cust_title = ''
-	let cust_desc = ''
-	let cust_price = 0
-	let customization =[]
+	let custom_image = null
+	let custom_title = ''
+	let custom_desc = ''
+	let custom_price = 0
+	let customization =[	]
 
 
 	//inclusion input add
@@ -46,17 +46,13 @@
 			customization = [
 				...customization,
 				{
-					cust_id : customization.length + 1,
-					cust_title: cust_title,
-					cust_desc: cust_desc,
-					cust_price: cust_price
+					custom_id : customization.length + 1,
+					custom_title: custom_title,
+					custom_desc: custom_desc,
+					custom_price: custom_price
 				}
 			];
 
-		cust_title = "";
-		cust_desc = "";
-		cust_price = 0;
-		cust_image = null;
 	}
 
 	//customization item delete
@@ -65,57 +61,70 @@
 	}		
 
 	async function handleBookingForm() {
-		const formData = new FormData();
+    const formData = new FormData();
 
-		// Append primary booking form data
-		formData.append('title', title);
-		formData.append('description', description);
-		formData.append('price', price);
-		formData.append('discount', discount);
-		console.log({title, description, price, discount})
+    // Log the values before appending to formData
+    console.log('Preparing to send booking form with the following data:');
+    console.log({ title, description, price, discount });
 
-		// Append inclusion as json string
-		formData.append('inclusion', JSON.stringify(inclusion));
+    // Append primary booking form data
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('price', price);
+    formData.append('discount', discount);
 
-		// Append Images
-		images.forEach((image, index) => {
-			formData.append(`image_${index}`, image);
-		});
+    // Append inclusion as json string
+    formData.append('inclusion', JSON.stringify(inclusion));
 
-		// Append customization item
-		customization.forEach((custom, index) => {
-			formData.append(`customization_${index}_title`, custom.cust_title);
-			formData.append(`customization_${index}_desc`, custom.cust_desc);
-			formData.append(`customization_${index}_price`, custom.cust_price);
-		});
-		
-		
+    // Append Images
+    images.forEach((image, index) => {
+        formData.append(`image_${index}`, image);
+    });
+
+    // Append customization item
+    customization.forEach((custom, index) => {
+        formData.append(`customization_${index}_title`, custom.custom_title);
+        formData.append(`customization_${index}_desc`, custom.custom_desc);
+        formData.append(`customization_${index}_price`, custom.custom_price);
+    });
+
+    // Log the formData entries to see what is included
+    for (const [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+
     try {
         const response = await fetch('http://localhost:3000/api/admin/booking_management', {
             method: 'POST',
             body: formData
         });
 
-			if (response.ok) {
-				const result = await response.json();
-				const booking_id = result.booking_id;
+        if (response.ok) {
+            const result = await response.json();
+            const booking_id = result.booking_id;
+            console.log(result);
 
-				 // Send inclusions and images using separate requests with booking_id
-				 await Promise.all([
-					sumbitInclusion(booking_id),
-					submitImages(booking_id),
-					submitCustomization(booking_id)
-				 ])
+            // Send inclusions and images using separate requests with booking_id
+            const responses =await Promise.all([
+                sumbitInclusion(booking_id),
+                submitImages(booking_id),
+                submitCustomization(booking_id)
+            ]);
 
-				alert("Booking Page Add Successfully");
+			responses.forEach((result, index) => {
+			if (result.status === 'rejected') {
+				console.error(`Request ${index + 1} failed:`, result.reason);
+				}
+			});
 
-			} else {
-				const errorData = await response.json();
-				console.log('Failed to sumbir booking. Error:', errorData);
-			}
-		} catch (error) {
-			console.error('An error occurred while sending the request:', error);
-		}
+            alert("Booking Page Add Successfully");
+        } else {
+            const errorData = await response.json();
+            console.log('Failed to submit booking. Error:', errorData);
+        }
+    } catch (error) {
+        console.error('An error occurred while sending the request:', error);
+    }
 	}
 
 	//child : for sumbit inclusions
@@ -123,6 +132,7 @@
 		const inclusionData = new FormData();
 		inclusionData.append('booking_id', booking_id);
 		inclusionData.append('inclusion_desc', JSON.stringify(inclusion))
+		console.log(inclusionData)
 
 		const response = await fetch('http://localhost:3000/api/admin/inclusions_table', {
 			method: 'POST',
@@ -136,23 +146,28 @@
 
 	//child : for sumbit images
 	async function submitImages(booking_id) {
-		const imageData = new FormData();
-		imageData.append('booking_id', booking_id);
+    const imageData = new FormData();
+    imageData.append('booking_id', booking_id);
 
-		images.forEach((image, index) => {
-			imageData.append(`image_${index}`, image);
-		});
+    images.forEach((image) => {
+        imageData.append('image', image); // Match backend key
+    });
 
-		const response = await fetch('http://localhost:3000/api/admin/images_table', {
-			method: 'POST',
-			body: imageData
-		});
+    try {
+        const response = await fetch('http://localhost:3000/api/admin/images_table', {
+            method: 'POST',
+            body: imageData,
+        });
 
-		if (!response.ok) {
-			console.log('Failed to send the images');
-		}
-		
-	}
+        if (!response.ok) {
+            throw new Error('Failed to send images');
+        }
+
+        console.log('Images submitted successfully!');
+    } catch (error) {
+        console.error('Error in submitImages:', error.message);
+    }
+}
 
 	function handleImagesChange () {
 		images = Array.from(imagesInput.files);
@@ -163,9 +178,10 @@
 		for (const item of customization) {
 			const customizationData = new FormData();
 			customizationData.append('booking_id', booking_id);
-        	customizationData.append('custom_title', item.cust_title);
-        	customizationData.append('custom_desc', item.cust_desc);
-        	customizationData.append('custom_price', item.cust_price);
+        	customizationData.append('custom_title', item.custom_title);
+        	customizationData.append('custom_desc', item.custom_desc);
+        	customizationData.append('custom_price', item.custom_price);
+			console.log(customizationData)
 
 			if(item.custom_image){
 				customizationData.append('custom_image', item.custom_image);
@@ -200,7 +216,7 @@ function clearForm(){
 {#if booking}
 		<div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-50 overflow-scroll">
 			<form
-				on:submit|preventDefault={clearForm}
+				on:submit|preventDefault={handleBookingForm}
 				class="max-w-md mx-auto top-24 rounded-lg border-2 shadow-lg p-6 flex h-auto flex-col gap-4 bg-white relative"
 				enctype="multipart/form-data"
 			>
@@ -313,7 +329,7 @@ function clearForm(){
 			
 				
 				<!-- Customization -->
-				<div class="customization">
+				<form class="customization" enctype="multipart/form-data">
 					<p class="text-right text-blue-600 hover:cursor-pointer hover:underline underline-offset-4">more &darr;</p>
 					<h2 class="text-2xl font-semibold text-center">Customization</h2>
 					
@@ -323,7 +339,7 @@ function clearForm(){
 							<input
 								type="file"
 								id="cust_image"
-								bind:value={cust_image}
+								bind:value={custom_image}
 								class="mt-1 border w-full border-gray-300 rounded-md p-2"
 								required	
 							/>
@@ -335,7 +351,7 @@ function clearForm(){
 					<input
 						type="text"
 						id="cust_title"
-						bind:value={cust_title}
+						bind:value={custom_title}
 						placeholder="Enter title"
 						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 						required
@@ -349,7 +365,7 @@ function clearForm(){
 					>
 					<textarea
 						id="cust_description"
-						bind:value={cust_desc}
+						bind:value={custom_desc}
 						placeholder="Enter description"
 						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 						rows="3"
@@ -363,14 +379,14 @@ function clearForm(){
 					<input
 						type="number"
 						id="cust_price"
-						bind:value={cust_price}
+						bind:value={custom_price}
 						placeholder="Enter price"
 						class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 						required
 					/>
 					</div>
 					
-					<button class="text-lg text-white rounded-md mt-5 font-semibold px-3 py-1 bg-blue-600" on:click={addCustomizationItem}>Add Customization</button>
+					<button class="text-lg text-white rounded-md mt-5 font-semibold px-3 py-1 bg-blue-600" type="reset" on:click={addCustomizationItem}>Add Customization</button>
 					
 					<!-- List Item -->
 					<div class="my-3  ">
@@ -385,11 +401,11 @@ function clearForm(){
 								on:click={deleteCustomization(customItem.cust_id)}>
 								<span class="fa-solid fa-trash text-white flex justify-center items-center  p-2"></span>
 							</button>
-								<h2 class="font-bold text-lg">{customItem.cust_title}</h2>
+								<h2 class="font-bold text-lg">{customItem.custom_title}</h2>
 							</div>
-							<h3 class="font-bold   text-lg">₹ {customItem.cust_price}</h3>
+							<h3 class="font-bold   text-lg">₹ {customItem.custom_price}</h3>
 						</div>
-						<p class="mx-10">{customItem.cust_desc}</p>
+						<p class="mx-10">{customItem.custom_desc}</p>
 					</div>
 						{/each}
 						
@@ -397,7 +413,7 @@ function clearForm(){
 
 					
 
-				</div>
+				</form>
 
 				<!-- Submit Button -->
 				<div class="mt-4 ">

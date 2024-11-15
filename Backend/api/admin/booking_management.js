@@ -2,8 +2,11 @@
 
 import express from 'express';
 import pool from '../../Database/db.js';
+import multer from 'multer';
 
 const router = express.Router();
+
+const upload = multer()
 
 
 //Get All Category with id
@@ -72,7 +75,7 @@ router.get('/api/admin/booking_management', async (req, res) => {
 
 
 //Add data
-router.post('/api/admin/booking_management', async (req, res) => {
+router.post('/api/admin/booking_management', upload.any(),  async (req, res) => {
     let conn;
     try {
         conn = await pool.getConnection();
@@ -80,10 +83,8 @@ router.post('/api/admin/booking_management', async (req, res) => {
 
         
         console.log("bookingform details: ", req.body);
+        console.log(req.files)
         
-        // if (!title || !description || !price || !discount) {
-        //     return res.status(400).json({ message: 'All fields are required' });
-        // }
         const result = await conn.query('INSERT INTO bookingform (title, description, price, discount) VALUES (?, ?, ?, ?)', [title, description, price, discount]);
        
         console.log(result);
@@ -110,33 +111,31 @@ router.post('/api/admin/booking_management', async (req, res) => {
     }
 });
 
-//Delete data
-router.delete('api/admin/booking_management/:booking_id', async (req, res) => {
-    const { booking_id } = req.body
+// Delete data
+router.delete('/api/admin/booking_management/:booking_id', async (req, res) => {
+    const { booking_id } = req.params; // Get booking_id from params
 
     try {
-        const checkResult = await pool.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id])
+        const checkResult = await pool.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
 
-        //if insert wrong booking id then return 404
-        if(checkResult.length === 0){
+        // If no booking found, return 404
+        if (checkResult.length === 0) {
             return res.status(404).json({ error: 'Booking id not found' });
         }
 
-        const result = await pool.query('DELETE FROM bookingform WHERE booking_id = ?', [booking_id])
+        const result = await pool.query('DELETE FROM bookingform WHERE booking_id = ?', [booking_id]);
 
-        if(result.affectedRows === 1){      
-            res.status(200).json({message: `Booking with ID ${booking_id} deleted successfully`})
-        }
-        else{
-            res.status(500).json({ error: 'An error occurred while deleting the boooking id' });
+        if (result.affectedRows === 1) {
+            res.status(200).json({ message: `Booking with ID ${booking_id} deleted successfully` });
+        } else {
+            res.status(500).json({ error: 'An error occurred while deleting the booking id' });
         }
 
-    }catch(error){
+    } catch (error) {
         console.error('Error deleting Booking id:', error);
-        res.status(500).json({ error: 'An error occurred while deleting the boooking id' });
+        res.status(500).json({ error: 'An error occurred while deleting the booking id' });
     }
-    
-})
+});
 
 
 export default router;
