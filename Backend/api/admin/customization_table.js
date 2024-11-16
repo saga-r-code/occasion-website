@@ -6,7 +6,7 @@ import multer from 'multer';
 import sharp from 'sharp';
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({storage});
 
 const router = express.Router();
 
@@ -14,66 +14,65 @@ const router = express.Router();
 router.post('/api/admin/customization_table', upload.single('custom_image'), async (req, res) => {
     let conn;
     try {
-        // Extract data from the request body
+        console.log('Request body:', req.body);
+        console.log('Uploaded files:', req.files);
+
         const { custom_title, custom_desc, custom_price, booking_id } = req.body;
-        console.log(req.body);
-
-        // Connect to the database
+        
+        if (!custom_title || !custom_desc || !custom_price || !booking_id) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+        
         conn = await pool.getConnection();
-
-        // Validate booking_id exists
         const bookingExist = await conn.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
-        console.log(bookingExist);
+        
         if (bookingExist.length === 0) {
             return res.status(404).json({ message: 'Invalid Booking Id' });
         }
 
-        // Compress and resize the image using sharp
         let imageBuffer = null;
-        if (req.file) {
-            imageBuffer = await sharp(req.file.buffer)
-                .resize(500) // Resize to a width of 500 pixels (adjust as needed)
-                .jpeg({ quality: 80 }) // Convert to JPEG format with 80% quality
+        if (req.files && req.files.length > 0) {
+            console.log('File uploaded:', req.files[0]);
+            imageBuffer = await sharp(req.files[0].buffer)
+                .resize(500)
+                .jpeg({ quality: 80 })
                 .toBuffer();
+            console.log('Processed image buffer:', imageBuffer);
+            console.log('Image buffer size:', imageBuffer.length);
+        } else {
+            console.log('No files uploaded');
         }
 
-        // SQL query with placeholders to insert customization item
+        if (!imageBuffer && req.files.length > 0) {
+            return res.status(400).send({ message: 'Image upload failed' });
+        }
+
         const result = await conn.query(`
             INSERT INTO customization_item (custom_image, custom_title, custom_desc, custom_price, booking_id) 
             VALUES (?, ?, ?, ?, ?)
         `, [
-            imageBuffer, // Image buffer first
+            imageBuffer || null,
             custom_title,
-            custom_desc, 
+            custom_desc,
             custom_price,
             booking_id
         ]);
 
-        // Get the insertId to return the custom_id
-        const custom_id = Number(result.insertId);
-
-        console.log("Added Data:", {
-            custom_id, custom_title, custom_desc, custom_price, booking_id
-        });
-        if (imageBuffer) {
-            console.log("Image Buffer Size:", imageBuffer.length);
-            console.log("Image Buffer Preview:", imageBuffer.slice(0, 20)); // Log only the first 20 bytes
-        }
-
-        // Respond with the created customization item
-        res.status(201).send({
-            data: {
-                custom_id, // Return the inserted ID
+        if (result.affectedRows === 1) {
+            return res.json({
+                message: 'Customization added successfully',
+                id: result.insertId,
                 custom_title,
-                custom_desc, 
+                custom_desc,
                 custom_price,
-                booking_id,
-                image: req.file ? req.file.originalname : null
-            }
-        });
+                custom_image: imageBuffer ? 'Image uploaded successfully' : 'No image uploaded'
+            });
+        } else {
+            return res.status(500).send({ message: 'Error adding customization' });
+        }
     } catch (error) {
         console.error('Error inserting data:', error.message);
-        res.status(500).send({ message: 'Internal Server Error' });
+        res.status(500).send({ message: 'TEri maki chut bhadve solve hoja ab to' });
     } finally {
         if (conn) {
             try {
@@ -84,6 +83,7 @@ router.post('/api/admin/customization_table', upload.single('custom_image'), asy
         }
     }
 });
+
 
 // Delete Customization
 router.delete('/api/admin/customization_table/:custom_id', async (req, res) => {

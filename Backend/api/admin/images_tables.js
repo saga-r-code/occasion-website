@@ -92,4 +92,31 @@ router.get('/api/admin/images_table', async (req, res) => {
         res.status(500).send({ message: 'Internal Server Error' });
     }
 });
+
+// Delete images using booking_id
+router.delete('/api/admin/images_table/:booking_id', async (req, res) => {
+    const { booking_id } = req.params;
+
+    try {
+        const checkResult = await pool.query('SELECT * FROM multi_images WHERE booking_id = ?', [booking_id]);
+
+        // If the images does not exist, return a 404 error
+        if (checkResult.length === 0) {
+            return res.status(404).json({ error: 'Images not found' });
+        }
+
+        // Delete the images by booking_id from the database
+        const result = await pool.query('DELETE FROM multi_images WHERE booking_id = ?', [booking_id]);
+
+        // Check the result of the deletion
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: `Images with booking_id ${booking_id} deleted successfully` });
+        } else {
+            res.status(404).json({ message: 'Images not found' });
+        }
+    } catch (error) {
+        console.error('Error deleting images:', error);
+        res.status(500).json({ error: 'An error occurred while deleting the images' });
+    }
+});
 export default router;

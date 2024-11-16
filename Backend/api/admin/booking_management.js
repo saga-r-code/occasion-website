@@ -82,8 +82,8 @@ router.post('/api/admin/booking_management', upload.any(),  async (req, res) => 
         const { title, description, price, discount } = req.body;
 
         
-        console.log("bookingform details: ", req.body);
-        console.log(req.files)
+        // console.log("bookingform details: ", req.body);
+        console.log("files", req.files)
         
         const result = await conn.query('INSERT INTO bookingform (title, description, price, discount) VALUES (?, ?, ?, ?)', [title, description, price, discount]);
        
@@ -94,7 +94,7 @@ router.post('/api/admin/booking_management', upload.any(),  async (req, res) => 
             console.log("bookingform id: ", insertID);
             return res.json({
                 message: "bookingform added successfully",
-                id: insertID
+                booking_id: insertID
             });
         } else {
             return res.status(400).json({

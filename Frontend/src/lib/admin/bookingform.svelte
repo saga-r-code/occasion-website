@@ -134,7 +134,7 @@
 		inclusionData.append('inclusion_desc', JSON.stringify(inclusion))
 		console.log(inclusionData)
 
-		const response = await fetch('http://localhost:3000/api/admin/inclusions_table', {
+		const response = await fetch('http://localhost:3000/api/admin/inclusion_table', {
 			method: 'POST',
 			body: inclusionData
 		});
