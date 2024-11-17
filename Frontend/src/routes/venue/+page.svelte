@@ -71,7 +71,7 @@
 		>
 		{#each groupedVenues.filter((item) => item.category_name === category) as venues}
 				<div
-					class="venue-conatiner rounded-xl border-2 flex flex-col overflow-hidden gap-5 pb-5 justify-start items-start h-auto w-[15rem] lg:w-[22rem] md:w-[18rem]"
+					class="venue-conatiner bg-white text-black shadow-lg shadow-gray-900 rounded-xl border-2 flex flex-col overflow-hidden gap-5 pb-5 justify-start items-start h-auto w-[15rem] lg:w-[22rem] md:w-[18rem]"
 					on:click={togglemodal}
 				>
 					<div class="img-container relative">
@@ -85,7 +85,7 @@
 							/>
 						</div>
 						<div
-							class="px-4 py-2 bg-[#294b55] rounded-full absolute bottom-3 right-5 md:right-10 lg:right-5"
+							class="px-4 py-2 bg-green-900 shadow-md text-white rounded-full absolute bottom-3 right-5 md:right-10 lg:right-5"
 						>
 							<span class="font-bold">Book Now</span>
 						</div>
@@ -98,7 +98,7 @@
 						
 						<div class="flex gap-2 flex-wrap items-center pb-2">
 							<span class="text-slate-400 line-through"> {venues.old_price > 0 ? `₹ ${venues.old_price}` : ''}</span>
-							<button class="py-2 w-[7rem] rounded-full bg-[#50808e]">₹ {venues.new_price}</button>
+							<button class="py-2 w-[7rem] rounded-full shadow-lg  bg-green-200">₹ {venues.new_price}</button>
 						</div>
 					</div>
 				</div>

@@ -96,12 +96,12 @@
                 <Headline headline={category} no={groupedVenues.filter((item) => item.category_name === category).length} />
 					<div class="venue-list grid sm:grid-cols-2 lg:flex lg:flex-wrap py-10 gap-x-3 md:gap-x-16 items-center">
 					{#each groupedVenues.filter((item) => item.category_name === category) as event}
-						<div class="venue-container flex flex-col px-3 gap-5 justify-start items-start h-[22rem] w-[15rem] lg:w-[20rem] md:w-[18rem] md:h-[28rem]" on:click={togglemodal}>
-								<div class="img-container relative">
+						<div class="venue-container  flex flex-col b gap-5 justify-start items-start h-[22rem] w-[15rem] lg:w-[20rem] md:w-[18rem] md:h-[28rem]" on:click={togglemodal}>
+								<div class="img-container shadow-md relative">
 									<div class="venue-img relative overflow-hidden hover:scale-105 rounded-2xl h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center bg-red -200">
 										<img src={event.image} alt={event.title} class="absolute top-0 left-0 w-full h-full object-cover" />
 									</div>
-									<div class="px-4 py-2 bg-[#294b55] rounded-full absolute bottom-3 right-5">
+									<div class="px-4 py-2 bg-green-900 shadow-md rounded-full absolute bottom-3 right-5">
 										<span class="font-bold">Book Now</span>
 									</div>
 								</div>

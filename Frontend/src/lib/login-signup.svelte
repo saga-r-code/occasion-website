@@ -108,7 +108,7 @@
 			</div>
 		</div>
 
-		<a href="/home" class="px-5 pb-10 flex justify-end items-center gap-5 text-white"
+		<a href="/venue" class="px-5 pb-10 flex justify-end items-center gap-5 text-white"
 			><h3 class="text-xl font-semibold tracking-widest underline underline-offset-4">Skip</h3>
 			<i class="fa-solid fa-circle-arrow-right text-4xl"></i></a
 		>

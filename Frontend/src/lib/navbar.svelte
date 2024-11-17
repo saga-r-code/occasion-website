@@ -38,7 +38,7 @@
 		<div class="navbar flex flex-wrap gap-4 justify-between items-center py-5">
 			<div class="flex justify-center items-end flex-wrap gap-5">
 			<a href="/venue" class="text-3xl md:text-4xl font-semibold">Occasion</a>
-			<i class="fa-solid fa-phone flex justify-center items-center gap-2 text-sm"><p class="underline-offset-4 underline">9820938124</p></i>
+			<i class="fa-solid fa-phone flex justify-center items-center gap-2 text-sm"><p class="underline-offset-4 underline">9324847376</p></i>
 			</div>
 			<!-- icon -->
 			<button

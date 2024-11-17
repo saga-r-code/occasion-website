@@ -324,10 +324,9 @@
               <hr>
 
               <p class="flex flex-col gap-3 text-balance">If any queries, please contact</p>
-               <a href="https://api.whatsapp.com/send?phone=919820938124" target="_blank" class="fa-solid fa-phone  flex gap-4"><p class="text-balance font-normal font-sans">91+ 9820938124</p></a>
-
+               <a href="https://wa.me/9324847376" target="_blank" class="fa-solid fa-phone  flex gap-4"><p class="text-balance font-normal font-sans">91+ 9324847376</p></a>
              
-              <a href="https://api.whatsapp.com/send?phone=919820938124" target="_blank" class="fa-solid fa-envelope  flex gap-4"><p class="text-balance font-normal font-sans">shah.sagar2006@gmail.com</p></a>
+              <a href="mailto:info@occasions.in" target="_blank" class="fa-solid fa-envelope  flex gap-4"><p class="text-balance font-normal font-sans">info@occasions.in</p></a>
             </div>
 
             <!-- Book -->

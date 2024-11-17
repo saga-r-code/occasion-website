@@ -10,79 +10,83 @@ const upload = multer({storage});
 
 const router = express.Router();
 
-// Add customization
+
 router.post('/api/admin/customization_table', upload.single('custom_image'), async (req, res) => {
     let conn;
     try {
-        console.log('Request body:', req.body);
-        console.log('Uploaded files:', req.files);
-
         const { custom_title, custom_desc, custom_price, booking_id } = req.body;
-        
+        console.log("booking_id",booking_id)
+
+        // Validate required fields
         if (!custom_title || !custom_desc || !custom_price || !booking_id) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
-        
+
+        if (!req.file) {
+            return res.status(400).json({ message: 'Custom image is required!' });
+        }
+
+        // Process image
+        let imageBuffer;
+        try {
+            imageBuffer = await req.file.buffer
+                .resize(500)
+                .jpeg({ quality: 80 })
+                .toBuffer();
+        } catch (err) {
+            console.error('Error processing image:', err.message);
+            return res.status(500).json({ message: 'Error processing image' });
+        }
+
+        // Check if booking exists
         conn = await pool.getConnection();
         const bookingExist = await conn.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
-        
         if (bookingExist.length === 0) {
             return res.status(404).json({ message: 'Invalid Booking Id' });
         }
 
-        let imageBuffer = null;
-        if (req.files && req.files.length > 0) {
-            console.log('File uploaded:', req.files[0]);
-            imageBuffer = await sharp(req.files[0].buffer)
-                .resize(500)
-                .jpeg({ quality: 80 })
-                .toBuffer();
-            console.log('Processed image buffer:', imageBuffer);
-            console.log('Image buffer size:', imageBuffer.length);
-        } else {
-            console.log('No files uploaded');
-        }
-
-        if (!imageBuffer && req.files.length > 0) {
-            return res.status(400).send({ message: 'Image upload failed' });
-        }
-
+        // Insert customization into the database
         const result = await conn.query(`
             INSERT INTO customization_item (custom_image, custom_title, custom_desc, custom_price, booking_id) 
             VALUES (?, ?, ?, ?, ?)
         `, [
-            imageBuffer || null,
+            imageBuffer,
             custom_title,
             custom_desc,
             custom_price,
             booking_id
         ]);
 
+        const insertId = result.insertId.toString();
+
+        // Respond to the client
         if (result.affectedRows === 1) {
-            return res.json({
+            res.json({
                 message: 'Customization added successfully',
-                id: result.insertId,
+                id: insertId,
                 custom_title,
                 custom_desc,
                 custom_price,
-                custom_image: imageBuffer ? 'Image uploaded successfully' : 'No image uploaded'
+                custom_image: 'Image uploaded successfully'
             });
         } else {
-            return res.status(500).send({ message: 'Error adding customization' });
+            res.status(500).json({ message: 'Error adding customization' });
         }
     } catch (error) {
         console.error('Error inserting data:', error.message);
-        res.status(500).send({ message: 'TEri maki chut bhadve solve hoja ab to' });
+        res.status(500).json({ message: 'An error occurred' });
     } finally {
         if (conn) {
             try {
                 await conn.release();
             } catch (error) {
-                console.error('Error releasing database connection:', error.message);
+                console.error('Error releasing connection:', error.message);
             }
         }
     }
 });
+
+
 
 
 // Delete Customization

@@ -16,7 +16,18 @@
 	let custom_title = ''
 	let custom_desc = ''
 	let custom_price = 0
-	let customization =[	]
+	let customization =[]
+
+	let moreInfo = false
+	let moreInfoCustomization = false
+
+	function handleMoreInfo(){
+		moreInfo = !moreInfo
+	}
+
+	function handleMoreInfoCustomization(){
+		moreInfoCustomization = !moreInfoCustomization
+	}
 
 
 	//inclusion input add
@@ -86,6 +97,11 @@
         formData.append(`customization_${index}_title`, custom.custom_title);
         formData.append(`customization_${index}_desc`, custom.custom_desc);
         formData.append(`customization_${index}_price`, custom.custom_price);
+
+		if (custom.custom_image) {
+			formData.append(`customization_${index}_image`, custom.custom_image);
+		}
+
     });
 
     // Log the formData entries to see what is included
@@ -175,8 +191,8 @@
 
 	//child : for sumbit customizations
 	async function submitCustomization(booking_id) {
-		for (const item of customization) {
-			const customizationData = new FormData();
+		const customizationData = new FormData();
+		for (let item of customization) {
 			customizationData.append('booking_id', booking_id);
         	customizationData.append('custom_title', item.custom_title);
         	customizationData.append('custom_desc', item.custom_desc);
@@ -297,8 +313,8 @@ function clearForm(){
 
 				
 				<!-- Inclusion -->
-                <div class="inclusions">
-					<p class="text-right text-blue-600 hover:cursor-pointer hover:underline underline-offset-4">more &darr;</p>
+				<button class="text-right text-blue-600 hover:cursor-pointer hover:underline underline-offset-4" on:click={handleMoreInfo}>more &darr;</button>
+                <div class={`inclusions ${moreInfo ? '' : 'hidden'}`}>
 					<h2 class="text-2xl font-semibold text-center ">Inclusions</h2>
 					<label for="title" class="block text-sm font-medium text-gray-700">Inclusion:</label>
 					<div class="flex gap-3 justify-center items-center mt-2">
@@ -329,8 +345,8 @@ function clearForm(){
 			
 				
 				<!-- Customization -->
-				<form class="customization" enctype="multipart/form-data">
-					<p class="text-right text-blue-600 hover:cursor-pointer hover:underline underline-offset-4">more &darr;</p>
+				<button class={`customization ${moreInfo ? ' ' : 'hidden'} text-right customization text-blue-600 hover:cursor-pointer hover:underline underline-offset-4`} on:click={handleMoreInfoCustomization}>more &darr;</button>
+				<form class={` ${moreInfoCustomization ? '' : 'hidden'}`} enctype="multipart/form-data">
 					<h2 class="text-2xl font-semibold text-center">Customization</h2>
 					
 					<!-- custom Image Input -->

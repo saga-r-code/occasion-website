@@ -17,8 +17,7 @@
 	};
 	let message = '';
 
-	async function handlesubmit(e) {
-		e.preventDefault(); // Prevent the default form submission
+	async function handlesubmit() {
 
 		const formData = {
 			fullname,
@@ -74,9 +73,9 @@
 	<div class="form-conatiner w-[80%] mx-auto py-10 text-white">
 		<h1 class="font-bold text-3xl pb-10">Say Hello !</h1>
 		<div
-			class="form-details items-center justify-center flex 2xl:gap-56 gap-20 flex-wrap 2xl:flex-nowrap"
+			class="form-details items-center justify-center flex 2xl:gap-56 gap-20 mb-20 flex-wrap 2xl:flex-nowrap"
 		>
-			<form on:submit={handlesubmit} class="flex flex-col gap-10">
+			<form on:submit|preventDefault={handlesubmit} class="flex flex-col gap-10">
 				<div class="flex justify-center flex-col gap-2">
 					<label class="font-bold text-xl" for="name">Full Name:</label>
 					<input
