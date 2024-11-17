@@ -44,7 +44,7 @@ router.post('/api/user/login', [
         }
 
         //Genrate Token
-        const token = jwt.sign({ email: email }, jwt_key);
+        const token = jwt.sign({ email: email }, jwt_key, { expiresIn: '1d' });
 
 
         // Set token in cookie

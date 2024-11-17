@@ -1,23 +1,23 @@
 <script>
 	const logout = async () => {
-		try {
-			const response = await fetch('http://localhost:3000/api/user/logout', {
-				method: 'POST',
-				credentials: 'include' // Send cookies with the request
-			});
+    try {
+        const response = await fetch('http://localhost:3000/api/admin/logout', {
+            method: 'POST',
+            credentials: 'include',  // Include cookies in the request
+        });
 
-			if (response.ok) {
-				alert('Logged out successfully!');
-				window.location.href = 'http://localhost:5173/login'; // Redirect to login page
-			} else {
-				console.log('Logout failed:', response.statusText);
-				alert('Logout failed. Please try again.');
-			}
-		} catch (error) {
-			console.error('Error during logout:', error);
-			alert('An error occurred. Please try again.');
-		}
-	};
+        const result = await response.json();
+        if (response.ok) {
+            alert('Logout successful!');
+            window.location.href = '/'; // Redirect to login page
+        } else {
+            alert(result.message || 'Logout failed');
+        }
+    } catch (error) {
+        console.error('Error during logout:', error);
+        alert('An error occurred. Please try again.');
+    }
+};
 </script>
 
 <div class="bg-[#1c2541] text-white">

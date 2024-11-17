@@ -14,59 +14,51 @@
 	}
 
 	const handleSubmit = async (e) => {
-		e.preventDefault();
-		const data = {
-			username,
-			email,
-			password,
-			confirmPassword
-		};
+    e.preventDefault();
 
-		try {
-			// Send the data to the backend and store in database
-			const response = await fetch('http://localhost:3000/api/user/signup', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(data),
-				credentials: 'include' // Include cookies in request
-			});
+    // Password and Confirm Password Validation
+    if (password !== confirmPassword) {
+        alert('Password and Confirm Password do not match');
+        return;
+    }
+    if (password.length < 8) {
+        alert('Password must be at least 8 characters long');
+        return;
+    }
 
-			//For Password check
-			if (data.password !== data.confirmPassword) {
-				alert('Password and Confirm Password does not match');
-				return;
-			}
+    // Prepare the data for the backend
+    const data = { username, email, password, confirmPassword };
 
-			if (data.password.length < 8) {
-				alert('Password must be at least 8 characters long');
-				return;
-			}
+    try {
+        // Send the data to the backend
+        const response = await fetch('http://localhost:3000/api/user/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+            credentials: 'include',  // Include cookies in the request
+        });
 
-			//For email check
-			if (response.status === 409) {
-				alert('Email already exists. Please use a different email.');
-				return;
-			}
+        if (response.status === 409) {
+            alert('Email already exists. Please use a different email.');
+            return;
+        }
 
-			//response check
-			if (response.ok) {
-				alert('Account Created Successfully');
-				clearForm();
-				if (email === 'admin123@gmail.com') {
-					window.location.href = 'http://localhost:5173/admin';
-				} else {
-					window.location.href = 'http://localhost:5173/home';
-				}
-			} else {
-				console.log('Failed to send the message. Please try again.');
-			}
-		} catch (error) {
-			console.error('Error submitting the form:', error);
-			console.log('An error occurred. Please try again later.');
-		}
-	};
+        if (response.ok) {
+            alert('Account Created Successfully');
+            clearForm();
+            window.location.href = 'http://localhost:5173/venue';
+        } else {
+            console.log('Failed to send the message. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error submitting the form:', error);
+        alert('An error occurred. Please try again later.');
+    }
+};
+
+
 
 	const togglePasswordVisibility = () => {
 		showPassword = !showPassword;
@@ -76,6 +68,7 @@
 		showConfirmPassword = !showConfirmPassword;
 	};
 </script>
+
 
 <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
 	<h2 class="text-2xl font-bold text-center my-6">Sign Up</h2>

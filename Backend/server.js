@@ -4,6 +4,7 @@ import bookingrouter from './api/user/booking.js';
 import signuprouter from './api/user/signup.js';
 import loginrouter from './api/user/login.js'
 import logoutrouter from './api/user/logout.js'
+import adminLogout from './api/admin/logout.js'
 import loginadmin from './api/admin/login.js'
 import signupadmin from './api/admin/signup.js'
 import category from './api/admin/category.js'
@@ -26,6 +27,7 @@ const port = 3000;
 
 app.use(cors({
   origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'DELETE'],
   credentials: true // Enable credentials (cookies)
 }))
 
@@ -39,6 +41,7 @@ app.use(bookingrouter) //app.use('/booking', bookingrouter)
 app.use(signuprouter) //app.use('/signup', signuprouter)
 app.use(loginrouter) //app.use('/login', loginrouter)
 app.use(logoutrouter) //app.use('/logoutuser', logoutrouter)
+app.use(adminLogout) //app.use('/logoutadmin', adminLogout)
 app.use(signupadmin) //app.use('/signupadmin', signupadmin)
 app.use(loginadmin) //app.use('/loginadmin', loginadmin)
 app.use(category) //app.use('/category',  category)

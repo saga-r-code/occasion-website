@@ -1,4 +1,4 @@
-// http://localhost:3000/api/admin/login 
+// http://localhost:3000/api/user/login 
 
 import express from 'express';
 import pool from '../../Database/db.js';
@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 const jwt_key = process.env.JWT_SAFE_KEY || 'occasion_sagee'
+// console.log(jwt_key)
 
 
 // POST route to login user
@@ -25,29 +26,33 @@ router.post('/api/admin/login', [
 
         const { email, password } = req.body;
 
-        // Check if the user exists
-        const adminResult = await pool.query(`SELECT * FROM admin_signup WHERE email = ?`, [email]);
+        if (email !== 'admin123@gmail.com') {
+            return res.status(401).send({ message: 'Invalid email' });
+        }
 
-        if (adminResult.length === 0) {
+        // Check if the user exists
+        const userResult = await pool.query(`SELECT * FROM admin_signup WHERE email = ?`, [email]);
+
+        if (userResult.length === 0) {
             console.log("please check details")
             return res.status(401).send({ message: "Invalid email please fill properly " });
         }
 
-        const admin = adminResult[0];
+        const user = userResult[0];
 
         // Compare the provided password with the hashed password stored in the database
-        const isMatch = await bcrypt.compare(password, admin.password);
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             console.log("please check details")
             return res.status(401).send({ message: "Invalid Credential" });
         }
 
         //Genrate Token
-        const token = jwt.sign({ email: email }, jwt_key);
+        const token = jwt.sign({ email: 'admin123@gmail.com' }, jwt_key, { expiresIn: '1d' });
 
 
         // Set token in cookie
-        res.cookie('admin_token', token, {
+        res.cookie('token', token, {
             httpOnly: true, // Prevents client-side access to the cookie
             secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
             sameSite: 'strict' // Restrict cookie to same-site requests
@@ -56,16 +61,16 @@ router.post('/api/admin/login', [
         // Check if user already exists in user_login table
         const existingUser  = await pool.query(`SELECT * FROM admin_login WHERE email = ?`, [email]);
 
-        // if (existingUser .length > 0) {
-        //     console.log("admin Login")
-        //     return res.status(200).send({ message: "admin Login " , token: token});
-        // }
+        if (existingUser .length > 0) {
+            console.log("User  Login")
+            return res.status(200).send({ message: "admin  Login " , token: token});
+        }
 
-        // // Insert into user_login table
-        // const loginQuery = `INSERT INTO user_login (email, password) VALUES (?, ?)`;
-        // await pool.query(loginQuery, [email, admin.password]); // Store hashed password or just email
-        console.log("admin Successfully Login")
-        res.status(200).json({ message: "Login successful" });
+        // Insert into user_login table
+        const loginQuery = `INSERT INTO admin_login (email, password) VALUES (?, ?)`;
+        await pool.query(loginQuery, [email, user.password]); // Store hashed password or just email
+        console.log("User  Successfully Login")
+        res.status(200).send({ message: "Login successful" });
 
     } catch (error) {
         console.error('Error during login:', error.message);

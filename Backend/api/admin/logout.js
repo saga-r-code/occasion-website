@@ -25,7 +25,7 @@ const logoutMiddleware = (req, res, next) => {
 }
 
 // POST route to logout user
-router.post('/api/user/logout', logoutMiddleware, async (req, res) => {
+router.post('/api/admin/logout', logoutMiddleware, async (req, res) => {
     try {
         const { email } = req.body;
 
@@ -34,7 +34,7 @@ router.post('/api/user/logout', logoutMiddleware, async (req, res) => {
         }
 
         // Delete user session from the database
-        const result = await pool.query(`DELETE FROM user_login WHERE email = ?`, [email]);
+        const result = await pool.query(`DELETE FROM admin_login WHERE email = ?`, [email]);
 
         if (result.affectedRows === 0) {
             console.log('User session already deleted or not found.');

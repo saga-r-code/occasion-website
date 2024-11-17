@@ -10,13 +10,8 @@
 		password = '';
 	}
 
-	const handleSubmit = async (e) => {
-		e.preventDefault(); // Prevent default form submission
-		const data = {
-			email,
-			password
-		};
-
+	const handleSubmit = async () => {
+		
 		// Check if email and password are provided
 		if (!email || !password) {
 			alert('please fill up the login page');
@@ -30,8 +25,8 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(data),
-				credentials: 'include' // Include cookies in request
+				body: JSON.stringify({ email, password }),
+				credentials: 'include' // Include cookies
 			});
 
 			const result = await response.json();
@@ -40,10 +35,14 @@
 			if (response.ok) {
 				alert('Login successful!');
 				clearForm();
+				console.log('Entered email:', email); // Debugging the entered email
+				console.log('Admin email:', isAdmin); // Debugging the admin email
+				console.log('Redirecting to:', email === isAdmin ? '/admin' : '/venue');
+
 				if (email === isAdmin) {
-					window.location.href = '/admin';
+					window.location.replace('/admin');
 				} else {
-					window.location.href = '/home';
+					window.location.replace('/venue');
 				}
 			} else {
 				alert('Invalid Credtional');

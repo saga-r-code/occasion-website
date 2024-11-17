@@ -4,24 +4,25 @@
 		open = !open;
 	}
 
-	const logout = async (email) => {
+	let login = true;
+
+	function handleLogout () {
+		login = !login;
+	}
+
+	const logout = async () => {
     try {
         const response = await fetch('http://localhost:3000/api/user/logout', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include', // Send cookies with the request
-            body: JSON.stringify({ email }) // Include email in the request body
+            credentials: 'include',  // Include cookies in the request
         });
 
+        const result = await response.json();
         if (response.ok) {
-            alert('Logged out successfully!');
-            window.location.href = 'http://localhost:5173/'; // Redirect to login page
+            alert('Logout successful!');
+            window.location.href = '/'; // Redirect to login page
         } else {
-            const errorData = await response.json();
-            console.log('Logout failed:', errorData.message);
-            alert('Logout failed: ' + (errorData.message || 'Please try again.'));
+            alert(result.message || 'Logout failed');
         }
     } catch (error) {
         console.error('Error during logout:', error);
@@ -29,13 +30,14 @@
     }
 };
 
+
 </script>
 
 <div class="bg-[#1c2541] text-white">
 	<div class="w-[90%] m-auto">
 		<div class="navbar flex flex-wrap gap-4 justify-between items-center py-5">
 			<div class="flex justify-center items-end flex-wrap gap-5">
-			<a href="/home" class="text-3xl md:text-4xl font-semibold">Occasion</a>
+			<a href="/venue" class="text-3xl md:text-4xl font-semibold">Occasion</a>
 			<i class="fa-solid fa-phone flex justify-center items-center gap-2 text-sm"><p class="underline-offset-4 underline">9820938124</p></i>
 			</div>
 			<!-- icon -->
@@ -67,9 +69,11 @@
 				<li class="hover:underline hover:underline-offset-8"><a href="/services">Services</a></li>
 				<li class="hover:underline hover:underline-offset-8"><a href="/about">About</a></li>
 				<li class="hover:underline hover:underline-offset-8"><a href="/contact">Contact Us</a></li>
+				
 				<li>
 					<button class="hover:underline hover:underline-offset-8" on:click={logout}>Logout</button>
 				</li>
+				
 			</ul>
 		</div>
 	</div>
