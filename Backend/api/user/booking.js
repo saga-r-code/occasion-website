@@ -1,16 +1,32 @@
 // http://localhost:3000/api/user/booking
+// http://localhost:3000/api/user/send-email
 
 import express from 'express';
 import pool from '../../Database/db.js';
+import transporter from '../mail/gmail.js';
 
 const router = express.Router();
 
+router.post('/api/user/send-email', async (req, res) => {
+  const {email, fullname} = req.body
+  
+  const mailOptions = {
+    from: 'shah.sage2006@gmail.com', // Sender address
+    to: email, // List of recipients
+    subject: 'Booking Confirmation', // Subject line
+    text: `Hello ${fullname},\n\nThank you for your booking!`, // Plain text body
+    // html: '<b>Hello world?</b>' // You can also send HTML content
+  };
 
-// Function to generate a random 6-digit number
-// const generateRandom = () => {
-//   return Math.floor(100000 + Math.random() * 900000); // Generates a number between 100000 and 999999
-// };
-
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email sent: ' + info.response);
+    res.status(200).send('Email sent successfully');
+  } catch (error) {
+    console.error('Error sending email:', error.message);
+    res.status(500).send({ message: 'Error sending email', error: error.message });
+  }
+});
 
 // POST route to insert a new booking
 router.post('/api/user/booking', async (req, res) => {
@@ -38,6 +54,39 @@ router.post('/api/user/booking', async (req, res) => {
       userInput.pincode,
       userInput.message,
     ]);
+
+    await transporter.sendMail({
+      from: 'shah.sage2006@gmail.com', // Sender address
+      to: userInput.email, // List of recipients
+      subject: 'Booking Confirmation', // Subject line
+      text: `Hello ${userInput.fullname}, ` +
+           `\n\nYour Confirm Contact Number: ${userInput.contact}` +
+            `\n\nBooking details: ${userInput.message}\n` +
+            `\n\nWe have received your booking request and will get back to you soon.` +
+      `\n\nThank you for your booking!`, // Plain text body
+      // html: '<b>Hello world?</b>' // You can also send HTML content
+    });
+
+    // Send email notification to the admin with all booking info
+    const adminEmail = 'shah.sagar2006@gmail.com'; // Replace with your admin email
+    await transporter.sendMail({
+      from: userInput.email,
+      to: adminEmail,
+      subject: 'New Booking Notification',
+      text: `New booking details:\n\n` +
+            `Name: ${userInput.fullname}\n` +
+            `Contact: ${userInput.contact}\n` +
+            `Email: ${userInput.email}\n` +
+            `Flat/Bldg: ${userInput.flat_bldg}\n` +
+            `Street Name: ${userInput.street_name}\n` +
+            `Landmark: ${userInput.landmark}\n` +
+            `City: ${userInput.city}\n` +
+            `State: ${userInput.state}\n` +
+            `Pincode: ${userInput.pincode}\n` +
+            `Message: ${userInput.message}\n`
+    });
+
+
 
     res.status(201).send(`User added with ID: ${result.insertId}`);
     console.log(result)

@@ -10,12 +10,14 @@ const upload = multer({storage});
 
 const router = express.Router();
 
+//Add Customization
 
+/*************  ✨ Codeium Command 🌟  *************/
 router.post('/api/admin/customization_table', upload.single('custom_image'), async (req, res) => {
     let conn;
     try {
         const { custom_title, custom_desc, custom_price, booking_id } = req.body;
-        console.log("booking_id",booking_id)
+        // console.log("booking_id",booking_id)
 
         // Validate required fields
         if (!custom_title || !custom_desc || !custom_price || !booking_id) {
@@ -29,7 +31,7 @@ router.post('/api/admin/customization_table', upload.single('custom_image'), asy
         // Process image
         let imageBuffer;
         try {
-            imageBuffer = await req.file.buffer
+            imageBuffer = await sharp(req.file.buffer)
                 .resize(500)
                 .jpeg({ quality: 80 })
                 .toBuffer();
@@ -56,11 +58,11 @@ router.post('/api/admin/customization_table', upload.single('custom_image'), asy
             custom_price,
             booking_id
         ]);
-
-        const insertId = result.insertId.toString();
-
         // Respond to the client
         if (result.affectedRows === 1) {
+            const insertId = result.insertId.toString();
+
+            // Respond to the client
             res.json({
                 message: 'Customization added successfully',
                 id: insertId,
@@ -70,7 +72,7 @@ router.post('/api/admin/customization_table', upload.single('custom_image'), asy
                 custom_image: 'Image uploaded successfully'
             });
         } else {
-            res.status(500).json({ message: 'Error adding customization' });
+            throw new Error('Error adding customization');
         }
     } catch (error) {
         console.error('Error inserting data:', error.message);
@@ -85,8 +87,6 @@ router.post('/api/admin/customization_table', upload.single('custom_image'), asy
         }
     }
 });
-
-
 
 
 // Delete Customization

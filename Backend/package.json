@@ -13,7 +13,8 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.1",
-    "mariadb": "^3.3.2"
+    "mariadb": "^3.3.2",
+    "nodemailer": "^6.9.16"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"

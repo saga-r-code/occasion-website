@@ -98,10 +98,9 @@
         formData.append(`customization_${index}_desc`, custom.custom_desc);
         formData.append(`customization_${index}_price`, custom.custom_price);
 
-		if (custom.custom_image) {
-			formData.append(`customization_${index}_image`, custom.custom_image);
-		}
-
+        if (custom.custom_image) {
+            formData.append(`customization_${index}_image`, custom.custom_image);
+        }
     });
 
     // Log the formData entries to see what is included
@@ -121,17 +120,17 @@
             console.log(result);
 
             // Send inclusions and images using separate requests with booking_id
-            const responses =await Promise.all([
+            const responses = await Promise.all([
                 sumbitInclusion(booking_id),
                 submitImages(booking_id),
                 submitCustomization(booking_id)
             ]);
 
-			responses.forEach((result, index) => {
-			if (result.status === 'rejected') {
-				console.error(`Request ${index + 1} failed:`, result.reason);
-				}
-			});
+            responses.forEach((result, index) => {
+                if (result.status === 'rejected') {
+                    console.error(`Request ${index + 1} failed:`, result.reason);
+                }
+            });
 
             alert("Booking Page Add Successfully");
         } else {
@@ -141,27 +140,10 @@
     } catch (error) {
         console.error('An error occurred while sending the request:', error);
     }
-	}
+}
 
-	//child : for sumbit inclusions
-	async function sumbitInclusion(booking_id) {
-		const inclusionData = new FormData();
-		inclusionData.append('booking_id', booking_id);
-		inclusionData.append('inclusion_desc', JSON.stringify(inclusion))
-		console.log(inclusionData)
-
-		const response = await fetch('http://localhost:3000/api/admin/inclusion_table', {
-			method: 'POST',
-			body: inclusionData
-		});
-
-		if (!response.ok) {
-			console.log('Failed to send the inclusions');
-		} 
-	}
-
-	//child : for sumbit images
-	async function submitImages(booking_id) {
+// Child: for submit images
+async function submitImages(booking_id) {
     const imageData = new FormData();
     imageData.append('booking_id', booking_id);
 
@@ -185,34 +167,56 @@
     }
 }
 
-	function handleImagesChange () {
-		images = Array.from(imagesInput.files);
-	}
+function handleImagesChange() {
+    images = Array.from(imagesInput.files);
+}
 
-	//child : for sumbit customizations
-	async function submitCustomization(booking_id) {
-		const customizationData = new FormData();
-		for (let item of customization) {
-			customizationData.append('booking_id', booking_id);
-        	customizationData.append('custom_title', item.custom_title);
-        	customizationData.append('custom_desc', item.custom_desc);
-        	customizationData.append('custom_price', item.custom_price);
-			console.log(customizationData)
+// Child: for submit inclusions
+async function sumbitInclusion(booking_id) {
+    const inclusionData = new FormData();
+    inclusionData.append('booking_id', booking_id);
+    inclusionData.append('inclusion_desc', JSON.stringify(inclusion));
+    console.log(inclusionData);
 
-			if(item.custom_image){
-				customizationData.append('custom_image', item.custom_image);
-			}
+    const response = await fetch('http://localhost:3000/api/admin/inclusion_table', {
+        method: 'POST',
+        body: inclusionData
+    });
 
-			const response = await fetch('http://localhost:3000/api/admin/customization_table', {
-				method: 'POST',
-				body: customizationData
-			});
+    if (!response.ok) {
+        console.log('Failed to send the inclusions');
+    }
 
-			if (!response.ok) {
-				console.log('Failed to send the customization');
-			}
-		}
-	}
+    console.log('Inclusions submitted successfully!');
+
+    const inputBoxes = document.querySelectorAll('.inclusion-input');
+    // inclusion = Array.from(inputBoxes).map(input => input.value.trim()).filter(value => value !== '');
+}
+
+// Child: for submit customizations
+async function submitCustomization(booking_id) {
+    for (let item of customization) {
+        const customizationData = new FormData();
+        customizationData.append('booking_id', booking_id);
+        customizationData.append('custom_title', item.custom_title);
+        customizationData.append('custom_desc', item.custom_desc);
+        customizationData.append('custom_price', item.custom_price);
+        console.log(customizationData);
+
+        if (item.custom_image) {
+            customizationData.append('custom_image', item.custom_image);
+        }
+
+        const response = await fetch('http://localhost:3000/api/admin/customization_table', {
+            method: 'POST',
+            body: customizationData
+        });
+
+        if (!response.ok) {
+            console.log('Failed to send the customization');
+        }
+    }
+}
 
 
 // Clear form
@@ -313,8 +317,9 @@ function clearForm(){
 
 				
 				<!-- Inclusion -->
-				<button class="text-right text-blue-600 hover:cursor-pointer hover:underline underline-offset-4" on:click={handleMoreInfo}>more &darr;</button>
-                <div class={`inclusions ${moreInfo ? '' : 'hidden'}`}>
+				<button class="text-right text-blue-600 hover:cursor-pointer hover:underline underline-offset-4" on:click={handleMoreInfo}>Add Inclusion &darr;</button>
+				{#if moreInfo}
+				<div class={`inclusions `}>
 					<h2 class="text-2xl font-semibold text-center ">Inclusions</h2>
 					<label for="title" class="block text-sm font-medium text-gray-700">Inclusion:</label>
 					<div class="flex gap-3 justify-center items-center mt-2">
@@ -342,11 +347,14 @@ function clearForm(){
 						</button>
 					</div>
 				</div>
+				<button class={`customization text-right customization text-blue-600 hover:cursor-pointer underline`} on:click={handleMoreInfoCustomization}>Add Customization &darr;</button>
+				{/if}
+              
 			
 				
 				<!-- Customization -->
-				<button class={`customization ${moreInfo ? ' ' : 'hidden'} text-right customization text-blue-600 hover:cursor-pointer hover:underline underline-offset-4`} on:click={handleMoreInfoCustomization}>more &darr;</button>
-				<form class={` ${moreInfoCustomization ? '' : 'hidden'}`} enctype="multipart/form-data">
+				 {#if moreInfoCustomization}
+				 <form enctype="multipart/form-data">
 					<h2 class="text-2xl font-semibold text-center">Customization</h2>
 					
 					<!-- custom Image Input -->
@@ -430,6 +438,8 @@ function clearForm(){
 					
 
 				</form>
+				 {/if}
+				
 
 				<!-- Submit Button -->
 				<div class="mt-4 ">

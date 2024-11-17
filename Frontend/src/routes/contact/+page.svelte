@@ -16,9 +16,11 @@
 		pincode: ''
 	};
 	let message = '';
+	let submissionStatus = ''; // To track submission status
+	let charactersLeft = 5000;
+	
 
 	async function handlesubmit() {
-
 		const formData = {
 			fullname,
 			contact,
@@ -41,19 +43,29 @@
 				},
 				body: JSON.stringify(formData)
 			});
-			 //response check
+			
+			// Response check
 			if (response.ok) {
-				console.log('Your message has been sent successfully!');
+				submissionStatus = 'Your booking has been submitted successfully!';
 			} else {
-				console.log('Failed to send the message. Please try again.');
+				submissionStatus = 'Failed to submit your booking. Please try again.';
 			}
 		} 
 		catch (error) {
 			console.error('Error submitting the form:', error);
-			console.log('An error occurred. Please try again later.');
+			submissionStatus = 'An error occurred. Please try again later.';
 		}
 
 		// Clear the form after submission
+		clearForm();
+		charactersLeft = 5000; // reset the value
+	}
+
+	function handleInput(event) {
+		charactersLeft = 5000 - event.target.value.length;
+	}
+
+	function clearForm() {
 		fullname = '';
 		contact = '';
 		email = '';
@@ -65,6 +77,7 @@
 		address.pincode = '';
 		message = '';
 	}
+
 </script>
 
 <Navbar />
@@ -115,36 +128,42 @@
 							class="placeholder:font-bold placeholder:text-lg 2xl:w-34 py-2 px-2 rounded-lg placeholder:text-slate-300 bg-opacity-30 backdrop-blur-md bg-white shadow-md"
 							placeholder="Flat No. & Bldg Name"
 							bind:value={address.flat_bldg}
+							required
 						/>
 						<input
 							type="text"
 							class="placeholder:font-bold placeholder:text-lg 2xl:w-32 py-2 px-2 rounded-lg placeholder:text-slate-300 bg-opacity-30 backdrop-blur-md bg-white shadow-md"
 							placeholder="Street Name"
 							bind:value={address.street_name}
+							required
 						/>
 						<input
 							type="text"
 							class="placeholder:font-bold placeholder:text-lg 2xl:w-28 py-2 px-2 rounded-lg placeholder:text-slate-300 bg-opacity-30 backdrop-blur-md bg-white shadow-md"
 							placeholder="Landmark"
 							bind:value={address.landmark}
+							required
 						/>
 						<input
 							type="text"
 							class="placeholder:font-bold placeholder:text-lg 2xl:w-28 py-2 px-2 rounded-lg placeholder:text-slate-300 bg-opacity-30 backdrop-blur-md bg-white shadow-md"
 							placeholder="City"
 							bind:value={address.city}
+							required
 						/>
 						<input
 							type="text"
 							class="placeholder:font-bold placeholder:text-lg 2xl:w-28 py-2 px-2 rounded-lg placeholder:text-slate-300 bg-opacity-30 backdrop-blur-md bg-white shadow-md"
 							placeholder="State"
 							bind:value={address.state}
+							required
 						/>
 						<input
 							type="number"
 							class="placeholder:font-bold placeholder:text-lg 2xl:w-32 py-2 px-2 rounded-lg placeholder:text-slate-300 bg-opacity-30 backdrop-blur-md bg-white shadow-md"
 							placeholder="PIN Code"
 							bind:value={address.pincode}
+							required
 						/>
 					</div>
 				</div>
@@ -155,8 +174,13 @@
 						placeholder="Enter Your Message"
 						bind:value={message}
 						class="p-5 rounded-xl max-h-72 min-h-44 placeholder:font-bold placeholder:text-lg placeholder:text-slate-300 bg-opacity-30 backdrop-blur-md bg-white shadow-md"
+						on:input={handleInput}
+						maxlength="5000"
+						required
 					></textarea>
+					<p class="text-sm text-slate-500">Characters left: {charactersLeft}</p>
 				</div>
+
 
 				<button
 					class="bg-[#50808E] hover:bg-[#284e59] hover:shadow-black shadow-inner text-white font-bold text-xl py-3 rounded-xl"
@@ -166,6 +190,9 @@
 
 			<div class="details flex justify-center items-center flex-col gap-10 text-white">
 				<div class="flex flex-col gap-2">
+					{#if submissionStatus}
+					<p>{submissionStatus}</p>
+					{/if}
 					<h3 class="text-2xl font-bold">Vendor</h3>
 					<p class="text-xl">
 						If you are a registered vendor or a business looking to promote your brand on our
