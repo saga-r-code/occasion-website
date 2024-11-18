@@ -9,7 +9,7 @@ const router = express.Router();
 const upload = multer()
 
 
-//Get All Category with id
+//Get All Category with booking id
 router.get('/api/admin/booking_management/:booking_id', async (req, res) => {
     let conn;
     const booking_id = req.params.booking_id;
@@ -61,7 +61,7 @@ router.get('/api/admin/booking_management/:booking_id', async (req, res) => {
     }
 });
 
-//Get All Category without id
+//Get All Category
 router.get('/api/admin/booking_management', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM bookingform');

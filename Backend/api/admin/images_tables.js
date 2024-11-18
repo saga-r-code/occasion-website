@@ -11,6 +11,30 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
+//get all Images Route
+router.get('/api/admin/images_table', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM multi_images');
+        res.json(result);  // Send all Images as a JSON response
+    } catch (error) {
+        console.error('Error fetching Images:', error.message);
+        res.status(500).send({ message: 'Internal Server Error' });
+    }
+});
+
+//get all Images as per the booking id
+router.get('/api/admin/images_table/:booking_id', async (req, res) => {
+    const { booking_id } = req.params;
+    try {
+        const result = await pool.query('SELECT * FROM multi_images WHERE booking_id = ?', [booking_id]);
+        res.json(result);  // Send all Images as a JSON response
+    } catch (error) {
+        console.error('Error fetching Images:', error.message);
+        res.status(500).send({ message: 'Internal Server Error' });
+    }
+});
+
+
 //Add Images Route
 router.post('/api/admin/images_table', upload.array('image', 12), async (req, res) => {
     let conn;
@@ -82,16 +106,6 @@ router.post('/api/admin/images_table', upload.array('image', 12), async (req, re
     }
 });
 
-//get all Images Route
-router.get('/api/admin/images_table', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM multi_images');
-        res.json(result);  // Send all Images as a JSON response
-    } catch (error) {
-        console.error('Error fetching Images:', error.message);
-        res.status(500).send({ message: 'Internal Server Error' });
-    }
-});
 
 // Delete images using booking_id
 router.delete('/api/admin/images_table/:booking_id', async (req, res) => {

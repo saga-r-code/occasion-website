@@ -8,6 +8,30 @@ const upload = multer()
 
 const router = express.Router();
 
+
+//get all inclusion as per the booking id
+router.get('/api/admin/inclusion_table/:booking_id', async (req, res) => {
+    const { booking_id } = req.params;
+    try {
+        const result = await pool.query('SELECT * FROM inclusions WHERE booking_id = ?', [booking_id]);
+        res.json(result);  // Send all Images as a JSON response
+    } catch (error) {
+        console.error('Error fetching inclusions:', error.message);
+        res.status(500).send({ message: 'Internal Server Error' });
+    }
+});
+
+//Get all Inclusion
+router.get('/api/admin/inclusion_table', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM inclusions');
+        res.json(result);  // Send all Images as a JSON response
+    } catch (error) {
+        console.error('Error fetching inclusions:', error.message);
+        res.status(500).send({ message: 'Internal Server Error' });
+    }
+});
+
 //Add inclusion
 router.post('/api/admin/inclusion_table', upload.any(), async (req, res) => {
     let conn;
@@ -59,8 +83,6 @@ router.post('/api/admin/inclusion_table', upload.any(), async (req, res) => {
 });
 
 
-
-
 //Delete inclusion
 router.delete('/api/admin/inclusion_table/:booking_id', async (req, res) => {
     const { booking_id } = req.params;
@@ -86,14 +108,4 @@ router.delete('/api/admin/inclusion_table/:booking_id', async (req, res) => {
     }
 });
 
-//Get all Inclusion
-router.get('/api/admin/inclusion_table', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM inclusions');
-        res.json(result);  // Send all Images as a JSON response
-    } catch (error) {
-        console.error('Error fetching inclusions:', error.message);
-        res.status(500).send({ message: 'Internal Server Error' });
-    }
-});
 export default router;

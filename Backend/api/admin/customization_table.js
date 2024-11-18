@@ -10,8 +10,31 @@ const upload = multer({storage});
 
 const router = express.Router();
 
-//Add Customization
+//Get all Customizatio item with booking_id
+router.get('/api/admin/customization_table/:booking_id', async (req, res) => {
+    const { booking_id } = req.params;
+    try {
+        const result = await pool.query('SELECT * FROM customization_item WHERE booking_id = ?', [booking_id]);
+        res.json(result);  // Send all categories as a JSON response
+    } catch (error) {
+        console.error('Error fetching categories:', error.message);
+        res.status(500).send({ message: 'Internal Server Error' });
+    }
+});
 
+//Get All Customization item
+router.get('/api/admin/customization_table', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM customization_item');
+        res.json(result);  // Send all categories as a JSON response
+    } catch (error) {
+        console.error('Error fetching Customization item:', error.message);
+        res.status(500).send({ message: 'Internal Server Error' });
+    }
+});
+
+
+//Add Customization
 router.post('/api/admin/customization_table', upload.single('custom_image'), async (req, res) => {
     let conn;
     try {
@@ -85,26 +108,24 @@ router.post('/api/admin/customization_table', upload.single('custom_image'), asy
     }
 });
 
-
-
-
-// Delete Customization
-router.delete('/api/admin/customization_table/:custom_id', async (req, res) => {
-    const { custom_id } = req.params;
+//delete customization as per the bookind id
+router.delete('/api/admin/customization_table/:booking_id', async (req, res) => {
+    const { booking_id } = req.params;
 
     try {
-        const checkResult = await pool.query('SELECT * FROM customization_item WHERE custom_id = ?', [custom_id]);
+        const checkResult = await pool.query('SELECT * FROM customization_item WHERE booking_id = ?', [booking_id]);
 
         // If the item does not exist, return a 404 error
         if (checkResult.length === 0) {
             return res.status(404).json({ error: 'customization item not found' });
-        }           
+        }
+
         // Delete the item by item_id from the database
-        const result = await pool.query('DELETE FROM customization_item WHERE custom_id = ?', [custom_id]);
+        const result = await pool.query('DELETE FROM customization_item WHERE booking_id = ?', [booking_id]);
 
         // Check the result of the deletion
         if (result.affectedRows > 0) {
-            res.status(200).json({ message: `Item with ID ${custom_id} deleted successfully` });
+            res.status(200).json({ message: `Item with booking_id ${booking_id} deleted successfully` });
         } else {
             res.status(404).json({ message: 'customization item not found' });
         }
@@ -114,16 +135,33 @@ router.delete('/api/admin/customization_table/:custom_id', async (req, res) => {
     }
 });
 
-//Get All Customization item
-router.get('/api/admin/customization_table', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM customization_item');
-        res.json(result);  // Send all categories as a JSON response
-    } catch (error) {
-        console.error('Error fetching Customization item:', error.message);
-        res.status(500).send({ message: 'Internal Server Error' });
-    }
-});
+
+// // Delete Customization
+// router.delete('/api/admin/customization_table/:custom_id', async (req, res) => {
+//     const { custom_id } = req.params;
+
+//     try {
+//         const checkResult = await pool.query('SELECT * FROM customization_item WHERE custom_id = ?', [custom_id]);
+
+//         // If the item does not exist, return a 404 error
+//         if (checkResult.length === 0) {
+//             return res.status(404).json({ error: 'customization item not found' });
+//         }           
+//         // Delete the item by item_id from the database
+//         const result = await pool.query('DELETE FROM customization_item WHERE custom_id = ?', [custom_id]);
+
+//         // Check the result of the deletion
+//         if (result.affectedRows > 0) {
+//             res.status(200).json({ message: `Item with ID ${custom_id} deleted successfully` });
+//         } else {
+//             res.status(404).json({ message: 'customization item not found' });
+//         }
+//     } catch (error) {
+//         console.error('Error deleting item:', error);
+//         res.status(500).json({ error: 'An error occurred while deleting the item' });
+//     }
+// });
+
 
 
 export default router;
