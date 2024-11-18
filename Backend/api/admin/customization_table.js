@@ -12,71 +12,68 @@ const router = express.Router();
 
 //Add Customization
 
-/*************  ✨ Codeium Command 🌟  *************/
 router.post('/api/admin/customization_table', upload.single('custom_image'), async (req, res) => {
     let conn;
     try {
         const { custom_title, custom_desc, custom_price, booking_id } = req.body;
-        // console.log("booking_id",booking_id)
+
+        console.log('Received body:', req.body);
+        console.log('Uploaded file:', req.file); // Use req.file instead of req.files
 
         // Validate required fields
         if (!custom_title || !custom_desc || !custom_price || !booking_id) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
+        // Check if the image was uploaded
         if (!req.file) {
             return res.status(400).json({ message: 'Custom image is required!' });
         }
 
-        // Process image
-        let imageBuffer;
-        try {
-            imageBuffer = await sharp(req.file.buffer)
-                .resize(500)
-                .jpeg({ quality: 80 })
-                .toBuffer();
-        } catch (err) {
-            console.error('Error processing image:', err.message);
-            return res.status(500).json({ message: 'Error processing image' });
-        }
+        // Resize and convert the image to JPEG format
+        let imageBuffer = await sharp(req.file.buffer)
+            .resize(500) // Resize to a width of 500 pixels (adjust as needed)
+            .jpeg({ quality: 80 }) // Convert to JPEG format with 80% quality
+            .toBuffer();
 
-        // Check if booking exists
+        // Assign the image buffer to a variable
+        const custom_image = imageBuffer;
+
+        // Connect to the database
         conn = await pool.getConnection();
+
+        // Check if the booking ID exists
         const bookingExist = await conn.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
+        console.log('Booking existence check result:', bookingExist);
+
         if (bookingExist.length === 0) {
             return res.status(404).json({ message: 'Invalid Booking Id' });
         }
 
-        // Insert customization into the database
+        // Insert the customization into the database
         const result = await conn.query(`
             INSERT INTO customization_item (custom_image, custom_title, custom_desc, custom_price, booking_id) 
-            VALUES (?, ?, ?, ?, ?)
-        `, [
-            imageBuffer,
-            custom_title,
-            custom_desc,
-            custom_price,
-            booking_id
-        ]);
-        // Respond to the client
-        if (result.affectedRows === 1) {
-            const insertId = result.insertId.toString();
+            VALUES (?, ?, ?, ?, ?)`,
+            [custom_image, custom_title, custom_desc, custom_price, booking_id]
+        );
 
-            // Respond to the client
+        console.log('Insert result:', result); // Log the result of the insert query
+
+        if (result.affectedRows === 1) {
             res.json({
                 message: 'Customization added successfully',
-                id: insertId,
+                id: Number(result.insertId),
                 custom_title,
                 custom_desc,
                 custom_price,
-                custom_image: 'Image uploaded successfully'
+                custom_image: req.file.originalname // Return the original file name
             });
         } else {
             throw new Error('Error adding customization');
         }
     } catch (error) {
-        console.error('Error inserting data:', error.message);
-        res.status(500).json({ message: 'An error occurred' });
+        console.error('Error inserting data:', error); // Log the full error object
+        res.status(500).json({ message: 'An error occurred', error: error.message });
     } finally {
         if (conn) {
             try {
@@ -87,6 +84,8 @@ router.post('/api/admin/customization_table', upload.single('custom_image'), asy
         }
     }
 });
+
+
 
 
 // Delete Customization

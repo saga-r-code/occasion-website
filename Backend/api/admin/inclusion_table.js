@@ -60,6 +60,7 @@ router.post('/api/admin/inclusion_table', upload.any(), async (req, res) => {
 
 
 
+
 //Delete inclusion
 router.delete('/api/admin/inclusion_table/:booking_id', async (req, res) => {
     const { booking_id } = req.params;
