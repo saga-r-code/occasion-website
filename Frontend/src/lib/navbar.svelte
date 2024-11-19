@@ -71,7 +71,7 @@
 				<li class="hover:underline hover:underline-offset-8"><a href="/contact">Contact Us</a></li>
 				
 				<li>
-					<button class="hover:underline hover:underline-offset-8" on:click={logout}>Logout</button>
+					<button class="hover:underline hover:underline-offset-8 fa-solid fa-right-from-bracket text-xl" on:click={logout}></button>
 				</li>
 				
 			</ul>

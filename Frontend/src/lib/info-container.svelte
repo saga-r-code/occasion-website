@@ -1,7 +1,7 @@
 <!-- info-container end -->
 
 <script>
-	import img from '../lib/Images/lantern-2.jpg';
+	import img from '../lib/Images/lantern-3.jpg';
 </script>
 
 <div class="info-container pb-14 text-white">
@@ -22,7 +22,7 @@
 				ensuring your special day is filled with joy, laughter, and cherished memories.
 			</p>
 			<div
-				class="bg-[#50808e] rounded-md font-bold hover:bg-[#215f70] active:bg-[#50808e] px-10 py-2 sm:py-3 flex justify-center items-center 2xl:absolute bottom-14 right-20"
+				class="bg-[#50808e] hover:scale-95 rounded-md font-bold hover:bg-[#215f70] active:bg-[#50808e] px-10 py-2 sm:py-3 flex justify-center items-center 2xl:absolute bottom-14 right-20"
 			>
 				<a href="/contact">Contact Us</a>
 			</div>

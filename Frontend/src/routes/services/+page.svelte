@@ -5,13 +5,21 @@
     import InfoContainer from '$lib/info-container.svelte';
     import Navbar from '$lib/navbar.svelte';
     import BookingPage from '$lib/booking-page.svelte';
+    import DefaultImage from '../../lib/Images/default.jpg';
 
-    import Service1 from '../../lib/Images/service-2.jpeg';
-    import Service2 from '../../lib/Images/service-3.webp';
+    import Service1 from '../../lib/Images/lantern-2.jpg';
+    import Service2 from '../../lib/Images/birthday-2.avif';
+    import Service3 from '../../lib/Images/party-1.jpg';
+    import Service4 from '../../lib/Images/babyshowe-2.jpg';
+    import Service5 from '../../lib/Images/decoration-3.jpeg';
 
     const supplier = [
-        { id: 1, img: Service1, name: 'Decorator' },
-        { id: 2, img: Service2, name: 'Venue Planner' },
+        { id: 1, img: Service1, name: 'Festival' },
+        { id: 2, img: Service2, name: 'Birthday Paty' },
+        { id: 3, img: Service3, name: 'Games & Activity' },
+        { id: 4, img: Service4, name: 'Baby Shower' },
+        { id: 5, img: Service5, name: 'Event & Decoration' },
+
     ];
 
     import { onMount } from 'svelte';
@@ -19,7 +27,7 @@
     let venue = [];
     let selectedCategory = 'All Venues';
     let categories = [];
-    let DefaultImage = 'path/to/default/image.jpg'; // Define a default image path
+
 
     // Reactive statement to group venues based on selected category
     $: groupedVenues = selectedCategory === 'All Venues'
@@ -34,7 +42,7 @@
     // Fetch category items from the API
     const fetchCategoryItem = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/admin/category_item');
+            const response = await fetch('http://localhost:3000/api/admin/category_management');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -91,6 +99,27 @@
             </div>
         </div>
 
+        <!-- <div class="service-related py-20">
+            <h1 class="text-3xl font-semibold">Service Related</h1>
+            <div class="service-related-list flex gap-x-10 gap-y-5 py-10 flex-wrap">
+                <div class="service-related-card flex flex-col gap-5 items-center p-10 bg-[#1c2541] rounded-2xl">
+                    <i class="fa-solid fa-utensils text-6xl text-white"></i>
+                    <h2 class="text-2xl font-semibold">Food & Beverages</h2>
+                    <p class="text-center">We provide the best food and beverages to make your event more special</p>
+                </div>
+                <div class="service-related-card flex flex-col gap-5 items-center p-10 bg-[#1c2541] rounded-2xl">
+                    <i class="fa-solid fa-microphone text-6xl text-white"></i>
+                    <h2 class="text-2xl font-semibold">DJ & Music</h2>
+                    <p class="text-center">We have a team of expert DJs to make your event more lively</p>
+                </div>
+                <div class="service-related-card flex flex-col gap-5 items-center p-10 bg-[#1c2541] rounded-2xl">
+                    <i class="fa-solid fa-camera text-6xl text-white"></i>
+                    <h2 class="text-2xl font-semibold">Photography & Videography</h2>
+                    <p class="text-center">We have a team of expert photographers and videographers to capture your special moments</p>
+                </div>
+            </div>
+        </div> -->
+
         <div class="cards relative">
             {#each categoriesWithAll as category}
                 <Headline headline={category} no={groupedVenues.filter((item) => item.category_name === category).length} />
@@ -121,4 +150,4 @@
         <InfoContainer />
     </div>
     <Footer />
-</div>
+</div>          

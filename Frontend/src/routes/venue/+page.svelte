@@ -5,6 +5,7 @@
 	import Headline from '$lib/headline.svelte';
 	import InfoContainer from '$lib/info-container.svelte';
 	import Navbar from '$lib/navbar.svelte';
+	import DefaultImage from '../../lib/Images/default.jpg';
 
 	import { onMount } from 'svelte';
 
@@ -22,7 +23,7 @@
   
 	const fetchCategoryItem = async () => {
 	  try {
-		const response = await fetch('http://localhost:3000/api/admin/category_item');
+		const response = await fetch('http://localhost:3000/api/admin/category_management');
 		if (!response.ok) {
 		  throw new Error(`HTTP error! status: ${response.status}`);
 		}

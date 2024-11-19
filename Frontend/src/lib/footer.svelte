@@ -27,27 +27,24 @@
 			<div class="services-footer flex flex-col justify-center gap-5">
 				<h1 class="font-bold text-lg">Services</h1>
 				<ul class="flex flex-col justify-center gap-1">
-					<li>PhotoGraphers</li>
-					<li>Decorators</li>
-					<li>Venues Planner</li>
-					<li>Choreographers</li>
-					<li>Designers</li>
-					<li>makeup Artists</li>
+					<li>Festival Decorators</li>
+					<li>Birthday Party</li>
+					<li>Games & Activity</li>
+					<li>Baby Shower</li>
+					<li>Event & Decoration</li>
+					<li>PhotoGrapher</li>
 				</ul>
 			</div>
 			<div class="Links-footer flex flex-col gap-5">
 				<h1 class="font-bold text-lg">Quick Links</h1>
 				<ul class="flex flex-col justify-center gap-1">
-					<li><a href="/">Home</a></li>
 					<li><a href="/venue">Venues</a></li>
 					<li><a href="/services">Service</a></li>
 					<li><a href="/about">About Us</a></li>
 					<li><a href="/contact">Contact us</a></li>
 				</ul>
 			</div>
-			<div class="News flex flex-col gap-8">
-				<h1 class="font-bold text-lg">NewsLetter</h1>
-				<p class="text-lg">Subscribe To Get Latest Venues Updates</p>
+			<div class="News flex justify-center items-center gap-8">
 				<a href="/contact" class=" w-40 h-12 rounded-lg bg-[#50808E] border-2 hover:bg-[#284e59] hover:shadow-black flex justify-center items-center shadow-inner">Contact Us</a>
 			</div>
 		</section>

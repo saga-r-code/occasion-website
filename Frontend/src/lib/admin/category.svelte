@@ -65,7 +65,7 @@
 	//display card
 	const fetchCategoryItem = async () => {
 		try {
-			const response = await fetch('http://localhost:3000/api/admin/category_item');
+			const response = await fetch('http://localhost:3000/api/admin/category_management');
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
@@ -192,7 +192,7 @@
 
 		if (confirmed) {
 			try {
-				const response = await fetch(`http://localhost:3000/api/admin/category_delete/${item_id}`, {
+				const response = await fetch(`http://localhost:3000/api/admin/category_management/${item_id}`, {
 					method: 'DELETE'
 				});
 
@@ -222,12 +222,12 @@
 	//selected Title for booking
 	async function fetchTitle(itemId) {
         try {
-            const response = await fetch(`http://localhost:3000/api/admin/category_fetch/${itemId}`);
+            const response = await fetch(`http://localhost:3000/api/admin/category_management/${itemId}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const item = await response.json();
-            bookingPageSelectedTitle = item.category_name; // Set selectedTitle and trigger reactivity
+            bookingPageSelectedTitle = item.title; // Set selectedTitle and trigger reactivity
         } catch (error) {
             console.error('Error fetching title:', error);
             bookingPageSelectedTitle = 'Error loading title'; // Fallback title
@@ -260,7 +260,7 @@
 	<div class="flex justify-between flex-wrap gap-5 mx-auto w-[80%] pt-10">
 		<button
 			on:click={toggle}
-			class=" bg-red-500 text-white font-bold text-lg px-5 py-2 rounded-md hover:bg-red-600 mb-4"
+			class=" bg-red-500 hover:scale-95 text-white font-bold text-lg px-5 py-2 rounded-md hover:bg-red-600 mb-4"
 		>
 			Add Item
 		</button>
@@ -441,9 +441,10 @@
 	{/if}
 
 	
-<div class="w-[90%] mx-auto h-auto text-white mt-10">
+<div class={`w-[90%] mx-auto ${selectedCategory === "All Venues" || selectedCategory.length <=4 ? 'h-auto' : 'h-[100vh]'} text-white mt-10`}>
 	{#each categories as category}
-	  <div class="category-section">
+	{#if selectedCategory === "" || selectedCategory === category || selectedCategory === "All Venues"}
+	<div class="category-section">	
 		<!-- Display category headline -->
 		<Headline headline={category} no={groupedVenues.filter((item) => item.category_name === category).length} />
   
@@ -452,8 +453,8 @@
 		  {#each groupedVenues.filter((item) => item.category_name === category) as item}
 			<div class="venue-container bg-white text-black shadow-lg shadow-gray-900  rounded-xl border-2 flex flex-col overflow-hidden gap-5 pb-5 justify-start items-start h-auto w-[15rem] lg:w-[22rem] md:w-[18rem]">
 			  <div class="img-container relative">
-				<div class="absolute z-20 left-5 top-5 text-white bg-red-500 rounded-md hover:bg-red-600 active:shadow-inner active:bg-red-500">
-				  <button class="fa-solid fa-trash w-9 h-9 text-xl" on:click={() => handleDeleteItem(item.item_id)}></button>
+				<div class="absolute z-20 left-5 top-5 text-white shadow-sm shadow-slate-800 hover:shadow-inner bg-red-500 rounded-md ">
+				  <button class="fa-solid fa-trash hover:scale-95 w-9 h-9 text-xl" on:click={() => handleDeleteItem(item.item_id)}></button>
 				</div>
 				<div class="venue-img overflow-hidden h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center">
 				  <img src={item.image} alt={item.title} class="absolute top-0 left-0 border-b-2 border-gray-300 w-full h-full object-cover" />
@@ -465,7 +466,7 @@
 				  <span class="text-slate-500 line-through">{item.old_price > 0 ? `₹ ${item.old_price}` : ''}</span>
 				  <button class="py-2 w-[7rem] rounded-full bg-green-200 shadow-md">₹ {item.new_price}</button>
 				</div>
-				<div class="my-2 bg-blue-500 shadow-xl px-4 rounded-xl text-white hover:shadow-inner hover:bg-blue-600 active:bg-blue-500 text-lg font-bold py-2 w-fit">
+				<div class="my-2 bg-blue-500 shadow-xl px-4 hover:scale-95 rounded-xl text-white hover:shadow-inner hover:bg-blue-600 active:bg-blue-500 text-lg font-bold py-2 w-fit">
 				  <button class="text-wrap" on:click={() => openForm(item.item_id)}>Add Booking Form</button>
 				</div>
 			  </div>
@@ -473,6 +474,8 @@
 		  {/each}
 		</div>
 	  </div>
+	{/if}
+	 
 	{/each}
   </div>
 

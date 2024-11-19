@@ -14,6 +14,8 @@
     { id: 3, img: img3 },
     { id: 4, img: img4 },
     { id: 5, img: img5 },
+    { id: 6, img: img6 },
+    { id: 6, img: img6 },
   ];
 
   const inclusions = [
@@ -95,6 +97,12 @@
   let currentIndex = 0
   let val = 0
   let custom_item_price = 0
+  let price = 4999
+  let discount = 10
+  let discountPrice = (price * discount) / 100;
+  let finalAmount = Math.round(price - discountPrice)
+
+  
   let quantity = customization.map(() => 0)
 
   function totalCustomizationPrice() {
@@ -112,22 +120,19 @@
       totalCustomizationPrice()
     }
   }
+
+  function nextImage() {
+    currentIndex = (currentIndex + 1) % images.length;
+  }
+
+  function prevImage() {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+  }
+
+  function selectImage(index) {
+    currentIndex = index;
+  }
   
-
-  // onMount(() => {
-  //   interval = setInterval(() => {
-  //     currentIndex = (currentIndex + 1) % images.length;
-  //   }, 3000); // change image every 3 seconds
-  // });
-
-  // function previousImage() {
-  //   currentIndex = (currentIndex - 1 + images.length) % images.length;
-  // }
-
-  // function nextImage() {
-  //   currentIndex = (currentIndex + 1) % images.length;
-  // }
-
   // Define Close Form Variable
   export let closeForm = false;
   let open = false
@@ -162,57 +167,39 @@
       <div class="flex justify-center mb-10 mt-10  items-center h-full flex-wrap md:flex-nowrap">
 
         <!-- Image Container -->
-        <div class="img-container h-full w-full md:w-[50vw] py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24 ">
-          <div class="w-full h-full relative bg-red- shadow-xl rounded-md overflow-hidden  border-2 flex justify-center items-center flex-col">
-
-            <!-- pagination -->
-             <!--  on:click={previousImage} -->
-               <!-- on:click={nextImage} -->
-			<div class="pagination">
-				<button
-       
-					class="flex bg-white w-10 h-10 md:w-[50px] md:h-[50px] rounded-full text-center absolute z-10 top-[45%] md:top-[40%] left-3 justify-center items-center"
-				>
-					<i class="fa-solid fa-angles-left"></i>
-				</button>
-
-				<button
-        
-					class="flex bg-white w-10 h-10 md:w-[50px] md:h-[50px] rounded-full text-center absolute z-10 top-[45%] md:top-[40%] right-3 justify-center items-center"
-				>
-					<i class="fa-solid fa-angles-right"></i>
-				</button>
-			</div>
-
-      <img src={img1} alt={'image'} class="w-full h-full object-cover" />
-      <!-- <div class="w-full h-full flex justify-center items-center overflow-x-auto">
-        {#each images as image, index}
-          <div
-            class={`w-full h-full overflow-hidden flex justify-center items-center ${
-              index === currentIndex ? 'active' : ''
-            }`}
-          >
-            <img src={image.img} alt={'image'} class="w-full h-full object-cover" />
-          </div>
-        {/each}
-      </div> -->
-
-           <div class="w-full h-[20vh] flex py-4 px-3 justify-center items-center gap-10 overflow-x-auto ">
-            {#each images as image}
-            <div class="w-24 h-24 overflow-hidden flex justify-center items-center">
-                <img
-                    src={image.img}
-                    alt={'image'}
-                    class="w-full h-full object-cover"
-                />
+        <div class="img-container h-full w-full md:w-[50vw] py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24">
+          <div class="relative w-full h-full bg-gray-100 shadow-lg rounded-lg overflow-hidden border-2 flex flex-col items-center">
+            <!-- Main Image Section -->
+            <div class="relative w-full h-[70vh] flex justify-center items-center">
+              <button
+                on:click={prevImage}
+                class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white w-10 h-10 md:w-12 md:h-12 rounded-full flex justify-center items-center shadow-md hover:bg-gray-200 transition"
+              >
+                <i class="fa-solid fa-angles-left text-gray-600"></i>
+              </button>
+              <img src={images[currentIndex].img} alt="Main Image" class="w-full h-full object-cover rounded-t-lg" />
+              <button
+                on:click={nextImage}
+                class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white w-10 h-10 md:w-12 md:h-12 rounded-full flex justify-center items-center shadow-md hover:bg-gray-200 transition"
+              >
+                <i class="fa-solid fa-angles-right text-gray-600"></i>
+              </button>
             </div>
-            {/each}
-            </div>           
-           
-              
+        
+            <!-- Thumbnail Section -->
+            <div class="w-[90%] mx-auto bg-gray-50 py-4 px-4 flex justify-start items-center gap-4 overflow-x-auto rounded-b-lg">
+              {#each images as image, index}
+                <div
+                  on:click={() => selectImage(index)}
+                  class="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex justify-center items-center rounded-md overflow-hidden border-2 border-gray-300 hover:border-blue-500 cursor-pointer"
+                >
+                  <img src={image.img} alt="Thumbnail" class="w-full h-full object-cover" />
+                </div>
+              {/each}
+            </div>
           </div>
-          
         </div>
+        
 
         <!-- Info Container -->
         <div class="info-container relative h-full w-full md:w-[50vw] py-14 my-24 md:px-3 lg:px-7 xl:px-14 2xl:px-24 overflow-y-scroll ">
@@ -225,7 +212,10 @@
 
           <!--Details-->
             <div class="details border-2 shadow-xl px-5 py-3  flex justify-center gap-2 flex-col">
-              <h2 class="text-2xl font-bold text-right">₹ 4999</h2>
+              <div class="flex justify-between text-2xl font-bold">
+              <h1>Booking Plan</h1>
+              <h2>₹ {finalAmount}</h2>
+              </div>
               <hr>
               <form class="flex flex-col justify-center  mt-3 gap-3">  
                 <div class="flex justify-center items-center gap-5">
@@ -242,9 +232,9 @@
                 <div class="flex justify-center items-center gap-5">
                   <i class="fa-solid fa-location-dot text-2xl"></i>
                   <input
-                  type="number"
-                  id="pincode"
-                  placeholder="Enter Pincdoe"
+                  type="text"
+                  id="location"
+                  placeholder="Enter Address"
                   class="mt-1 block w-full border border-gray-300 rounded-md p-2"
                   required
                   />
@@ -307,9 +297,9 @@
                     <p class="text-sm h-16 overflow-y-scroll">{custom.desc}</p>
                     <p class="text-base font-bold">₹ {custom.price}</p>
                     <div class="flex justify-start items-center gap-3 my-2">
-                      <button on:click={() => lessItem(index)} class="fa-solid fa-minus bg-red-500 text-white p-2 rounded-md"></button>
+                      <button on:click={() => lessItem(index)} class="fa-solid fa-minus shadow-md active:shadow-inner bg-red-500 text-white p-2 rounded-md"></button>
                       <input type="text" id="quantity" value={quantity[index]} class=" block w-1/4 text-center border border-gray-300 rounded-md p-1" />
-                      <button on:click={() => addItem(index)} class="fa-solid fa-plus bg-green-500 text-white p-2 rounded-md"></button>
+                      <button on:click={() => addItem(index)} class="fa-solid fa-plus shadow-md  active:shadow-inner bg-green-500 text-white p-2 rounded-md"></button>
                     </div>
                   </div>
                 </div>
@@ -318,7 +308,25 @@
               <!-- custom-item end  -->
             </div>
 
-            <!-- pricing -->
+             <!-- pricing -->
+             <div class="details border-2 shadow-xl px-5 py-3  flex justify-center gap-2  flex-col">
+              <div class="flex justify-between font-bold text-2xl">
+              <h2>Total Bill</h2>
+              <h2>₹ {finalAmount + custom_item_price}</h2>
+            </div>
+              <hr>
+
+              <div class="Payment text-sm text-slate-600 space-y-1">
+                <h3>Actual Amount : ₹  {price}</h3>
+                <h3>Discount on plan : {discount} %</h3>
+                <h3>Discount price : ₹ {discountPrice}</h3>
+                <h3>Add on Price: ₹ {custom_item_price}</h3>
+                <hr>
+                <h3 class="text-base text-slate-700 mt-2 font-semibold">Final Amount: ₹  {finalAmount + custom_item_price}</h3>
+              </div>
+            </div>
+
+            <!-- contact -->
             <div class="details border-2 shadow-xl px-5 py-3  flex justify-center gap-2  flex-col">
               <h2 class="text-2xl font-bold">Contact</h2>
               <hr>

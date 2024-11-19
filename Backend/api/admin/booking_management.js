@@ -79,13 +79,13 @@ router.post('/api/admin/booking_management', upload.any(),  async (req, res) => 
     let conn;
     try {
         conn = await pool.getConnection();
-        const { title, description, price, discount } = req.body;
+        const { title, description, price, discount, item_id } = req.body;
 
         
         // console.log("bookingform details: ", req.body);
         console.log("files", req.files)
         
-        const result = await conn.query('INSERT INTO bookingform (title, description, price, discount) VALUES (?, ?, ?, ?)', [title, description, price, discount]);
+        const result = await conn.query('INSERT INTO bookingform (title, description, price, discount, item_id) VALUES (?, ?, ?, ?, ?)', [title, description, price, discount, item_id]);
        
         console.log(result);
 
@@ -94,7 +94,8 @@ router.post('/api/admin/booking_management', upload.any(),  async (req, res) => 
             console.log("bookingform id: ", insertID);
             return res.json({
                 message: "bookingform added successfully",
-                booking_id: insertID
+                booking_id: insertID,
+                item_id : item_id
             });
         } else {
             return res.status(400).json({
@@ -134,6 +135,39 @@ router.delete('/api/admin/booking_management/:booking_id', async (req, res) => {
     } catch (error) {
         console.error('Error deleting Booking id:', error);
         res.status(500).json({ error: 'An error occurred while deleting the booking id' });
+    }
+});
+
+
+
+//ALl Booking information get as per the item_id of category_management table
+router.get('/api/admin/booking_management_details/:item_id', async (req, res) => {
+    const { item_id } = req.params;
+    let conn;
+    try {
+        conn = await pool.getConnection();
+        const bookings = await conn.query(
+            `SELECT bf.*, 
+                    cm.item_id AS category_item_id,
+                    cm.category_name,
+                    inc.inclusion_desc, 
+                    mi.image AS multi_image, 
+                    ci.custom_title, ci.custom_desc, ci.custom_price
+             FROM bookingform bf
+             LEFT JOIN category_management cm ON bf.item_id = cm.item_id
+             LEFT JOIN inclusions inc ON bf.booking_id = inc.booking_id
+             LEFT JOIN multi_images mi ON bf.booking_id = mi.booking_id
+             LEFT JOIN customization_item ci ON bf.booking_id = ci.booking_id
+             WHERE bf.item_id = ?`,
+            [item_id] // Correctly pass the item_id in an array
+        );
+
+        res.json(bookings);
+    } catch (error) {
+        console.error('Error fetching bookings:', error.message);
+        res.status(500).json({ message: 'Error fetching bookings', error: error.message });
+    } finally {
+        if (conn) conn.release();
     }
 });
 
