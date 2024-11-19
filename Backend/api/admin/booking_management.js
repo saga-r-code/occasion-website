@@ -15,9 +15,9 @@ router.get('/api/admin/booking_management/:booking_id', async (req, res) => {
     const booking_id = req.params.booking_id;
     try {
         conn = await pool.getConnection()
-        
+
         // fetch booking details
-        const bookingResult = await conn.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]); 
+        const bookingResult = await conn.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
 
         if (bookingResult.length === 0) {
             return res.status(404).send({ message: 'Booking not found' });
@@ -75,18 +75,18 @@ router.get('/api/admin/booking_management', async (req, res) => {
 
 
 //Add data
-router.post('/api/admin/booking_management', upload.any(),  async (req, res) => {
+router.post('/api/admin/booking_management', upload.any(), async (req, res) => {
     let conn;
     try {
         conn = await pool.getConnection();
         const { title, description, price, discount, item_id } = req.body;
 
-        
+
         // console.log("bookingform details: ", req.body);
         console.log("files", req.files)
-        
+
         const result = await conn.query('INSERT INTO bookingform (title, description, price, discount, item_id) VALUES (?, ?, ?, ?, ?)', [title, description, price, discount, item_id]);
-       
+
         console.log(result);
 
         if (result.affectedRows === 1) {
@@ -95,7 +95,7 @@ router.post('/api/admin/booking_management', upload.any(),  async (req, res) => 
             return res.json({
                 message: "bookingform added successfully",
                 booking_id: insertID,
-                item_id : item_id
+                item_id: item_id
             });
         } else {
             return res.status(400).json({
@@ -146,21 +146,23 @@ router.get('/api/admin/booking_management_details/:item_id', async (req, res) =>
     let conn;
     try {
         conn = await pool.getConnection();
-        const bookings = await conn.query(
-            `SELECT bf.*, 
-                    cm.item_id AS category_item_id,
-                    cm.category_name,
-                    inc.inclusion_desc, 
-                    mi.image AS multi_image, 
-                    ci.custom_title, ci.custom_desc, ci.custom_price
-             FROM bookingform bf
-             LEFT JOIN category_management cm ON bf.item_id = cm.item_id
-             LEFT JOIN inclusions inc ON bf.booking_id = inc.booking_id
-             LEFT JOIN multi_images mi ON bf.booking_id = mi.booking_id
-             LEFT JOIN customization_item ci ON bf.booking_id = ci.booking_id
-             WHERE bf.item_id = ?`,
-            [item_id] // Correctly pass the item_id in an array
-        );
+
+        // const bookings = await conn.query(
+        //     ` SELECT bf.*, cm.item_id AS category_management_id, cf.* FROM bookingform bf JOIN category_management cm ON bf.item_id = cm.item_id WHERE bf.item_id = ?
+        //     `,
+        //     [item_id]
+        // );
+
+        const query = await conn.query(`
+    SELECT bf.*, cm.item_id AS category_item_id, cm.* 
+    FROM bookingform bf
+    JOIN category_management cm ON bf.item_id = cm.item_id
+    WHERE bf.item_id = ?;
+`, [item_id]);
+
+        const [rows] = await connection.execute(query, [36]);
+        console.log(rows);
+
 
         res.json(bookings);
     } catch (error) {
@@ -173,3 +175,17 @@ router.get('/api/admin/booking_management_details/:item_id', async (req, res) =>
 
 
 export default router;
+
+// `SELECT bf.*, 
+//         cm.item_id AS category_item_id,
+//         cm.category_name,
+//         inc.inclusion_desc,
+//         mi.image AS multi_image,
+//         ci.custom_title, ci.custom_desc, ci.custom_price
+//  FROM bookingform bf
+//  LEFT JOIN category_management cm ON bf.item_id = cm.item_id
+//  LEFT JOIN inclusions inc ON bf.booking_id = inc.booking_id
+//  LEFT JOIN multi_images mi ON bf.booking_id = mi.booking_id
+//  LEFT JOIN customization_item ci ON bf.booking_id = ci.booking_id
+//  WHERE bf.item_id = ?`,
+
