@@ -61,6 +61,7 @@ router.get('/api/admin/booking_management/:id', async (req, res) => {
     }
 });
 
+
 // Get all details for a specific category_management ID and its related bookingform entries
 router.get('/api/admin/booking_details/:id', async (req, res) => {
     const { id } = req.params; // Get the category ID from the request parameters
@@ -84,8 +85,8 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
                 bf.price AS booking_price,
                 bf.discount AS booking_discount,
                 GROUP_CONCAT(DISTINCT inc.inclusion_desc) AS inclusions,
-                GROUP_CONCAT(DISTINCT mi.image_id) AS multi_images,
-                GROUP_CONCAT(DISTINCT CONCAT_WS('|', ci.custom_title, ci.custom_desc, ci.custom_price)) AS customizations
+                GROUP_CONCAT(DISTINCT JSON_OBJECT('image_id', mi.image_id, 'image', mi.image)) AS multi_images,
+                GROUP_CONCAT(DISTINCT JSON_OBJECT('custom_title', ci.custom_title, 'custom_desc', ci.custom_desc, 'custom_price', ci.custom_price, 'custom_image', TO_BASE64(ci.custom_image))) AS customizations
             FROM 
                 category_management cm
             LEFT JOIN 
@@ -119,29 +120,36 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
             },
             bookings: categoryBookingDetails.map(detail => {
                 
-                // Create an array for images
+                // Handle images
                 let imagesArray = [];
                 if (detail.multi_images) {
-                    const ids = detail.multi_images.split(','); // Split the string into an array of IDs
-                    for (let id of ids) {
-                        imagesArray.push({ image_id: Number(id.trim()) }); // Push each ID as an object into the array
+                    try {
+                        const images = JSON.parse(`[${detail.multi_images}]`);
+                        imagesArray = images.map(image => ({
+                            image_id: image.image_id,
+                            image: image.image
+                                ? `data:image/jpeg;base64,${Buffer.from(image.image).toString('base64')}`
+                                : null
+                        }));
+                    } catch (error) {
+                        console.error('Error parsing multi_images:', error.message);
                     }
                 }
 
-                //For customization
+                // Handle customizations
                 let customizationsArray = [];
                 if (detail.customizations) {
-                 // Split the string into an array of customizations
-                 const customizations = detail.customizations.split(',');
-                 // Map each customization string to an object
-                 customizationsArray = customizations.map(customization => {
-                     const [title, description, price] = customization.split('|');
-                     return {
-                         title: title.trim(), // Trim whitespace
-                         description: description.trim(), // Trim whitespace
-                         price: Number(price.trim()) // Convert price to a number
-                     };
-                 });
+                    try {
+                        const customizations = JSON.parse(`[${detail.customizations}]`);
+                        customizationsArray = customizations.map(customization => ({
+                            title: customization.custom_title,
+                            description: customization.custom_desc,
+                            price: Number(customization.custom_price),
+                            custom_image: customization.custom_image,
+                        }));
+                    } catch (error) {
+                        console.error('Error parsing customizations:', error.message);
+                    }
                 }
 
                 return {
@@ -150,8 +158,10 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
                     description: detail.booking_description,
                     price: detail.booking_price,
                     discount: detail.booking_discount,
-                    inclusions: detail.inclusions ? detail.inclusions.split(',').map(inclusion => ({ inclusion })) : [], // Split only if not null
-                    images: imagesArray, // Use the newly formatted images array
+                    inclusions: detail.inclusions
+                        ? detail.inclusions.split(',').map(inclusion => ({ inclusion }))
+                        : [], // Split only if not null
+                    images: imagesArray,
                     customizations: customizationsArray,
                 };
             })
@@ -167,6 +177,7 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
         }
     }
 });
+
 
 // Delete all details for a specific category_management ID and its related bookingform entries
 router.delete('/api/admin/booking_details/:id', async (req, res) => {
