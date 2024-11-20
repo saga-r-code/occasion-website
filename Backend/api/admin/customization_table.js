@@ -66,7 +66,7 @@ router.post('/api/admin/customization_table', upload.single('custom_image'), asy
         conn = await pool.getConnection();
 
         // Check if the booking ID exists
-        const bookingExist = await conn.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
+        const bookingExist = await conn.query('SELECT * FROM bookingform WHERE id = ?', [booking_id]);
         console.log('Booking existence check result:', bookingExist);
 
         if (bookingExist.length === 0) {

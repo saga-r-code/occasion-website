@@ -50,7 +50,7 @@ router.post('/api/admin/images_table', upload.array('image', 12), async (req, re
         }
 
         // Validate booking_id exists
-        const bookingExist = await conn.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
+        const bookingExist = await conn.query('SELECT * FROM bookingform WHERE id = ?', [booking_id]);
         if (bookingExist.length === 0) {
             return res.status(404).json({ message: 'Invalid Booking Id' });
         }
@@ -134,3 +134,4 @@ router.delete('/api/admin/images_table/:booking_id', async (req, res) => {
     }
 });
 export default router;
+

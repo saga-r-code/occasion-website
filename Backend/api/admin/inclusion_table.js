@@ -32,7 +32,7 @@ router.get('/api/admin/inclusion_table', async (req, res) => {
     }
 });
 
-//Add inclusion
+// Add data
 router.post('/api/admin/inclusion_table', upload.any(), async (req, res) => {
     let conn;
     try {
@@ -40,38 +40,47 @@ router.post('/api/admin/inclusion_table', upload.any(), async (req, res) => {
         let { inclusion_desc, booking_id } = req.body;
 
         console.log('Inclusion description:', req.body);
-        // console.log('Files:', req.files);
 
         // Ensure inclusion_desc is correctly formatted
         if (typeof inclusion_desc === 'string') {
             try {
                 inclusion_desc = JSON.parse(inclusion_desc); // Parse only if it's a JSON string
             } catch (e) {
-                // If parsing fails, treat it as a plain string
                 console.log('Failed to parse inclusion_desc, treating as plain string');
             }
         }
 
-        // Validate booking_id exists
-        const bookingExist = await conn.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
-        if (bookingExist.length === 0) {
-            return res.status(404).json({ message: 'Invalid Booking ID' });
-        }
+        // Check if inclusion_desc is an array
+        const inclusion_desc_array = Array.isArray(inclusion_desc)
+            ? inclusion_desc
+            : [inclusion_desc];
 
-        const result = await conn.query('INSERT INTO inclusions (inclusion_desc, booking_id) VALUES (?, ?)', [inclusion_desc, booking_id]);
-        console.log(result);
+        // Prepare to insert inclusions
+        const insertPromises = inclusion_desc_array.map(async (desc) => {
+            try {
+                // Ensure each inclusion_desc is parsed correctly
+                if (typeof desc === 'string') {
+                    inclusion_desc = JSON.parse(desc);
+                }
+                const result = await conn.query(
+                    'INSERT INTO inclusions (inclusion_desc, booking_id) VALUES (?, ?)',
+                    [inclusion_desc, booking_id]
+                );
+                return result.insertId; // Return the inserted ID
+            } catch (error) {
+                console.error('Error inserting inclusion:', error);
+                throw error; // Rethrow to handle later
+            }
+        });
 
-        if (result.affectedRows === 1) {
-            const insertID = Number(result.insertId);
-            console.log('Insert successful, ID:', insertID);
-            return res.json({
-                message: 'Inclusion added successfully',
-                id: insertID,
-                inclusion_desc: inclusion_desc,
-            });
-        } else {
-            res.status(500).send({ message: 'Error adding inclusion' });
-        }
+        // Wait for all insertions to finish and collect IDs
+        const insertedIds = await Promise.all(insertPromises);
+
+        // Send response
+        res.json({
+            message: 'Inclusions added successfully',
+            inclusion_desc_array,
+        });
     } catch (error) {
         console.error('Error inserting inclusion:', error);
         res.status(500).send({ message: 'Internal Server Error', error: error.message });
@@ -81,6 +90,7 @@ router.post('/api/admin/inclusion_table', upload.any(), async (req, res) => {
         }
     }
 });
+
 
 
 //Delete inclusion

@@ -187,12 +187,12 @@
 	}
 
 	// delete cards
-	async function handleDeleteItem(item_id) {
+	async function handleDeleteItem(id) {
 		const confirmed = confirm('Are you sure you want to delete this item?');
 
 		if (confirmed) {
 			try {
-				const response = await fetch(`http://localhost:3000/api/admin/category_management/${item_id}`, {
+				const response = await fetch(`http://localhost:3000/api/admin/category_management/${id}`, {
 					method: 'DELETE'
 				});
 
@@ -201,7 +201,7 @@
 					alert(result.message);
 
 					// Remove deleted item from the venue array in the frontend
-					venue = venue.filter((item) => item.item_id !== item_id);
+					venue = venue.filter((item) => item.id !== id);
 					venue = [...venue]; // Ensure reactivity
 				} else {
 					const error = await response.json();
@@ -228,6 +228,7 @@
             }
             const item = await response.json();
             bookingPageSelectedTitle = item.title; // Set selectedTitle and trigger reactivity
+			console.log(itemId)
         } catch (error) {
             console.error('Error fetching title:', error);
             bookingPageSelectedTitle = 'Error loading title'; // Fallback title
@@ -235,7 +236,7 @@
     }
 
     function openForm(itemId) {
-        bookingPageSelectedTitle = ""; // Clear any previous title
+        // bookingPageSelectedTitle = ""; // Clear any previous title
         booking = true; // Show the booking form
         fetchTitle(itemId); // Fetch the title for the selected item
     }
@@ -270,7 +271,7 @@
 			  name="category"
 			  bind:value={selectedCategory}
 			  required
-			  class="rounded-lg w-full text-white font-semibold bg-white/10 tracking-wider text-[17px] border-slate-300 bg-opacity-30 backdrop-blur-lg border py-3 pr-10 pl-5 xl"
+			  class="rounded-lg w-full text-white font-semibold bg-white/10 tracking-wider text-[17px] border-slate-300 bg-opacity-30 backdrop-blur-lg border py-3 pr-10 pl-5 "
 			>  
 			  <option value="" disabled selected>Choose a category</option>
 			  {#each categoriesWithAll as category}
@@ -289,7 +290,7 @@
 			>
 				<button class="fa-solid fa-xmark absolute right-5 text-2xl font-bold" on:click={toggle}
 				></button>
-				<h2 class="text-xl font-semibold text-center mt-8 text-wrap">Add New Venue Form</h2>
+				<h2 class="text-xl font-semibold text-center mt-8 text-wrap">Add New Event Card</h2>
 
 				<!-- Image Input -->
 				<div>
@@ -454,7 +455,7 @@
 			<div class="venue-container bg-white text-black shadow-lg shadow-gray-900  rounded-xl border-2 flex flex-col overflow-hidden gap-5 pb-5 justify-start items-start h-auto w-[15rem] lg:w-[22rem] md:w-[18rem]">
 			  <div class="img-container relative">
 				<div class="absolute z-20 left-5 top-5 text-white shadow-sm shadow-slate-800 hover:shadow-inner bg-red-500 rounded-md ">
-				  <button class="fa-solid fa-trash hover:scale-95 w-9 h-9 text-xl" on:click={() => handleDeleteItem(item.item_id)}></button>
+				  <button class="fa-solid fa-trash hover:scale-95 w-9 h-9 text-xl" on:click={() => handleDeleteItem(item.id)}></button>
 				</div>
 				<div class="venue-img overflow-hidden h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center">
 				  <img src={item.image} alt={item.title} class="absolute top-0 left-0 border-b-2 border-gray-300 w-full h-full object-cover" />
@@ -467,7 +468,7 @@
 				  <button class="py-2 w-[7rem] rounded-full bg-green-200 shadow-md">₹ {item.new_price}</button>
 				</div>
 				<div class="my-2 bg-blue-500 shadow-xl px-4 hover:scale-95 rounded-xl text-white hover:shadow-inner hover:bg-blue-600 active:bg-blue-500 text-lg font-bold py-2 w-fit">
-				  <button class="text-wrap" on:click={() => openForm(item.item_id)}>Add Booking Form</button>
+				  <button class="text-wrap" on:click={() => openForm(item.id)}>Add Booking Form</button>
 				</div>
 			  </div>
 			</div>

@@ -11,10 +11,10 @@ const upload = multer({ storage });
 const router = express.Router();
 
 //Get All Category by thire id for title
-router.get('/api/admin/category_management/:item_id', async (req, res) => {
-    const { item_id } = req.params;
+router.get('/api/admin/category_management/:id', async (req, res) => {
+    const { id } = req.params;
     try {
-        const result = await pool.query('SELECT * FROM category_management WHERE item_id = ?', [item_id]);
+        const result = await pool.query('SELECT * FROM category_management WHERE id = ?', [id]);
         
         if (result.length === 0) {
             return res.status(404).send({ message: 'Item not found' });  // Item not found
@@ -73,7 +73,7 @@ router.post('/api/admin/category_management', upload.single('image'), async (req
         if(result.affectedRows === 1){
             res.status(200).json({
                 message: 'Data inserted successfully',
-                item_id : Number(result.insertId),
+                id : Number(result.insertId),
                 category_name,
                 title,
                 location,
@@ -97,22 +97,22 @@ router.post('/api/admin/category_management', upload.single('image'), async (req
 });
 
 //Delete data
-router.delete('/api/admin/category_management/:item_id', async (req, res) => {
-    const { item_id } = req.params;
+router.delete('/api/admin/category_management/:id', async (req, res) => {
+    const { id } = req.params;
 
     try {
-        const checkResult = await pool.query('SELECT * FROM category_management WHERE item_id = ?', [item_id]);
+        const checkResult = await pool.query('SELECT * FROM category_management WHERE id = ?', [id]);
 
         // If the item does not exist, return a 404 error
         if (checkResult.length === 0) {
             return res.status(404).json({ error: 'Category not found' });
         }           
-        // Delete the item by item_id from the database
-        const result = await pool.query('DELETE FROM category_management WHERE item_id = ?', [item_id]);
+        // Delete the item by id from the database
+        const result = await pool.query('DELETE FROM category_management WHERE id = ?', [id]);
 
         // Check the result of the deletion
         if (result.affectedRows > 0) {
-            res.status(200).json({ message: `Item with ID ${item_id} deleted successfully` });
+            res.status(200).json({ message: `Item with ID ${id} deleted successfully` });
         } else {
             res.status(404).json({ message: 'Category not found' });
         }

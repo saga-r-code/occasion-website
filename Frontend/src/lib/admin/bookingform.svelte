@@ -1,4 +1,6 @@
 <script>
+	import { onMount } from "svelte";
+
     export let booking;
     export let bookingPageSelectedTitle = "";
     export let bookingToggle;
@@ -15,6 +17,9 @@
     let custom_price = 0;
     let custom_image = null;
     let customization = [];
+
+	let titleAndIds = [];
+	let selectedCategoryManagementId = ''
 
     let moreInfo = false;
     let moreInfoCustomization = false;
@@ -64,12 +69,8 @@
         custom_image = null;
     }
 
-    function deleteCustomization(id) {
+	function deleteCustomization(id) {
         customization = customization.filter(custom => custom.custom_id !== id);
-    }
-
-    function handleImagesChange() {
-        images = Array.from(imagesInput.files);
     }
 
     function handleCutomImageChange(event) {
@@ -78,37 +79,45 @@
             custom_image = file;
 			console.log("custom_image" , custom_image)
         }
-
     }
 
-    async function handleBookingForm() {
+	function handleImagesChange() {
+        images = Array.from(imagesInput.files);
+    }
+
+	//For categoryid input via their title
+	async function fetchTitle() {
+        try {
+            const response = await fetch(`http://localhost:3000/api/admin/category_management`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const item = await response.json();
+			 titleAndIds = item.map(items => ({
+				title: items.title,
+				id: items.id
+			}))
+
+			// console.log(selectedCategoryManagementId)
+			// console.log("sagar", titleAndIds)
+			return titleAndIds;
+
+        } catch (error) {
+            console.error('Error fetching title:', error);
+        }
+    }
+
+	async function handleBookingForm() {
         const formData = new FormData();
 
         // Add main booking details
+		formData.append('item_id', selectedCategoryManagementId)
         formData.append('title', title);
         formData.append('description', description);
         formData.append('price', price);
         formData.append('discount', discount);
 
-        // Add inclusions
-		// formData.append('inclusion', JSON.stringify(inclusion));
-
-
-        // Add images
-        // images.forEach((image, index) => {
-        //     formData.append(`image_${index}`, image);
-        // });
-
-        // // Add customization items
-        // customization.forEach((custom, index) => {
-        //     formData.append(`customization_${index}_title`, custom.custom_title);
-        //     formData.append(`customization_${index}_desc`, custom.custom_desc);
-        //     formData.append(`customization_${index}_price`, custom.custom_price);
-
-        //     if (custom.custom_image) {
-        //         formData.append(`customization_${index}_image`, custom.custom_image);
-        //     }
-        // });
+		console.log(selectedCategoryManagementId)
 
         try {
             const response = await fetch('http://localhost:3000/api/admin/booking_management', {
@@ -118,9 +127,9 @@
 
             if (response.ok) {
                 const result = await response.json();
-                const booking_id = result.booking_id;
+                const booking_id = result.id;
                 alert("Booking added successfully!");
-
+				console.log("booking Id", booking_id)
                 // Submit related data
                 await Promise.all([
                     submitInclusion(booking_id),
@@ -138,7 +147,7 @@
         }
     }
 
-async function submitImages(booking_id) {
+	async function submitImages(booking_id) {
     const imageData = new FormData();
    	imageData.append('booking_id', booking_id);
     images.forEach(image => {
@@ -162,7 +171,9 @@ async function submitImages(booking_id) {
     async function submitInclusion(booking_id) {
         const inclusionData = new FormData();
         inclusionData.append('booking_id', booking_id);
-        inclusionData.append('inclusion_desc', JSON.stringify(inclusion));
+		inclusion.forEach((inclusions) => {
+        inclusionData.append('inclusion_desc', JSON.stringify(inclusions)); 
+    });
 
         try {
             const response = await fetch('http://localhost:3000/api/admin/inclusion_table', {
@@ -179,19 +190,21 @@ async function submitImages(booking_id) {
     }
 
     async function submitCustomization(booking_id) {
-        for (const custom of customization) {
-            const customizationData = new FormData();
-            customizationData.append('booking_id', booking_id);
+		const customizationData = new FormData();
+        customizationData.append('booking_id', booking_id);
+    
+        // Loop through the existing customization array and append each one to the FormData
+        customization.forEach((custom) => {
             customizationData.append('custom_title', custom.custom_title);
             customizationData.append('custom_desc', custom.custom_desc);
             customizationData.append('custom_price', custom.custom_price);
-
-			if (custom.custom_image) {
-				customizationData.append('custom_image', custom.custom_image);
-			}
-			else{
-				console.log("no file found")
-			}
+    
+            if (custom.custom_image) {
+                customizationData.append('custom_image', custom.custom_image); // Use [] to indicate an array
+            } else {
+                console.log("no file found for", custom.custom_title);
+            }
+        });
 
 			console.log("submit data",customizationData)
 
@@ -219,9 +232,12 @@ async function submitImages(booking_id) {
             } catch (error) {
                 console.error('Error submitting customization:', error);
             }
-        
-        }
     }
+
+	onMount(()=>{
+		fetchTitle()
+	})
+
 </script>
 
 
@@ -242,6 +258,26 @@ async function submitImages(booking_id) {
 		  {bookingPageSelectedTitle ? bookingPageSelectedTitle : 'Loading...'}
 		</h1>
 	  </div>
+
+
+	  <!-- Select Title of Catgeory_management -->
+	  <div class="relative w-full">
+		<select
+			id="category"
+			name="category"
+			bind:value={selectedCategoryManagementId}
+			required
+			class="block w-full pl-5 py-3 text-[17px] font-semibold text-white bg-gray-700 border appearance-auto border-gray-600 rounded-lg  "
+		>
+			<option value="" disabled selected>Choose a category</option>
+			{#each titleAndIds as titleId}
+				<option value={titleId.id}>{titleId.title}</option>
+			{/each}
+		</select>
+		<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+			
+		</div>
+	</div>
   
 	  <!-- Image Input -->
 	  <div>

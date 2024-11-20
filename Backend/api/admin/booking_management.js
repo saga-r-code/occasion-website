@@ -10,14 +10,14 @@ const upload = multer()
 
 
 //Get All Category with booking id
-router.get('/api/admin/booking_management/:booking_id', async (req, res) => {
+router.get('/api/admin/booking_management/:id', async (req, res) => {
     let conn;
-    const booking_id = req.params.booking_id;
+    const id = req.params.id;
     try {
         conn = await pool.getConnection()
 
         // fetch booking details
-        const bookingResult = await conn.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
+        const bookingResult = await conn.query('SELECT * FROM bookingform WHERE id = ?', [id]);
 
         if (bookingResult.length === 0) {
             return res.status(404).send({ message: 'Booking not found' });
@@ -26,9 +26,9 @@ router.get('/api/admin/booking_management/:booking_id', async (req, res) => {
         const booking = bookingResult[0];
 
         // fetch inclusions
-        const inclusionsResult = await conn.query('SELECT * FROM inclusions WHERE booking_id = ?', [booking_id]);
-        const customizationResult = await conn.query('SELECT * FROM customization_item WHERE booking_id = ?', [booking_id]);
-        const multiImages = await conn.query('SELECT * FROM multi_images WHERE booking_id = ?', [booking_id]);
+        const inclusionsResult = await conn.query('SELECT * FROM inclusions WHERE booking_id = ?', [id]);
+        const customizationResult = await conn.query('SELECT * FROM customization_item WHERE booking_id = ?', [id]);
+        const multiImages = await conn.query('SELECT * FROM multi_images WHERE booking_id = ?', [id]);
 
         const inclusions = inclusionsResult.map((inclusion) => ({
             inclusion_id: inclusion.inclusion_id,
@@ -58,6 +58,91 @@ router.get('/api/admin/booking_management/:booking_id', async (req, res) => {
     } catch (error) {
         console.error('Error fetching categories:', error.message);
         res.status(500).send({ message: 'Internal Server Error' });
+    }
+});
+
+// Get all details for a specific category_management ID and its related bookingform entries
+router.get('/api/admin/booking_details/:id', async (req, res) => {
+    const { id } = req.params; // Get the category ID from the request parameters
+    let conn;
+
+    try {
+        conn = await pool.getConnection();
+
+        // SQL query to fetch all details related to the category_management ID
+       // Fetch the details
+const categoryBookingDetails = await conn.query(`
+    SELECT 
+        cm.id AS category_id,
+        cm.category_name,
+        cm.title AS category_title,
+        cm.location,
+        cm.old_price,
+        cm.new_price,
+        bf.id AS booking_id,
+        bf.title AS booking_title,
+        bf.description AS booking_description,
+        bf.price AS booking_price,
+        bf.discount AS booking_discount,
+        GROUP_CONCAT(DISTINCT inc.inclusion_desc) AS inclusions,
+        GROUP_CONCAT(DISTINCT mi.image) AS multi_images,
+        GROUP_CONCAT(DISTINCT CONCAT_WS('|', ci.custom_title, ci.custom_desc, ci.custom_price)) AS customizations
+    FROM 
+        category_management cm
+    LEFT JOIN 
+        bookingform bf ON cm.id = bf.item_id
+    LEFT JOIN 
+        inclusions inc ON bf.id = inc.booking_id
+    LEFT JOIN 
+        multi_images mi ON bf.id = mi.booking_id
+    LEFT JOIN 
+        customization_item ci ON bf.id = ci.booking_id
+    WHERE 
+        cm.id = ?
+    GROUP BY 
+        bf.id;
+`, [id]);
+
+// Handle no data
+if (categoryBookingDetails.length === 0) {
+    return res.status(404).json({ message: 'No bookings found for this category' });
+}
+
+// Format the response
+const response = {
+    category: {
+        id: categoryBookingDetails[0].category_id,
+        name: categoryBookingDetails[0].category_name,
+        title: categoryBookingDetails[0].category_title,
+        location: categoryBookingDetails[0].location,
+        old_price: categoryBookingDetails[0].old_price,
+        new_price: categoryBookingDetails[0].new_price,
+    },
+    bookings: categoryBookingDetails.map(detail => ({
+        booking_id: detail.booking_id,
+        title: detail.booking_title,
+        description: detail.booking_description,
+        price: detail.booking_price,
+        discount: detail.booking_discount,
+        inclusions: detail.inclusions ? detail.inclusions.split(',').map(inclusion => ({ inclusion })) : [], // Split only if not null
+        images: detail.multi_images ? detail.multi_images.map(image => ({ image})) : [],
+        customizations: detail.customizations ? detail.customizations.split(',').map(customization => {
+            return { title, description, price };
+        }) : [],
+        
+    }))
+};
+
+
+
+        res.json(response);
+    } catch (error) {
+        console.error('Error fetching category and booking details:', error.message);
+        res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+        if (conn) {
+            await conn.release();
+        }
     }
 });
 
@@ -94,7 +179,7 @@ router.post('/api/admin/booking_management', upload.any(), async (req, res) => {
             console.log("bookingform id: ", insertID);
             return res.json({
                 message: "bookingform added successfully",
-                booking_id: insertID,
+                id: insertID,
                 item_id: item_id
             });
         } else {
@@ -113,21 +198,21 @@ router.post('/api/admin/booking_management', upload.any(), async (req, res) => {
 });
 
 // Delete data
-router.delete('/api/admin/booking_management/:booking_id', async (req, res) => {
-    const { booking_id } = req.params; // Get booking_id from params
+router.delete('/api/admin/booking_management/:id', async (req, res) => {
+    const { id } = req.params; // Get id from params
 
     try {
-        const checkResult = await pool.query('SELECT * FROM bookingform WHERE booking_id = ?', [booking_id]);
+        const checkResult = await pool.query('SELECT * FROM bookingform WHERE id = ?', [id]);
 
         // If no booking found, return 404
         if (checkResult.length === 0) {
             return res.status(404).json({ error: 'Booking id not found' });
         }
 
-        const result = await pool.query('DELETE FROM bookingform WHERE booking_id = ?', [booking_id]);
+        const result = await pool.query('DELETE FROM bookingform WHERE id = ?', [id]);
 
         if (result.affectedRows === 1) {
-            res.status(200).json({ message: `Booking with ID ${booking_id} deleted successfully` });
+            res.status(200).json({ message: `Booking with ID ${id} deleted successfully` });
         } else {
             res.status(500).json({ error: 'An error occurred while deleting the booking id' });
         }
@@ -140,52 +225,60 @@ router.delete('/api/admin/booking_management/:booking_id', async (req, res) => {
 
 
 
-//ALl Booking information get as per the item_id of category_management table
-router.get('/api/admin/booking_management_details/:item_id', async (req, res) => {
-    const { item_id } = req.params;
-    let conn;
-    try {
-        conn = await pool.getConnection();
 
-        // const bookings = await conn.query(
-        //     ` SELECT bf.*, cm.item_id AS category_management_id, cf.* FROM bookingform bf JOIN category_management cm ON bf.item_id = cm.item_id WHERE bf.item_id = ?
-        //     `,
-        //     [item_id]
-        // );
+// const categoryBookingDetails = await conn.query(`
+//     SELECT cm.id AS category_id,
+//            cm.category_name,
+//            cm.title AS category_title,
+//            cm.location,
+//            cm.old_price,
+//            cm.new_price,
+//            bf.id AS booking_id,
+//            bf.title AS booking_title,
+//            bf.description AS booking_description,
+//            bf.price AS booking_price,
+//            bf.discount AS booking_discount,
+//            inc.inclusion_desc,
+//            mi.image AS multi_image,
+//            ci.custom_title, ci.custom_desc, ci.custom_price
+//     FROM category_management cm
+//     LEFT JOIN bookingform bf ON cm.id = bf.item_id
+//     LEFT JOIN inclusions inc ON bf.id = inc.booking_id
+//     LEFT JOIN multi_images mi ON bf.id = mi.booking_id
+//     LEFT JOIN customization_item ci ON bf.id = ci.booking_id
+//     WHERE cm.id = ?
+// `, [id]);
 
-        const query = await conn.query(`
-    SELECT bf.*, cm.item_id AS category_item_id, cm.* 
-    FROM bookingform bf
-    JOIN category_management cm ON bf.item_id = cm.item_id
-    WHERE bf.item_id = ?;
-`, [item_id]);
+// if (categoryBookingDetails.length === 0) {
+//     return res.status(404).json({ message: 'No bookings found for this category' });
+// }
 
-        const [rows] = await connection.execute(query, [36]);
-        console.log(rows);
+// // Format the response
+// const response = {
+//     category: {
+//         id: categoryBookingDetails[0].category_id,
+//         name: categoryBookingDetails[0].category_name,
+//         title: categoryBookingDetails[0].category_title,
+//         location: categoryBookingDetails[0].location,
+//         old_price: categoryBookingDetails[0].old_price,
+//         new_price: categoryBookingDetails[0].new_price,
+//     },
+//     bookings: categoryBookingDetails.map(detail => ({
+//         booking_id: detail.booking_id,
+//         title: detail.booking_title,
+//         description: detail.booking_description,
+//         price: detail.booking_price,
+//         discount: detail.booking_discount,
+//         inclusions: detail.inclusion_desc ? [detail.inclusion_desc] : [],
+//         images: detail.multi_image ? [detail.multi_image] : [],
+//         customizations: detail.custom_title ? [{
+//             title: detail.custom_title,
+//             description: detail.custom_desc,
+//             price: detail.custom_price
+//         }] : []
+//     })).filter(booking => booking.booking_id) // Filter out any bookings that do not exist
+// };
 
-
-        res.json(bookings);
-    } catch (error) {
-        console.error('Error fetching bookings:', error.message);
-        res.status(500).json({ message: 'Error fetching bookings', error: error.message });
-    } finally {
-        if (conn) conn.release();
-    }
-});
 
 
 export default router;
-
-// `SELECT bf.*, 
-//         cm.item_id AS category_item_id,
-//         cm.category_name,
-//         inc.inclusion_desc,
-//         mi.image AS multi_image,
-//         ci.custom_title, ci.custom_desc, ci.custom_price
-//  FROM bookingform bf
-//  LEFT JOIN category_management cm ON bf.item_id = cm.item_id
-//  LEFT JOIN inclusions inc ON bf.booking_id = inc.booking_id
-//  LEFT JOIN multi_images mi ON bf.booking_id = mi.booking_id
-//  LEFT JOIN customization_item ci ON bf.booking_id = ci.booking_id
-//  WHERE bf.item_id = ?`,
-
