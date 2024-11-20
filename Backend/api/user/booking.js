@@ -107,4 +107,15 @@ router.post('/api/user/booking', async (req, res) => {
   }
 });
 
+router.get('/api/user/booking', async (req, res) => {
+  try {
+    const [results] = await pool.query('SELECT * FROM user_booking_system');
+    res.json(results); // Send the list of bookings as a JSON response
+  } catch (error) {
+    console.error('Error fetching bookings:', error.message);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+});
+
+
 export default router;

@@ -126,18 +126,70 @@ const response = {
         discount: detail.booking_discount,
         inclusions: detail.inclusions ? detail.inclusions.split(',').map(inclusion => ({ inclusion })) : [], // Split only if not null
         images: detail.multi_images ? detail.multi_images.map(image => ({ image})) : [],
+/*************  ✨ Codeium Command 🌟  *************/
         customizations: detail.customizations ? detail.customizations.split(',').map(customization => {
-            return { title, description, price };
+            const [title, description, price] = customization.split('|');
+            return {
+                title,
+                description,
+                price: Number(price)
+            }
         }) : [],
         
     }))
 };
 
-
-
         res.json(response);
     } catch (error) {
         console.error('Error fetching category and booking details:', error.message);
+        res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+        if (conn) {
+            await conn.release();
+        }
+    }
+});
+
+// Delete all details for a specific category_management ID and its related bookingform entries
+router.delete('/api/admin/booking_details/:id', async (req, res) => {
+    const { id } = req.params; // Get the category_management ID from the request parameters
+    let conn;
+
+    try {
+        conn = await pool.getConnection();
+
+        // Check if the category exists
+        const checkCategory = await conn.query('SELECT * FROM category_management WHERE id = ?', [id]);
+
+        if (checkCategory.length === 0) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
+
+        // Fetch all related booking IDs for the category
+        const relatedBookings = await conn.query('SELECT id FROM bookingform WHERE item_id = ?', [id]);
+
+        // Delete related inclusions, images, and customizations for each booking
+        for (const booking of relatedBookings) {
+            const bookingId = booking.id;
+
+            // Delete inclusions
+            await conn.query('DELETE FROM inclusions WHERE booking_id = ?', [bookingId]);
+            // Delete multi_images
+            await conn.query('DELETE FROM multi_images WHERE booking_id = ?', [bookingId]);
+            // Delete customizations
+            await conn.query('DELETE FROM customization_item WHERE booking_id = ?', [bookingId]);
+        }
+
+        // Delete the bookings associated with the category
+        await conn.query('DELETE FROM bookingform WHERE item_id = ?', [id]);
+
+        // Finally, delete the category
+        await conn.query('DELETE FROM category_management WHERE id = ?', [id]);
+
+        res.status(200).json({ message: `Category with ID ${id} and its associated bookings deleted successfully` });
+
+    } catch (error) {
+        console.error('Error deleting category and associated bookings:', error.message);
         res.status(500).json({ message: 'Internal Server Error' });
     } finally {
         if (conn) {

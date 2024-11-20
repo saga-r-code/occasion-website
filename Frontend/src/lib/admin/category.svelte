@@ -2,6 +2,7 @@
 	import Headline from '$lib/headline.svelte';
 	import { onMount } from 'svelte';
 	import Bookingform from './bookingform.svelte';
+	import BookingPage from '$lib/booking-page.svelte';
 
 	let categories = []; // Categories array
 	let venue = [];
@@ -231,7 +232,7 @@
 			console.log(itemId)
         } catch (error) {
             console.error('Error fetching title:', error);
-            bookingPageSelectedTitle = 'Error loading title'; // Fallback title
+            bookingPageSelectedTitle = ''; // Fallback title
         }
     }
 
@@ -255,23 +256,40 @@
 		fetchCategory();
 		fetchCategoryItem();
 	});
+
+	let closeForm = false;
+
+// Toggle modal visibility
+function togglemodal() {
+	closeForm = !closeForm;
+}
+
 </script>
+<BookingPage {closeForm} {togglemodal} />	
 
 <div class={`conatiner h-auto`}>
 	<div class="flex justify-between flex-wrap gap-5 mx-auto w-[80%] pt-10">
+		<div class="flex flex-wrap gap-5">
 		<button
 			on:click={toggle}
-			class=" bg-red-500 hover:scale-95 text-white font-bold text-lg px-5 py-2 rounded-md hover:bg-red-600 mb-4"
+			class=" bg-red-600 hover:scale-95 text-white font-bold text-lg px-5 py-2 shadow-md rounded-md hover:shadow-inner hover:bg-red-700 mb-4"
 		>
 			Add Item
 		</button>
+		<button
+			on:click={openForm}
+			class=" bg-blue-600 hover:scale-95 text-white font-bold text-lg px-5 py-2 shadow-md rounded-md hover:shadow-inner hover:bg-blue-700 mb-4"
+		>
+			Add Booking Form
+		</button>
+	</div>
 		<div class="space-x-4 space-y-4 sm:space-y-0">
 			<select
 			  id="category"
 			  name="category"
 			  bind:value={selectedCategory}
 			  required
-			  class="rounded-lg w-full text-white font-semibold bg-white/10 tracking-wider text-[17px] border-slate-300 bg-opacity-30 backdrop-blur-lg border py-3 pr-10 pl-5 "
+			  class="rounded-lg w-full text-white font-semibold bg-white/10 tracking-wider text-[17px] border-slate-300 bg-opacity-30 backdrop-blur-lg border py-3 pr-10 pl-5 xl"
 			>  
 			  <option value="" disabled selected>Choose a category</option>
 			  {#each categoriesWithAll as category}
@@ -441,7 +459,6 @@
 		</div>
 	{/if}
 
-	
 <div class={`w-[90%] mx-auto ${selectedCategory === "All Venues" || selectedCategory.length <=4 ? 'h-auto' : 'h-[100vh]'} text-white mt-10`}>
 	{#each categories as category}
 	{#if selectedCategory === "" || selectedCategory === category || selectedCategory === "All Venues"}
@@ -459,6 +476,9 @@
 				</div>
 				<div class="venue-img overflow-hidden h-[15rem] w-[15rem] md:w-[20rem] md:h-[20rem] lg:w-[22rem] flex justify-center items-center">
 				  <img src={item.image} alt={item.title} class="absolute top-0 left-0 border-b-2 border-gray-300 w-full h-full object-cover" />
+				</div>
+				<div class="px-4 py-2 bg-blue-900 text-white shadow-md rounded-full absolute bottom-5 right-5">
+				  <button class="font-bold" on:click={togglemodal}>Explore Booking Page</button>
 				</div>
 			  </div>
 			  <div class="details px-4 text-lg md:text-xl flex flex-col gap-2">

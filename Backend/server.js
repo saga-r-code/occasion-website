@@ -13,6 +13,7 @@ import inclusionRouter from './api/admin/inclusion_table.js'
 import imagesRouter from './api/admin/images_tables.js'
 import customizationRouter from './api/admin/customization_table.js'
 import bookingManagement from './api/admin/booking_management.js'
+import bookingTwo from './api/user/booking_two.js'
 
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
@@ -32,7 +33,7 @@ app.use(cookieParser());
 
 app.use(express.json())
 
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }))
 
 app.use(bookingrouter) //app.use('/booking', bookingrouter)
 app.use(signuprouter) //app.use('/signup', signuprouter)
@@ -47,6 +48,7 @@ app.use(inclusionRouter) //app.use('/inclusion', inclusionRouter)
 app.use(imagesRouter) //app.use('/images', imagesRouter)
 app.use(customizationRouter) //app.use('/customization', customizationRouter)
 app.use(bookingManagement) //app.use('/booking_management', bookingManagement)
+app.use(bookingTwo) //app.use('/api/user_booking', bookingTwo)
 
 
 app.listen(port, () => {

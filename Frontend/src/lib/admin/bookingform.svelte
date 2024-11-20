@@ -234,6 +234,8 @@
             }
     }
 
+
+
 	onMount(()=>{
 		fetchTitle()
 	})
@@ -255,7 +257,7 @@
 	  <div class="text-center mt-8">
 		<h2 class="text-xl font-semibold">Add Booking Form</h2>
 		<h1 class="text-lg font-bold">
-		  {bookingPageSelectedTitle ? bookingPageSelectedTitle : 'Loading...'}
+		  {bookingPageSelectedTitle ? bookingPageSelectedTitle : ''}
 		</h1>
 	  </div>
 

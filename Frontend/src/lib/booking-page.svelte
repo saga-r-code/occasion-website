@@ -109,6 +109,11 @@
     custom_item_price = quantity.reduce((total, qty, idx) => total + qty * customization[idx].price)
   }
 
+
+  async function bookingpage(params) {
+    
+  }
+
   function addItem(index) {
     quantity[index]++;
     totalCustomizationPrice()
@@ -238,7 +243,18 @@
                   class="mt-1 block w-full border border-gray-300 rounded-md p-2"
                   required
                   />
-                </div>  
+                </div> 
+                
+                <div class="flex justify-center items-center gap-5">
+                  <i class="fa-solid fa-envelope text-2xl"></i>
+                  <input
+                  type="email"
+                  id="eamil"
+                  placeholder="Enter Email Address"
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                  required
+                  />
+                </div> 
 
                 <div class="flex justify-center items-center gap-5">
                   <i class="fa-solid fa-phone text-xl"></i>
