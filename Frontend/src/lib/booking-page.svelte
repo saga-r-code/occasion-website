@@ -137,6 +137,24 @@
   function selectImage(index) {
     currentIndex = index;
   }
+
+  const bookingPageData = []
+
+  async function fetchingBookingPageDetail() {
+    try {
+      const response = await fetch('http://localhost:3000/api/admin/booking_details/39');
+      if(!response.ok){
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      bookingPageData.push(data)
+      console.log(bookingPageData)
+      
+    } catch (error) {
+      console.error('Error fetching booking details:', error.message);
+    }
+  }
   
   // Define Close Form Variable
   export let closeForm = false;
@@ -151,6 +169,10 @@
   function toggleLoginPage(){
     open = !open
   }
+
+  onMount(()=>{
+    fetchingBookingPageDetail()
+  })
 
 </script>
 

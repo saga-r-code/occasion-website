@@ -20,7 +20,7 @@
 };
 </script>
 
-<div class="bg-[#1c2541] text-white">
+<div class="bg-[#1c2541] text-white shadow-xl border-b-white border-b-[1px] shadow-white">
 	<div class="w-[90%] m-auto">
 		<div class="navbar flex  gap-4 justify-between items-center py-4">
 			<a href="/home" class="text-3xl md:text-4xl font-semibold">Occasion</a>

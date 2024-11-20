@@ -189,50 +189,6 @@
         }
     }
 
-    // async function submitCustomization(booking_id) {
-	// 	const customizationData = new FormData();
-    //     customizationData.append('booking_id', booking_id);
-    
-    //     // Loop through the existing customization array and append each one to the FormData
-    //     customization.forEach((custom) => {
-    //         customizationData.append('custom_title', custom.custom_title);
-    //         customizationData.append('custom_desc', custom.custom_desc);
-    //         customizationData.append('custom_price', custom.custom_price);
-    
-    //         if (custom.custom_image) {
-    //             customizationData.append('custom_image', custom.custom_image); // Use [] to indicate an array
-    //         } else {
-    //             console.log("no file found for", custom.custom_title);
-    //         }
-    //     });
-
-	// 		console.log("submit data",customizationData)
-
-    //       // Send form data to backend
-	// 	  try {
-    //             const response = await fetch('http://localhost:3000/api/admin/customization_table', {
-    //                 method: 'POST',
-    //                 body: customizationData
-    //             });
-
-	// 			const imageBuffer = await response.json();
-    //     		customizationData.append('custom_image',imageBuffer);
-
-    //             if (response.ok) {
-    //                 const result = await response.json();
-    //                 console.log('Customization submitted successfully:', result);
-    //                 // Reset fields after successful submission
-    //                 custom_title = '';
-    //                 custom_desc = '';
-    //                 custom_price = 0;
-    //                 custom_image = null;
-    //             } else {
-    //                 console.error('Failed to submit customization:', response);
-    //             }
-    //         } catch (error) {
-    //             console.error('Error submitting customization:', error);
-    //         }
-    // }
 
 	async function submitCustomization(booking_id) {
     const customizationData = new FormData();
@@ -508,6 +464,7 @@ function readFileAsArrayBuffer(file) {
 		<button
 		  type="submit"
 		  class="w-full bg-blue-600 text-white rounded-md p-2"
+		  on:click={!booking}
 		>
 		  Submit
 		</button>
