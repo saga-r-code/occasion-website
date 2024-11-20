@@ -1,4 +1,6 @@
 <script>
+	import LoginSignup from "./login-signup.svelte";
+
 	let username = '';
 	let email = '';
 	let password = '';
@@ -67,6 +69,8 @@
 	const toggleConfirmPasswordVisibility = () => {
 		showConfirmPassword = !showConfirmPassword;
 	};
+
+
 </script>
 
 

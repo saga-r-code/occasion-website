@@ -84,9 +84,9 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
                 bf.description AS booking_description,
                 bf.price AS booking_price,
                 bf.discount AS booking_discount,
-                GROUP_CONCAT(DISTINCT inc.inclusion_desc) AS inclusions,
+                GROUP_CONCAT(DISTINCT JSON_OBJECT('inclusion_id' , inc.inclusion_id,'inclusion_desc',inc.inclusion_desc)) AS inclusions,
                 GROUP_CONCAT(DISTINCT JSON_OBJECT('image_id', mi.image_id, 'image', mi.image)) AS multi_images,
-                GROUP_CONCAT(DISTINCT JSON_OBJECT('custom_title', ci.custom_title, 'custom_desc', ci.custom_desc, 'custom_price', ci.custom_price, 'custom_image', TO_BASE64(ci.custom_image))) AS customizations
+                GROUP_CONCAT(DISTINCT JSON_OBJECT("custom_id", ci.custom_id, 'custom_title', ci.custom_title, 'custom_desc', ci.custom_desc, 'custom_price', ci.custom_price, 'custom_image', TO_BASE64(ci.custom_image))) AS customizations
             FROM 
                 category_management cm
             LEFT JOIN 
@@ -119,6 +119,20 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
                 new_price: categoryBookingDetails[0].new_price,
             },
             bookings: categoryBookingDetails.map(detail => {
+
+                // Handle inclusions
+                let inclusionsArray = [];
+                if (detail.inclusions) {
+                    try {
+                        const inclusions = JSON.parse(`[${detail.inclusions}]`);
+                        inclusionsArray = inclusions.map(inclusion => ({
+                            inclusion_id: inclusion.inclusion_id,
+                            inclusion_desc: inclusion.inclusion_desc
+                        }));
+                    } catch (error) {
+                        console.error('Error parsing inclusions:', error.message);
+                    }
+                }
                 
                 // Handle images
                 let imagesArray = [];
@@ -142,6 +156,7 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
                     try {
                         const customizations = JSON.parse(`[${detail.customizations}]`);
                         customizationsArray = customizations.map(customization => ({
+                            custom_id: customization.custom_id,
                             title: customization.custom_title,
                             description: customization.custom_desc,
                             price: Number(customization.custom_price),
@@ -158,9 +173,7 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
                     description: detail.booking_description,
                     price: detail.booking_price,
                     discount: detail.booking_discount,
-                    inclusions: detail.inclusions
-                        ? detail.inclusions.split(',').map(inclusion => ({ inclusion }))
-                        : [], // Split only if not null
+                    inclusions:inclusionsArray,
                     images: imagesArray,
                     customizations: customizationsArray,
                 };

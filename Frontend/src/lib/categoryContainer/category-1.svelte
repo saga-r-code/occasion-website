@@ -1,95 +1,51 @@
 <script>
 	export let title;
 	import video from '../Video/container-bg.mp4';
-	const category = [
-		{
-			id: 1,
-			name: 'Charity Events'
-		},
-		{
-			id: 2,
-			name: 'Fashion Events'
-		},
-		{
-			id: 3,
-			name: 'Festival'
-		},
-		{
-			id: 4,
-			name: 'Wedding Events'
-		},
-		{
-			id: 5,
-			name: 'Parties '
-		},
-		{
-			id: 6,
-			name: 'Seminar'
-		}
-	];
-	const location = [
-		{
-			id: 1,
-			name: 'Kalyan'
-		},
-		{
-			id: 2,
-			name: 'Dombivali'
-		},
-		{
-			id: 3,
-			name: 'Thane'
-		},
-		{
-			id: 4,
-			name: 'Ghatkopar'
-		},
-		{
-			id: 5,
-			name: 'Mulund'
-		},
-		{
-			id: 6,
-			name: 'Mumbai'
-		}
-	];
+
+
 </script>
 
-<div
-	class="category text-white flex justify-start md:justify-end items-center flex-col gap-5 h-[25rem] p-8  relative overflow-hidden"
->
-	<video class="absolute top-0 left-0 w-full h-full object-cover" autoplay muted loop>
-		<source src={video} type="video/mp4" />
-	</video>
-	<div
-		class="dropdown-btn z-10 flex flex-wrap md:flex-row justify-center items-center gap-10 md:p-10 pt-3 md:text-lg"
-	>
-		<h1 class="text-3xl md:text-4xl xl:text-5xl w-[100vw]  text-center font-medium">{title}</h1>
+<div class="category shadow-lg shadow-slate-900 text-white relative flex flex-col items-center gap-8 p-6 h-[25rem] bg-gradient-to-b from-gray-800 to-black">
+    <video autoplay muted loop>
+        <source src={video} type="video/mp4" />
+    </video>
 
-		<select
-			name="category"
-			id="category"
-			class="rounded-lg bg-white bg-opacity-30 backdrop-blur-md border py-4 pr-28 2xl:pr-60 pl-5 xl"
-		>
-			<option value="" disabled selected>Choose a category</option>
-			{#each category as cat}
-				<option value={cat.id}>{cat.name}</option>
-			{/each}
-		</select>
-		<select
-			name="location"
-			id="location"
-			class="rounded-lg bg-white bg-opacity-30 backdrop-blur-md border-2 py-4 pr-28 2xl:pr-60 pl-5 xl"
-		>
-			<option value="" disabled selected>Choose a Location</option>
-			{#each location as loc}
-				<option value={loc.id}>{loc.name}</option>
-			{/each}
-		</select>
-		<div
-			class="search bg-[#50808e] font-bold text-xl text-center text-white rounded-lg py-3 px-28 2xl:px-40 cursor-pointer active:bg-[#50808e] hover:bg-[#315763]"
-		>
-			Search
-		</div>
-	</div>
+    <div class="absolute top-20 z-10 flex flex-col items-center text-center">
+        <h1 class="text-4xl md:text-5xl xl:text-6xl font-bold mb-4 animated-text">{title}</h1>
+        <p class="text-lg font-medium md:w-[50vw] xl:w-[40vw] animated-text">
+            At Occasion, we believe that every celebration is a unique story waiting to be told. Our mission is to help you create unforgettable memories through our bespoke decoration services. Our team of experts will collaborate closely with you to understand your vision and bring it to life.
+        </p>
+    </div>
 </div>
+
+<style>
+    @keyframes fadeInUp {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animated-text {
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    .category {
+        position: relative;
+        overflow: hidden;
+    }
+
+    video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.7;
+    }
+</style>

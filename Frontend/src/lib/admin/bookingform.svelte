@@ -5,6 +5,8 @@
     export let bookingPageSelectedTitle = "";
     export let bookingToggle;
 
+	
+
     let title = '';
     let description = '';
     let price = 0;
@@ -472,4 +474,7 @@ function readFileAsArrayBuffer(file) {
 	</form>
   </div>
   {/if}
+
+
   
+ 

@@ -82,7 +82,7 @@
 <Navbar />
 <BookingPage {closeForm} {togglemodal} />
 <div class="services">
-    <Category_1 title="Occasion Services" />
+    <Category_1 title="Elevate Your Celebrations: Bespoke Occasion Services" />
     <div class="services-container w-[90%] mx-auto text-white">
         <div class="category py-10">
             <h1 class="text-3xl font-semibold">Services Category</h1>

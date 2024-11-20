@@ -33,7 +33,7 @@
 
 </script>
 
-<div class="bg-[#1c2541] text-white">
+<div class="bg-[#1c2541] text-white border-b-2 shadow-lg">
 	<div class="w-[90%] m-auto">
 		<div class="navbar flex flex-wrap gap-4 justify-between items-center py-5">
 			<div class="flex justify-center items-end flex-wrap gap-5">

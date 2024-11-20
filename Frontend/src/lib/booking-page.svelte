@@ -92,13 +92,19 @@
 
   ]
 
+  let categoryData = {};
+  let bookingsData = [];
+  let inclusionsData = [];
+  let customizationsData = [];
+  let imagesData = [];
+
 
   let interval;
   let currentIndex = 0
   let val = 0
-  let custom_item_price = 0
-  let price = 4999
-  let discount = 10
+  let custom_item_price = 0;
+  let price;
+  let discount = 0;
   let discountPrice = (price * discount) / 100;
   let finalAmount = Math.round(price - discountPrice)
 
@@ -107,11 +113,6 @@
 
   function totalCustomizationPrice() {
     custom_item_price = quantity.reduce((total, qty, idx) => total + qty * customization[idx].price)
-  }
-
-
-  async function bookingpage(params) {
-    
   }
 
   function addItem(index) {
@@ -138,23 +139,55 @@
     currentIndex = index;
   }
 
-  const bookingPageData = []
 
   async function fetchingBookingPageDetail() {
-    try {
-      const response = await fetch('http://localhost:3000/api/admin/booking_details/39');
-      if(!response.ok){
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      bookingPageData.push(data)
-      console.log(bookingPageData)
-      
-    } catch (error) {
-      console.error('Error fetching booking details:', error.message);
+  try {
+    const response = await fetch('http://localhost:3000/api/admin/booking_details/39');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const data = await response.json();
+    
+    // Log the full data to inspect the structure
+    // console.log("Fetched Data:", data);
+
+    const { category, bookings } = data;
+    if (category && bookings && bookings.length > 0) {
+        // Set category and booking data
+        categoryData = data.category;
+        bookingsData = data.bookings;
+        
+        // Assuming you want to use the first booking
+        const firstBooking = bookingsData[0];
+        
+        // finalAmount = firstBooking.price; // Set the final amount
+        // price = firstBooking.price;
+        // discount = firstBooking.discount;
+        // discountPrice = (price * discount) / 100; // Calculate discount price
+        // custom_item_price = firstBooking.customizations.reduce((total, item) => total + item.price, 0); // Sum customizations
+        inclusionsData = firstBooking.inclusions;
+        customizationsData = firstBooking.customizations;
+        imagesData = firstBooking.images;
+
+        console.log("Category Data:", categoryData);
+        console.log("Bookings Data:", bookingsData);
+        console.log("Inclsuion Data:", inclusionsData);
+        console.log("Images Data:", imagesData);
+        console.log("Customization Data:", customizationsData);
+
+     
+    } else {
+      console.error("Error: 'booking' is undefined or not an array.");
+    }
+
+  } catch (error) {
+    console.error('Error fetching booking details:', error.message);
   }
+}
+
+  
+
   
   // Define Close Form Variable
   export let closeForm = false;
@@ -176,7 +209,7 @@
 
 </script>
 
-<LoginPage {open} {toggleLoginPage}/>
+<!-- <LoginPage {open} {toggleLoginPage}/> -->
 <!-- Conditional Rendering -->
 {#if closeForm}
   <!-- Modal Container -->
@@ -233,15 +266,20 @@
           <div class="w-full h-full flex flex-col gap-y-10">
              <!--heading-->
             <div class="heading border-2 shadow-xl px-5 py-3 flex justify-center gap-2 flex-col">
-              <h1 class="text-2xl font-semibold text-wrap">Dinosaur Happy Birthday Theme Decor</h1>
-              <h3 class="text-base">Make your child's birthday one to remember with our exclusive dinosaur- theme birthday décor</h3>
+              {#each bookingsData as booking }
+              <h1 class="text-2xl font-semibold text-wrap">{booking.title}</h1>
+              <h3 class="text-base">{booking.description}</h3>
+              {/each}
+             
             </div>
 
           <!--Details-->
             <div class="details border-2 shadow-xl px-5 py-3  flex justify-center gap-2 flex-col">
               <div class="flex justify-between text-2xl font-bold">
               <h1>Booking Plan</h1>
-              <h2>₹ {finalAmount}</h2>
+              {#each bookingsData as booking }
+              <h2>₹ {booking.price}</h2>
+              {/each}
               </div>
               <hr>
               <form class="flex flex-col justify-center  mt-3 gap-3">  
@@ -312,10 +350,10 @@
               <p>Below are the included details, please note that no additional items are provided.</p>
               <hr>
               <ul class="mt-3">
-                {#each inclusions as inclu}
+                {#each inclusionsData as inclu}
                 <li class="flex gap-5">
                   <i class="fa-duotone fa-solid fa-check text-green-600 font-extrabold text-xl"></i>
-                  <p>{inclu.inclusion}</p>
+                  <p>{inclu.inclusion_desc}</p>
                 </li>
                 {/each}
               </ul>             
@@ -350,14 +388,19 @@
              <div class="details border-2 shadow-xl px-5 py-3  flex justify-center gap-2  flex-col">
               <div class="flex justify-between font-bold text-2xl">
               <h2>Total Bill</h2>
-              <h2>₹ {finalAmount + custom_item_price}</h2>
+              {#each bookingsData as booking }
+              <h2>₹ {booking.price }</h2>
+              {/each}
             </div>
               <hr>
 
               <div class="Payment text-sm text-slate-600 space-y-1">
-                <h3>Actual Amount : ₹  {price}</h3>
-                <h3>Discount on plan : {discount} %</h3>
-                <h3>Discount price : ₹ {discountPrice}</h3>
+                {#each bookingsData as booking }
+                <h3>Actual Amount : ₹  {booking.price}</h3>
+                <h3>Discount on plan : {booking.discount} %</h3>
+                <h3>Discount price: ₹ {(booking.price * booking.discount) / 100}</h3>
+                {/each}
+                
                 <h3>Add on Price: ₹ {custom_item_price}</h3>
                 <hr>
                 <h3 class="text-base text-slate-700 mt-2 font-semibold">Final Amount: ₹  {finalAmount + custom_item_price}</h3>

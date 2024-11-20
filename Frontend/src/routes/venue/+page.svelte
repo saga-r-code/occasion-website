@@ -59,9 +59,9 @@
 </script>
 
 <Navbar />
+<Category_1 title="Explore Our Exclusive Occasion Venues" />
 <BookingPage {closeForm} {togglemodal}/>
 <div class="venue overflow-hidden">
-	<Category_1 title="Our Occasion Venues" />
 	<div class="wedding-list w-[90%] mx-auto py-5">
 		<div class="wedding-venues text-white py-10">
 			{#each categoriesWithAll as category}

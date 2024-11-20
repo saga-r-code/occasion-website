@@ -41,12 +41,10 @@
 			alert('You are already logged in!');
 			isLogin = true; // User is logged in
 			document.cookie = "isLogin=true; path=/";  // Store login state in cookie
-			window.location.href = 'http://localhost:5173/venue'; // Redirect to home page
 		  } else {
 			alert('Login successful!');
 			document.cookie = "isLogin=true; path=/";  // Store login state in cookie
 			isLogin = true; // Update local state
-			window.location.href = 'http://localhost:5173/venue'; // Redirect to home page
 		  }
 		} else {
 		  alert(result.message || 'Login failed');
@@ -76,6 +74,78 @@
 	//   open = !isLogin;  // Open modal only if not logged in
 	});
   </script>
+	
+  <!-- <script>
+	import { onMount } from 'svelte';
+	
+	let email = '';
+	let password = '';
+	let showPassword = false;
+	let isLogin = false; // Tracks if the user is logged in
+	export let open = false; // Controls modal visibility
+
+	// Clear form fields
+	function clearForm() {
+		email = '';
+		password = '';
+	}
+
+	// Toggle modal visibility
+	function toggleModal() {
+		if (!isLogin) {
+			open = !open;
+		} else {
+			alert("You're already logged in!");
+		}
+	}
+
+	// Handle login form submission
+	const handleSubmit = async () => {
+		if (!email || !password) {
+			alert('Please fill out the login form');
+			return;
+		}
+
+		try {
+			const response = await fetch('http://localhost:3000/api/user/login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email, password }),
+				credentials: 'include', // Include cookies
+			});
+
+			const result = await response.json();
+
+			if (response.ok) {
+				alert(result.message === 'User already logged in' ? 
+					'You are already logged in!' : 
+					'Login successful!');
+				isLogin = true; // Update local state
+				document.cookie = "isLogin=true; path=/"; // Store login state in cookie
+				open = false; // Close modal after login
+			} else {
+				alert(result.message || 'Login failed');
+			}
+		} catch (error) {
+			console.error('Error during login:', error);
+			alert('An error occurred. Please try again.');
+		}
+	};
+
+	// Toggle password visibility
+	const togglePasswordVisibility = () => {
+		showPassword = !showPassword;
+	};
+
+	// Check if user is logged in on page load
+	onMount(() => {
+		const cookies = document.cookie.split('; ');
+		const isLoginCookie = cookies.find(cookie => cookie.startsWith('isLogin='));
+		if (isLoginCookie) {
+			isLogin = isLoginCookie.split('=')[1] === 'true';
+		}
+	});
+</script> -->
   
   {#if open && !isLogin} <!-- Show modal only when open is true and user is not logged in -->
 	<div class="w-dvw h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] justify-center items-start md:items-center p-2 py-14 sm:py-0 z-50 flex">
@@ -130,4 +200,6 @@
 	  </div>
 	</div>
   {/if}
+
+ 
   

@@ -58,7 +58,7 @@
 	};
 </script>
 
-<div class="pages">
+<div class="page ">
 	<div class="container xl:w-[80%] 2xl:h-[100vh] mx-auto">
 		<h1 class="text-5xl p-5 font-bold text-center text-white">Occasion Event Mangement</h1>
 		<div class="flex justify-around items-center flex-wrap p-2 gap-10 py-10 lg:py-20">
@@ -103,6 +103,7 @@
 						>
 							Login
 						</button>
+						
 					</div>
 				</form>
 			</div>
@@ -116,8 +117,8 @@
 </div>
 
 <style>
-	.pages,
+	/* .pages,
 	.container {
 		background-image: linear-gradient(to bottom, #142b4e, #0a3656, #00405d, #004a62, #075466);
-	}
+	} */
 </style>
