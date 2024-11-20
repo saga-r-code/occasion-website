@@ -70,74 +70,92 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
         conn = await pool.getConnection();
 
         // SQL query to fetch all details related to the category_management ID
-       // Fetch the details
-const categoryBookingDetails = await conn.query(`
-    SELECT 
-        cm.id AS category_id,
-        cm.category_name,
-        cm.title AS category_title,
-        cm.location,
-        cm.old_price,
-        cm.new_price,
-        bf.id AS booking_id,
-        bf.title AS booking_title,
-        bf.description AS booking_description,
-        bf.price AS booking_price,
-        bf.discount AS booking_discount,
-        GROUP_CONCAT(DISTINCT inc.inclusion_desc) AS inclusions,
-        GROUP_CONCAT(DISTINCT mi.image) AS multi_images,
-        GROUP_CONCAT(DISTINCT CONCAT_WS('|', ci.custom_title, ci.custom_desc, ci.custom_price)) AS customizations
-    FROM 
-        category_management cm
-    LEFT JOIN 
-        bookingform bf ON cm.id = bf.item_id
-    LEFT JOIN 
-        inclusions inc ON bf.id = inc.booking_id
-    LEFT JOIN 
-        multi_images mi ON bf.id = mi.booking_id
-    LEFT JOIN 
-        customization_item ci ON bf.id = ci.booking_id
-    WHERE 
-        cm.id = ?
-    GROUP BY 
-        bf.id;
-`, [id]);
+        const categoryBookingDetails = await conn.query(`
+            SELECT 
+                cm.id AS category_id,
+                cm.category_name,
+                cm.title AS category_title,
+                cm.location,
+                cm.old_price,
+                cm.new_price,
+                bf.id AS booking_id,
+                bf.title AS booking_title,
+                bf.description AS booking_description,
+                bf.price AS booking_price,
+                bf.discount AS booking_discount,
+                GROUP_CONCAT(DISTINCT inc.inclusion_desc) AS inclusions,
+                GROUP_CONCAT(DISTINCT mi.image_id) AS multi_images,
+                GROUP_CONCAT(DISTINCT CONCAT_WS('|', ci.custom_title, ci.custom_desc, ci.custom_price)) AS customizations
+            FROM 
+                category_management cm
+            LEFT JOIN 
+                bookingform bf ON cm.id = bf.item_id
+            LEFT JOIN 
+                inclusions inc ON bf.id = inc.booking_id
+            LEFT JOIN 
+                multi_images mi ON bf.id = mi.booking_id
+            LEFT JOIN 
+                customization_item ci ON bf.id = ci.booking_id
+            WHERE 
+                cm.id = ?
+            GROUP BY 
+                bf.id;
+        `, [id]);
 
-// Handle no data
-if (categoryBookingDetails.length === 0) {
-    return res.status(404).json({ message: 'No bookings found for this category' });
-}
+        // Handle no data
+        if (categoryBookingDetails.length === 0) {
+            return res.status(404).json({ message: 'No bookings found for this category' });
+        }
 
-// Format the response
-const response = {
-    category: {
-        id: categoryBookingDetails[0].category_id,
-        name: categoryBookingDetails[0].category_name,
-        title: categoryBookingDetails[0].category_title,
-        location: categoryBookingDetails[0].location,
-        old_price: categoryBookingDetails[0].old_price,
-        new_price: categoryBookingDetails[0].new_price,
-    },
-    bookings: categoryBookingDetails.map(detail => ({
-        booking_id: detail.booking_id,
-        title: detail.booking_title,
-        description: detail.booking_description,
-        price: detail.booking_price,
-        discount: detail.booking_discount,
-        inclusions: detail.inclusions ? detail.inclusions.split(',').map(inclusion => ({ inclusion })) : [], // Split only if not null
-        images: detail.multi_images ? detail.multi_images.map(image => ({ image})) : [],
-/*************  ✨ Codeium Command 🌟  *************/
-        customizations: detail.customizations ? detail.customizations.split(',').map(customization => {
-            const [title, description, price] = customization.split('|');
-            return {
-                title,
-                description,
-                price: Number(price)
-            }
-        }) : [],
-        
-    }))
-};
+        // Format the response
+        const response = {
+            category: {
+                id: categoryBookingDetails[0].category_id,
+                name: categoryBookingDetails[0].category_name,
+                title: categoryBookingDetails[0].category_title,
+                location: categoryBookingDetails[0].location,
+                old_price: categoryBookingDetails[0].old_price,
+                new_price: categoryBookingDetails[0].new_price,
+            },
+            bookings: categoryBookingDetails.map(detail => {
+                
+                // Create an array for images
+                let imagesArray = [];
+                if (detail.multi_images) {
+                    const ids = detail.multi_images.split(','); // Split the string into an array of IDs
+                    for (let id of ids) {
+                        imagesArray.push({ image_id: Number(id.trim()) }); // Push each ID as an object into the array
+                    }
+                }
+
+                //For customization
+                let customizationsArray = [];
+                if (detail.customizations) {
+                 // Split the string into an array of customizations
+                 const customizations = detail.customizations.split(',');
+                 // Map each customization string to an object
+                 customizationsArray = customizations.map(customization => {
+                     const [title, description, price] = customization.split('|');
+                     return {
+                         title: title.trim(), // Trim whitespace
+                         description: description.trim(), // Trim whitespace
+                         price: Number(price.trim()) // Convert price to a number
+                     };
+                 });
+                }
+
+                return {
+                    booking_id: detail.booking_id,
+                    title: detail.booking_title,
+                    description: detail.booking_description,
+                    price: detail.booking_price,
+                    discount: detail.booking_discount,
+                    inclusions: detail.inclusions ? detail.inclusions.split(',').map(inclusion => ({ inclusion })) : [], // Split only if not null
+                    images: imagesArray, // Use the newly formatted images array
+                    customizations: customizationsArray,
+                };
+            })
+        };
 
         res.json(response);
     } catch (error) {

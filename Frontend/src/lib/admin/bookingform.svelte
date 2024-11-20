@@ -189,50 +189,104 @@
         }
     }
 
-    async function submitCustomization(booking_id) {
-		const customizationData = new FormData();
-        customizationData.append('booking_id', booking_id);
+    // async function submitCustomization(booking_id) {
+	// 	const customizationData = new FormData();
+    //     customizationData.append('booking_id', booking_id);
     
-        // Loop through the existing customization array and append each one to the FormData
-        customization.forEach((custom) => {
-            customizationData.append('custom_title', custom.custom_title);
-            customizationData.append('custom_desc', custom.custom_desc);
-            customizationData.append('custom_price', custom.custom_price);
+    //     // Loop through the existing customization array and append each one to the FormData
+    //     customization.forEach((custom) => {
+    //         customizationData.append('custom_title', custom.custom_title);
+    //         customizationData.append('custom_desc', custom.custom_desc);
+    //         customizationData.append('custom_price', custom.custom_price);
     
-            if (custom.custom_image) {
-                customizationData.append('custom_image', custom.custom_image); // Use [] to indicate an array
-            } else {
-                console.log("no file found for", custom.custom_title);
-            }
+    //         if (custom.custom_image) {
+    //             customizationData.append('custom_image', custom.custom_image); // Use [] to indicate an array
+    //         } else {
+    //             console.log("no file found for", custom.custom_title);
+    //         }
+    //     });
+
+	// 		console.log("submit data",customizationData)
+
+    //       // Send form data to backend
+	// 	  try {
+    //             const response = await fetch('http://localhost:3000/api/admin/customization_table', {
+    //                 method: 'POST',
+    //                 body: customizationData
+    //             });
+
+	// 			const imageBuffer = await response.json();
+    //     		customizationData.append('custom_image',imageBuffer);
+
+    //             if (response.ok) {
+    //                 const result = await response.json();
+    //                 console.log('Customization submitted successfully:', result);
+    //                 // Reset fields after successful submission
+    //                 custom_title = '';
+    //                 custom_desc = '';
+    //                 custom_price = 0;
+    //                 custom_image = null;
+    //             } else {
+    //                 console.error('Failed to submit customization:', response);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error submitting customization:', error);
+    //         }
+    // }
+
+	async function submitCustomization(booking_id) {
+    const customizationData = new FormData();
+    customizationData.append('booking_id', booking_id);
+
+    // Loop through the existing customization array and append each one to the FormData
+    for (const custom of customization) {
+        customizationData.append('custom_title', custom.custom_title);
+        customizationData.append('custom_desc', custom.custom_desc);
+        customizationData.append('custom_price', custom.custom_price);
+
+        if (custom.custom_image) {
+            // Read the file as an ArrayBuffer and create a Blob
+            const buffer = await readFileAsArrayBuffer(custom.custom_image);
+            const blob = new Blob([buffer], { type: custom.custom_image.type }); // Create a Blob from the buffer
+            customizationData.append('custom_image', blob, custom.custom_image.name); // Append Blob to FormData
+        } else {
+            console.log("No file found for", custom.custom_title);
+        }
+    }
+
+    console.log("Submit data:", customizationData);
+
+    // Send form data to backend
+    try {
+        const response = await fetch('http://localhost:3000/api/admin/customization_table', {
+            method: 'POST',
+            body: customizationData
         });
 
-			console.log("submit data",customizationData)
-
-          // Send form data to backend
-		  try {
-                const response = await fetch('http://localhost:3000/api/admin/customization_table', {
-                    method: 'POST',
-                    body: customizationData
-                });
-
-				const imageBuffer = await response.json();
-        		customizationData.append('custom_image',imageBuffer);
-
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('Customization submitted successfully:', result);
-                    // Reset fields after successful submission
-                    custom_title = '';
-                    custom_desc = '';
-                    custom_price = 0;
-                    custom_image = null;
-                } else {
-                    console.error('Failed to submit customization:', response);
-                }
-            } catch (error) {
-                console.error('Error submitting customization:', error);
-            }
+        // Check if the response is okay
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Customization submitted successfully:', result);
+            // Reset fields after successful submission
+            customization = []; // Clear the customization array
+        } else {
+            const errorData = await response.json();
+            console.error('Failed to submit customization:', errorData);
+        }
+    } catch (error) {
+        console.error('Error submitting customization:', error);
     }
+}
+
+// Helper function to read a file as ArrayBuffer
+function readFileAsArrayBuffer(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result); // Resolve with the ArrayBuffer
+        reader.onerror = reject; // Reject on error
+        reader.readAsArrayBuffer(file); // Read the file
+    });
+}
 
 
 
@@ -350,6 +404,7 @@
 	  </button>
 	  {#if moreInfo}
 	  <div>
+		<p class="text-sm text-slate-400 font-medium text-right text-wrap">Minimum Required 2 Inclusions</p>
 		{#each inclusion as inc, index}
 		<input
 		  type="text"
@@ -383,6 +438,8 @@
 		  <label class="block text-sm font-medium text-gray-700">Upload Image:</label>
 		  <input
 			type="file"
+			name="custom_image"
+			bind:value={custom_image}
 			on:change={handleCutomImageChange}
 			class="mt-1 block w-full border border-gray-300 rounded-md p-2"
 		  />
@@ -451,7 +508,6 @@
 		<button
 		  type="submit"
 		  class="w-full bg-blue-600 text-white rounded-md p-2"
-		
 		>
 		  Submit
 		</button>

@@ -35,78 +35,154 @@ router.get('/api/admin/customization_table', async (req, res) => {
 
 
 //Add Customization
-router.post('/api/admin/customization_table', upload.single('custom_image'), async (req, res) => {
-    let conn;
-    try {
-        const { custom_title, custom_desc, custom_price, booking_id } = req.body;
+// router.post('/api/admin/customization_table', upload.array('custom_image'), async (req, res) => {
+//     let conn;
+//     try {
+//         const { custom_title, custom_desc, custom_price, booking_id } = req.body;
 
-        console.log('Received body:', req.body);
-        console.log('Uploaded file:', req.file); // Use req.file instead of req.files
+//         console.log('Received body:', req.body);
+//         console.log('Uploaded file:', req.file); // Use req.file instead of req.files
 
-        // Validate required fields
-        if (!custom_title || !custom_desc || !custom_price || !booking_id) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
+//         // Validate required fields
+//         if (!custom_title || !custom_desc || !custom_price || !booking_id) {
+//             return res.status(400).json({ message: 'Missing required fields' });
+//         }
 
-        // Check if the image was uploaded
-        if (!req.file) {
-            return res.status(400).json({ message: 'Custom image is required!' });
-        }
+//         // Check if the image was uploaded
+//         if (!req.file) {
+//             return res.status(400).json({ message: 'Custom image is required!' });
+//         }
 
-        // Resize and convert the image to JPEG format
-        let imageBuffer = await sharp(req.file.buffer)
-            .resize(500) // Resize to a width of 500 pixels (adjust as needed)
-            .jpeg({ quality: 80 }) // Convert to JPEG format with 80% quality
-            .toBuffer();
+//         // Resize and convert the image to JPEG format
+//         let imageBuffer = await sharp(req.file.buffer)
+//             .resize(500) // Resize to a width of 500 pixels (adjust as needed)
+//             .jpeg({ quality: 80 }) // Convert to JPEG format with 80% quality
+//             .toBuffer();
 
-        // Assign the image buffer to a variable
-        const custom_image = imageBuffer;
+//         // Assign the image buffer to a variable
+//         const custom_image = imageBuffer;
 
-        // Connect to the database
-        conn = await pool.getConnection();
+//         // Connect to the database
+//         conn = await pool.getConnection();
 
-        // Check if the booking ID exists
-        const bookingExist = await conn.query('SELECT * FROM bookingform WHERE id = ?', [booking_id]);
-        console.log('Booking existence check result:', bookingExist);
+//         // Check if the booking ID exists
+//         const bookingExist = await conn.query('SELECT * FROM bookingform WHERE id = ?', [booking_id]);
+//         console.log('Booking existence check result:', bookingExist);
 
-        if (bookingExist.length === 0) {
-            return res.status(404).json({ message: 'Invalid Booking Id' });
-        }
+//         if (bookingExist.length === 0) {
+//             return res.status(404).json({ message: 'Invalid Booking Id' });
+//         }
 
-        // Insert the customization into the database
-        const result = await conn.query(`
-            INSERT INTO customization_item (custom_image, custom_title, custom_desc, custom_price, booking_id) 
-            VALUES (?, ?, ?, ?, ?)`,
-            [custom_image, custom_title, custom_desc, custom_price, booking_id]
-        );
+//         // Insert the customization into the database
+//         const result = await conn.query(`
+//             INSERT INTO customization_item (custom_image, custom_title, custom_desc, custom_price, booking_id) 
+//             VALUES (?, ?, ?, ?, ?)`,
+//             [custom_image, custom_title, custom_desc, custom_price, booking_id]
+//         );
 
-        console.log('Insert result:', result); // Log the result of the insert query
+//         console.log('Insert result:', result); // Log the result of the insert query
 
-        if (result.affectedRows === 1) {
-            res.json({
-                message: 'Customization added successfully',
-                id: Number(result.insertId),
-                custom_title,
-                custom_desc,
-                custom_price,
-                custom_image: req.file.originalname // Return the original file name
-            });
-        } else {
-            throw new Error('Error adding customization');
-        }
-    } catch (error) {
-        console.error('Error inserting data:', error); // Log the full error object
-        res.status(500).json({ message: 'An error occurred', error: error.message });
-    } finally {
-        if (conn) {
-            try {
-                await conn.release();
-            } catch (error) {
-                console.error('Error releasing connection:', error.message);
+//         if (result.affectedRows === 1) {
+//             res.json({
+//                 message: 'Customization added successfully',
+//                 id: Number(result.insertId),
+//                 custom_title,
+//                 custom_desc,
+//                 custom_price,
+//                 custom_image: req.file.originalname // Return the original file name
+//             });
+//         } else {
+//             throw new Error('Error adding customization');
+//         }
+//     } catch (error) {
+//         console.error('Error inserting data:', error); // Log the full error object
+//         res.status(500).json({ message: 'An error occurred', error: error.message });
+//     } finally {
+//         if (conn) {
+//             try {
+//                 await conn.release();
+//             } catch (error) {
+//                 console.error('Error releasing connection:', error.message);
+//             }
+//         }
+//     }
+// });
+
+router.post(
+    '/api/admin/customization_table',
+    upload.array('custom_image'), // Accept multiple files under the field 'custom_image'
+    async (req, res) => {
+        let conn;
+        try {
+            const { booking_id, custom_title, custom_desc, custom_price } = req.body;
+
+            console.log('Received body:', req.body);
+            console.log('Uploaded files:', req.files); // Log uploaded files
+
+            if (!booking_id) {
+                return res.status(400).json({ message: 'Missing booking ID' });
             }
+
+            conn = await pool.getConnection();
+
+            // Validate the booking ID exists
+            const bookingExists = await conn.query(
+                'SELECT * FROM bookingform WHERE id = ?',
+                [booking_id]
+            );
+            if (bookingExists.length === 0) {
+                return res.status(404).json({ message: 'Invalid Booking Id' });
+            }
+
+            // Validate arrays length consistency
+            if (
+                !Array.isArray(custom_title) ||
+                custom_title.length !== req.files.length ||
+                custom_title.length !== custom_desc.length ||
+                custom_title.length !== custom_price.length
+            ) {
+                return res.status(400).json({
+                    message: 'Mismatched lengths between customization fields and uploaded files',
+                });
+            }
+
+            const insertPromises = [];
+
+            // Loop through each customization and process data
+            for (let i = 0; i < custom_title.length; i++) {
+                const imageBuffer = await sharp(req.files[i].buffer)
+                    .resize(500)
+                    .jpeg({ quality: 80 })
+                    .toBuffer();
+
+                insertPromises.push(
+                    conn.query(
+                        `
+                        INSERT INTO customization_item (custom_image, custom_title, custom_desc, custom_price, booking_id) 
+                        VALUES (?, ?, ?, ?, ?)`,
+                        [
+                            imageBuffer,
+                            custom_title[i],
+                            custom_desc[i],
+                            custom_price[i],
+                            booking_id,
+                        ]
+                    )
+                );
+            }
+
+            // Execute all insert queries
+            await Promise.all(insertPromises);
+
+            res.status(200).json({ message: 'Customizations added successfully' });
+        } catch (error) {
+            console.error('Error:', error.message);
+            res.status(500).json({ message: 'Internal Server Error', error: error.message });
+        } finally {
+            if (conn) conn.release();
         }
     }
-});
+);
 
 //delete customization as per the bookind id
 router.delete('/api/admin/customization_table/:booking_id', async (req, res) => {
