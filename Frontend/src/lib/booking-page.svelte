@@ -18,33 +18,6 @@
     { id: 6, img: img6 },
   ];
 
-  const inclusions = [
-    {
-      id: 1,
-      inclusion: "Arch of 150 Balloons in  Pastel Pink, Pastel Green and Purple colors"
-    },
-    {
-      id: 2,
-      inclusion: "8 Mermaid Theme Paper Cutouts"
-    },
-    {
-      id: 3,
-      inclusion: "4 Balloon Pillars (16 Theme Balloons in each Pillars)"
-    },
-    {
-      id: 4,
-      inclusion: "6 Mermaid Themed Foil Balloons (1 Mermaid Tail Foil Balloon, 2 Sea Shells Foil Balloons, 1 Mermaid Foil Balloon and 2 Pink Stars Foil Balloons)"
-    },
-    {
-      id: 5,
-      inclusion: "Arch of 150 Balloons in  Pastel Pink, Pastel Green and Purple colors"
-    },
-    {
-      id: 6,
-      inclusion: "8 BT Balloons"
-    },
-  ]
-
   const customization = [
     {
       id: 1,
@@ -248,12 +221,12 @@
         
             <!-- Thumbnail Section -->
             <div class="w-[90%] mx-auto bg-gray-50 py-4 px-4 flex justify-start items-center gap-4 overflow-x-auto rounded-b-lg">
-              {#each images as image, index}
+              {#each imagesData as image, index}
                 <div
                   on:click={() => selectImage(index)}
                   class="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex justify-center items-center rounded-md overflow-hidden border-2 border-gray-300 hover:border-blue-500 cursor-pointer"
                 >
-                  <img src={image.img} alt="Thumbnail" class="w-full h-full object-cover" />
+                  <img src={image.imgage} alt="Thumbnail" class="w-full h-full object-cover" />
                 </div>
               {/each}
             </div>

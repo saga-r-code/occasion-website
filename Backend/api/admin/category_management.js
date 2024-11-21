@@ -1,4 +1,4 @@
-// http://localhost:3000/api/admin/category_management
+2// http://localhost:3000/api/admin/category_management
 
 import express from 'express';
 import pool from '../../Database/db.js';

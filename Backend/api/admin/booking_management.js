@@ -142,7 +142,7 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
                         imagesArray = images.map(image => ({
                             image_id: image.image_id,
                             image: image.image
-                                ? `data:image/jpeg;base64,${Buffer.from(image.image).toString('base64')}`
+                                ? `data:image/*;base64,${Buffer.from(image.image).toString('base64')}`
                                 : null
                         }));
                     } catch (error) {
