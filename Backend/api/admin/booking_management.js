@@ -86,7 +86,7 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
                 bf.discount AS booking_discount,
                 GROUP_CONCAT(DISTINCT JSON_OBJECT('inclusion_id' , inc.inclusion_id,'inclusion_desc',inc.inclusion_desc)) AS inclusions,
                 GROUP_CONCAT(DISTINCT JSON_OBJECT('image_id', mi.image_id, 'image', mi.image)) AS multi_images,
-                GROUP_CONCAT(DISTINCT JSON_OBJECT("custom_id", ci.custom_id, 'custom_title', ci.custom_title, 'custom_desc', ci.custom_desc, 'custom_price', ci.custom_price, 'custom_image', TO_BASE64(ci.custom_image))) AS customizations
+                GROUP_CONCAT(DISTINCT JSON_OBJECT("custom_id", ci.custom_id, 'custom_title', ci.custom_title, 'custom_desc', ci.custom_desc, 'custom_price', ci.custom_price, 'custom_image', ci.custom_image)) AS customizations
             FROM 
                 category_management cm
             LEFT JOIN 
@@ -134,16 +134,14 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
                     }
                 }
                 
-                // Handle images
+                // Handle images as buffers
                 let imagesArray = [];
                 if (detail.multi_images) {
                     try {
                         const images = JSON.parse(`[${detail.multi_images}]`);
                         imagesArray = images.map(image => ({
                             image_id: image.image_id,
-                            image: image.image
-                                ? `data:image/*;base64,${Buffer.from(image.image).toString('base64')}`
-                                : null
+                            image: image.image ? Buffer.from(image.image, 'base64') : null // Directly using the buffer
                         }));
                     } catch (error) {
                         console.error('Error parsing multi_images:', error.message);
@@ -160,7 +158,7 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
                             title: customization.custom_title,
                             description: customization.custom_desc,
                             price: Number(customization.custom_price),
-                            custom_image: customization.custom_image,
+                            custom_image: customization.custom_image ? Buffer.from(customization.custom_image, 'base64') : null 
                         }));
                     } catch (error) {
                         console.error('Error parsing customizations:', error.message);
@@ -173,7 +171,7 @@ router.get('/api/admin/booking_details/:id', async (req, res) => {
                     description: detail.booking_description,
                     price: detail.booking_price,
                     discount: detail.booking_discount,
-                    inclusions:inclusionsArray,
+                    inclusions: inclusionsArray,
                     images: imagesArray,
                     customizations: customizationsArray,
                 };
@@ -316,63 +314,5 @@ router.delete('/api/admin/booking_management/:id', async (req, res) => {
         res.status(500).json({ error: 'An error occurred while deleting the booking id' });
     }
 });
-
-
-
-
-// const categoryBookingDetails = await conn.query(`
-//     SELECT cm.id AS category_id,
-//            cm.category_name,
-//            cm.title AS category_title,
-//            cm.location,
-//            cm.old_price,
-//            cm.new_price,
-//            bf.id AS booking_id,
-//            bf.title AS booking_title,
-//            bf.description AS booking_description,
-//            bf.price AS booking_price,
-//            bf.discount AS booking_discount,
-//            inc.inclusion_desc,
-//            mi.image AS multi_image,
-//            ci.custom_title, ci.custom_desc, ci.custom_price
-//     FROM category_management cm
-//     LEFT JOIN bookingform bf ON cm.id = bf.item_id
-//     LEFT JOIN inclusions inc ON bf.id = inc.booking_id
-//     LEFT JOIN multi_images mi ON bf.id = mi.booking_id
-//     LEFT JOIN customization_item ci ON bf.id = ci.booking_id
-//     WHERE cm.id = ?
-// `, [id]);
-
-// if (categoryBookingDetails.length === 0) {
-//     return res.status(404).json({ message: 'No bookings found for this category' });
-// }
-
-// // Format the response
-// const response = {
-//     category: {
-//         id: categoryBookingDetails[0].category_id,
-//         name: categoryBookingDetails[0].category_name,
-//         title: categoryBookingDetails[0].category_title,
-//         location: categoryBookingDetails[0].location,
-//         old_price: categoryBookingDetails[0].old_price,
-//         new_price: categoryBookingDetails[0].new_price,
-//     },
-//     bookings: categoryBookingDetails.map(detail => ({
-//         booking_id: detail.booking_id,
-//         title: detail.booking_title,
-//         description: detail.booking_description,
-//         price: detail.booking_price,
-//         discount: detail.booking_discount,
-//         inclusions: detail.inclusion_desc ? [detail.inclusion_desc] : [],
-//         images: detail.multi_image ? [detail.multi_image] : [],
-//         customizations: detail.custom_title ? [{
-//             title: detail.custom_title,
-//             description: detail.custom_desc,
-//             price: detail.custom_price
-//         }] : []
-//     })).filter(booking => booking.booking_id) // Filter out any bookings that do not exist
-// };
-
-
 
 export default router;

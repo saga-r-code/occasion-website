@@ -6,17 +6,8 @@
   import img4 from '../lib/Images/decoration-3.jpeg';
   import img5 from '../lib/Images/flower.jpg';
   import img6 from '../lib/Images/chairs-2.jpg';
-	import LoginPage from './login-page.svelte';
+	// import LoginPage from './login-page.svelte';
 
-  const images = [
-    { id: 1, img: img1 },
-    { id: 2, img: img2 },
-    { id: 3, img: img3 },
-    { id: 4, img: img4 },
-    { id: 5, img: img5 },
-    { id: 6, img: img6 },
-    { id: 6, img: img6 },
-  ];
 
   const customization = [
     {
@@ -101,63 +92,60 @@
   }
 
   function nextImage() {
-    currentIndex = (currentIndex + 1) % images.length;
+    currentIndex = (currentIndex + 1) % imagesData.length;
   }
 
   function prevImage() {
-    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    currentIndex = (currentIndex - 1 + imagesData.length) % imagesData.length;
   }
 
   function selectImage(index) {
     currentIndex = index;
   }
 
-
-  async function fetchingBookingPageDetail() {
-  try {
-    const response = await fetch('http://localhost:3000/api/admin/booking_details/39');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    // Log the full data to inspect the structure
-    // console.log("Fetched Data:", data);
-
-    const { category, bookings } = data;
-    if (category && bookings && bookings.length > 0) {
-        // Set category and booking data
-        categoryData = data.category;
-        bookingsData = data.bookings;
-        
-        // Assuming you want to use the first booking
-        const firstBooking = bookingsData[0];
-        
-        // finalAmount = firstBooking.price; // Set the final amount
+ // finalAmount = firstBooking.price; // Set the final amount
         // price = firstBooking.price;
         // discount = firstBooking.discount;
         // discountPrice = (price * discount) / 100; // Calculate discount price
         // custom_item_price = firstBooking.customizations.reduce((total, item) => total + item.price, 0); // Sum customizations
-        inclusionsData = firstBooking.inclusions;
-        customizationsData = firstBooking.customizations;
-        imagesData = firstBooking.images;
+        async function fetchingBookingPageDetail() {
+    try {
+      const response = await fetch('http://localhost:3000/api/admin/booking_details/39');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const { category, bookings } = data;
+      if (category && bookings && bookings.length > 0) {
+        categoryData = category;
+        bookingsData = bookings;
+
+        const firstBooking = bookings[0];
+
+        inclusionsData = firstBooking.inclusions || [];
+        customizationsData = firstBooking.customizations || [];
+        imagesData = firstBooking.images || [];
+
+        // Convert image buffers to base64 strings
+        imagesData = imagesData.map((image) => ({
+          ...image,
+          image: image.image ? `data:image/jpeg;base64,${btoa(image.image)}` : null,
+        }));
 
         console.log("Category Data:", categoryData);
         console.log("Bookings Data:", bookingsData);
-        console.log("Inclsuion Data:", inclusionsData);
+        console.log("Inclusions Data:", inclusionsData);
         console.log("Images Data:", imagesData);
         console.log("Customization Data:", customizationsData);
-
-     
-    } else {
-      console.error("Error: 'booking' is undefined or not an array.");
+      } else {
+        console.error("Error: 'bookings' is undefined or not an array.");
+      }
+    } catch (error) {
+      console.error('Error fetching booking details:', error.message);
     }
-
-  } catch (error) {
-    console.error('Error fetching booking details:', error.message);
   }
-}
 
   
 
@@ -182,8 +170,6 @@
 
 </script>
 
-<!-- <LoginPage {open} {toggleLoginPage}/> -->
-<!-- Conditional Rendering -->
 {#if closeForm}
   <!-- Modal Container -->
   <div class="w-full h-[100vh] fixed top-0 bg-[rgba(0,0,0,0.7)] z-40 overflow-scroll overflow-x-hidden">
@@ -202,37 +188,36 @@
         <!-- Image Container -->
         <div class="img-container h-full w-full md:w-[50vw] py-14 md:px-3 lg:px-7 xl:px-14 2xl:px-24">
           <div class="relative w-full h-full bg-gray-100 shadow-lg rounded-lg overflow-hidden border-2 flex flex-col items-center">
-            <!-- Main Image Section -->
-            <div class="relative w-full h-[70vh] flex justify-center items-center">
-              <button
-                on:click={prevImage}
-                class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white w-10 h-10 md:w-12 md:h-12 rounded-full flex justify-center items-center shadow-md hover:bg-gray-200 transition"
-              >
-                <i class="fa-solid fa-angles-left text-gray-600"></i>
-              </button>
-              <img src={images[currentIndex].img} alt="Main Image" class="w-full h-full object-cover rounded-t-lg" />
-              <button
-                on:click={nextImage}
-                class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white w-10 h-10 md:w-12 md:h-12 rounded-full flex justify-center items-center shadow-md hover:bg-gray-200 transition"
-              >
-                <i class="fa-solid fa-angles-right text-gray-600"></i>
-              </button>
-            </div>
-        
-            <!-- Thumbnail Section -->
-            <div class="w-[90%] mx-auto bg-gray-50 py-4 px-4 flex justify-start items-center gap-4 overflow-x-auto rounded-b-lg">
-              {#each imagesData as image, index}
-                <div
-                  on:click={() => selectImage(index)}
-                  class="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex justify-center items-center rounded-md overflow-hidden border-2 border-gray-300 hover:border-blue-500 cursor-pointer"
-                >
-                  <img src={image.imgage} alt="Thumbnail" class="w-full h-full object-cover" />
-                </div>
-              {/each}
-            </div>
+              <!-- Main Image Section -->
+              <div class="relative w-full h-[70vh] flex justify-center items-center">
+                  <button
+                      on:click={prevImage}
+                      class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white w-10 h-10 md:w-12 md:h-12 rounded-full flex justify-center items-center shadow-md hover:bg-gray-200 transition"
+                  >
+                      <i class="fa-solid fa-angles-left text-gray-600"></i>
+                  </button>
+                  <img src={imagesData[currentIndex].image} alt="Main Image" class="w-full h-full object-cover rounded-t-lg" />
+                  <button
+                      on:click={nextImage}
+                      class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white w-10 h-10 md:w-12 md:h-12 rounded-full flex justify-center items-center shadow-md hover:bg-gray-200 transition"
+                  >
+                      <i class="fa-solid fa-angles-right text-gray-600"></i>
+                  </button>
+              </div>
+      
+              <!-- Thumbnail Section -->
+              <div class="w-[90%] mx-auto bg-gray-50 py-4 px-4 flex justify-start items-center gap-4 overflow-x-auto rounded-b-lg">
+                  {#each imagesData as image, index}
+                      <div
+                          on:click={() => selectImage(index)}
+                          class="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex justify-center items-center rounded-md overflow-hidden border-2 border-gray-300 hover:border-blue-500 cursor-pointer"
+                      >
+                          <img src={image.image} alt="Thumbnail" class="w-full h-full object-cover" />
+                      </div>
+                  {/each}
+              </div>
           </div>
-        </div>
-        
+      </div>
 
         <!-- Info Container -->
         <div class="info-container relative h-full w-full md:w-[50vw] py-14 my-24 md:px-3 lg:px-7 xl:px-14 2xl:px-24 overflow-y-scroll ">
